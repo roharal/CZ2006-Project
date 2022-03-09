@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:exploresg/screens/base.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/utils.dart';
@@ -26,7 +27,7 @@ class _SplashScreen extends State<SplashScreen> {
   }
 
   _homePage() {
-    Navigator.pushReplacementNamed(context, '/base');
+    Navigator.pushReplacementNamed(context, BaseScreen.routeName);
   }
 
   @override
