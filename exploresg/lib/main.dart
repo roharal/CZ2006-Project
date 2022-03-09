@@ -1,5 +1,4 @@
 import 'package:exploresg/screens/base.dart';
-import 'package:exploresg/screens/home.dart';
 import 'package:exploresg/screens/splash.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +15,13 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreen.routeName: (context) => SplashScreen(),
         BaseScreen.routeName: (context) => BaseScreen(),
-
       },
+
+      onGenerateRoute: (RouteSettings settings) {
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
+      },
+
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );
