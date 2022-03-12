@@ -4,11 +4,7 @@ import 'dart:core';
 Text textMajor(String text, Color color, double size) {
   return Text(
     text,
-    style: TextStyle(
-      fontFamily: 'MadeSunflower',
-      fontSize: size,
-      color: color
-    ),
+    style: TextStyle(fontFamily: 'MadeSunflower', fontSize: size, color: color),
   );
 }
 
@@ -17,7 +13,7 @@ Text textMinor(String text) {
     text,
     style: TextStyle(
       fontFamily: 'AvenirLtStd',
-      fontSize: 9,
+      fontSize: 12,
     ),
   );
 }
@@ -46,22 +42,17 @@ Widget topBar(String title, double height, double width, String imagePath) {
   return Stack(
     children: [
       Container(
-        height: height/3.5,
+        height: height / 3.5,
         width: width,
         decoration: new BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(
-                  imagePath
-              ),
-              fit: BoxFit.fill
-          ),
-          borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(40.0)),
+          image:
+              DecorationImage(image: AssetImage(imagePath), fit: BoxFit.fill),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(40.0)),
         ),
       ),
       Positioned(
-        top: height/5,
-        left: width/8,
+        top: height / 5,
+        left: width / 8,
         child: textMajor(title, Colors.white, 36),
       )
     ],
