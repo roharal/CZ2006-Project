@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:exploresg/screens/base.dart';
+import 'package:exploresg/screens/login.dart';
+import 'package:exploresg/screens/signup.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/utils.dart';
@@ -28,6 +30,7 @@ class _SplashScreen extends State<SplashScreen> {
 
   _homePage() {
     Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+    //Navigator.pushReplacementNamed(context, SignUpScreen.routeName); //for testing
   }
 
   @override

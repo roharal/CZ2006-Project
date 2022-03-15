@@ -1,4 +1,6 @@
 import 'package:exploresg/screens/base.dart';
+import 'package:exploresg/screens/login.dart';
+import 'package:exploresg/screens/signup.dart';
 import 'package:exploresg/screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,8 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreen.routeName: (context) => SplashScreen(),
         BaseScreen.routeName: (context) => BaseScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
+        SignUpScreen.routeName: (context) => SignUpScreen(),
       },
 
       onGenerateRoute: (RouteSettings settings) {
