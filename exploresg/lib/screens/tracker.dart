@@ -1,6 +1,7 @@
 import 'package:exploresg/helper/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../models/Place.dart';
 
 class TrackerScreen extends StatefulWidget {
   @override
@@ -156,18 +157,30 @@ class _TrackerScreen extends State<TrackerScreen> {
               SizedBox(
                 height: 10,
               ),
-              _trackerContainer(0.3 * height, 0.8 * width,
-                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00)),
-              _trackerContainer(0.3 * height, 0.8 * width,
-                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00)),
+              _trackerContainer(
+                  0.3 * height,
+                  0.8 * width,
+                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00, false,
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg')),
+              _trackerContainer(
+                  0.3 * height,
+                  0.8 * width,
+                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00, false,
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg')),
               SizedBox(
                 height: 40,
               ),
               Image.asset('assets/img/myTrackerAccents2.png'),
-              _trackerContainer(0.3 * height, 0.8 * width,
-                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00)),
-              _trackerContainer(0.3 * height, 0.8 * width,
-                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00)),
+              _trackerContainer(
+                  0.3 * height,
+                  0.8 * width,
+                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00, false,
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg')),
+              _trackerContainer(
+                  0.3 * height,
+                  0.8 * width,
+                  Place('Cat Safari', 'Cattos', 'Sunshine View', 3.00, false,
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg')),
             ],
           ),
         ),

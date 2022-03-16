@@ -2,8 +2,8 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'dart:core';
-import '../models/Place.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../models/Place.dart';
 
 Text textMajor(String text, Color color, double size) {
   return Text(
@@ -51,59 +51,6 @@ MaterialColor createMaterialColor(Color color) {
     );
   });
   return MaterialColor(color.value, swatch);
-}
-
-Widget placeContainer(Place place, double width, double height, Widget e) {
-  return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      margin: EdgeInsets.symmetric(vertical: 5),
-      padding: EdgeInsets.symmetric(
-          vertical: 0.05 * height, horizontal: 0.05 * width),
-      width: width,
-      height: height,
-      child: Column(children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(16.0),
-                child: Image.network(
-                  place.image,
-                  fit: BoxFit.fill,
-                  height: 100,
-                  width: 100,
-                )),
-            SizedBox(width: 20),
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  textMajor(place.placename, Colors.grey, 20),
-                  RatingBarIndicator(
-                    rating: place.ratings,
-                    itemBuilder: (context, index) => Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                    itemCount: 5,
-                    itemSize: width / 20,
-                    direction: Axis.horizontal,
-                  ),
-                  textMinor(place.placeaddress)
-                ]))
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Expanded(
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: textMinor(place.placedesc))),
-        e
-      ]));
 }
 
 Widget topBar(String title, double height, double width, String imagePath) {
@@ -254,114 +201,57 @@ class _SearchState extends State<Search> {
   }
 }
 
-class Place {
-  late String placename;
-  late String placedesc;
-  late String placeaddress;
-  late double ratings;
-  //constructor
-  Place(
-      String placename, String placedesc, String placeaddress, double ratings) {
-    this.placename = placename;
-    this.placedesc = placedesc;
-    this.placeaddress = placeaddress;
-    this.ratings = ratings;
-  }
-}
-
-class PlaceContainer extends StatefulWidget {
-  final Place place;
-  final double width;
-  final double height;
-  const PlaceContainer(
-      {Key? key,
-      required this.place,
-      required this.width,
-      required this.height})
-      : super(key: key);
-
-  @override
-  State<PlaceContainer> createState() => _PlaceContainerState();
-}
-
-class _PlaceContainerState extends State<PlaceContainer> {
-  @override
-  // ignore: override_on_non_overriding_member
-  bool _likes = false;
-  Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(
-            vertical: 0.05 * widget.height, horizontal: 0.05 * widget.width),
-        width: widget.width,
-        height: widget.height,
-        child: Column(children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                "assets/img/catsafari.png",
-                height: 100,
-                width: 100,
-                fit: BoxFit.fill,
-              ),
-              SizedBox(width: 20),
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    textMajor(widget.place.placename, Colors.grey, 20),
-                    RatingBarIndicator(
-                      rating: widget.place.ratings,
-                      itemBuilder: (context, index) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      itemCount: 5,
-                      itemSize: widget.width / 20,
-                      direction: Axis.horizontal,
+Widget placeContainer(Place place, double width, double height, Widget e) {
+  return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      margin: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.symmetric(
+          vertical: 0.05 * height, horizontal: 0.05 * width),
+      width: width,
+      height: height,
+      child: Column(children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+                borderRadius: BorderRadius.circular(16.0),
+                child: Image.network(
+                  place.image,
+                  fit: BoxFit.fill,
+                  height: 100,
+                  width: 100,
+                )),
+            SizedBox(width: 20),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  textMajor(place.placename, Colors.grey, 20),
+                  RatingBarIndicator(
+                    rating: place.ratings,
+                    itemBuilder: (context, index) => Icon(
+                      Icons.star,
+                      color: Colors.amber,
                     ),
-                    textMinor(widget.place.placeaddress)
-                  ]))
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: textMinor(widget.place.placedesc))),
-          Expanded(
-              child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                IconButton(
-                  icon: _likes
-                      ? Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        )
-                      : Icon(
-                          Icons.favorite_border,
-                          color: Colors.grey,
-                        ),
-                  onPressed: () {
-                    print("<3 pressed");
-                    setState(() {
-                      _likes = !_likes;
-                    });
-                    print(_likes);
-                  },
-                ),
-                textMinor("add to favourites")
-              ]))
-        ]));
-  }
+                    itemCount: 5,
+                    itemSize: width / 20,
+                    direction: Axis.horizontal,
+                  ),
+                  textMinor(place.placeaddress)
+                ]))
+          ],
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Expanded(
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: textMinor(place.placedesc))),
+        e
+      ]));
 }
 
 class Tracker {
@@ -384,172 +274,5 @@ class Tracker {
     this.date = date;
     this.time = time;
     this.people = people;
-  }
-}
-
-class TrackerContainer extends StatefulWidget {
-  final Place place;
-  final double width;
-  final double height;
-  const TrackerContainer(
-      {Key? key,
-      required this.place,
-      required this.width,
-      required this.height})
-      : super(key: key);
-
-  @override
-  State<TrackerContainer> createState() => _TrackerContainerState();
-}
-
-class _TrackerContainerState extends State<TrackerContainer> {
-  @override
-  // ignore: override_on_non_overriding_member
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      margin: EdgeInsets.symmetric(vertical: 5),
-      padding: EdgeInsets.symmetric(
-          vertical: 0.05 * widget.height, horizontal: 0.05 * widget.width),
-      width: widget.width,
-      height: widget.height + 30,
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                "assets/img/catsafari.png",
-                height: 100,
-                width: 100,
-                fit: BoxFit.fill,
-              ),
-              SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    textMajor(widget.place.placename, Colors.grey, 20),
-                    RatingBarIndicator(
-                      rating: widget.place.ratings,
-                      itemBuilder: (context, index) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      itemCount: 5,
-                      itemSize: widget.width / 20,
-                      direction: Axis.horizontal,
-                    ),
-                    textMinor(widget.place.placeaddress)
-                  ],
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          textMinor(widget.place.placedesc),
-          Expanded(
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(children: [
-                        textMinor('my status:'),
-                        textMinor('date:'),
-                        textMinor('time:'),
-                        textMinor('people:'),
-                      ]),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Status(
-                              height: widget.height, width: widget.width),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: textMinor('16/3/2022'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: textMinor('11:30 am'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: textMinor('faith, ihsan'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Status extends StatefulWidget {
-  final double width;
-  final double height;
-  const Status({Key? key, required this.width, required this.height})
-      : super(key: key);
-
-  @override
-  State<Status> createState() => _StatusState();
-}
-
-class _StatusState extends State<Status> {
-  String dropdownValue = 'to explore';
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 18),
-        margin: EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: createMaterialColor(Color(0xFFFFF9ED))),
-        height: widget.height / 6.5,
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-                value: dropdownValue,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                style: const TextStyle(
-                  color: Colors.blueAccent,
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 14,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                },
-                items: <String>['unexplored', 'to explore', 'explored']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList())));
   }
 }
