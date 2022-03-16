@@ -1,5 +1,5 @@
 import 'package:exploresg/helper/utils.dart';
-import 'package:exploresg/screens/FavouriteScreen.dart';
+import 'package:exploresg/screens/favourites.dart';
 import 'package:exploresg/screens/home.dart';
 import 'package:exploresg/screens/inbox.dart';
 import 'package:exploresg/screens/aftersearch.dart';
