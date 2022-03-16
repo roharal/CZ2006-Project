@@ -22,11 +22,13 @@ class _InboxScreen extends State<InboxScreen> {
       "assets/img/catSafari.png");
   List<Invitation> invitationList = [
     Invitation(DateTime.now(), "Oshwad", "Cat Safari", 3, "56 Nanyang Ave",
-        "Dog day center in Singapore", "assets/img/catSafari.png")
+        "Dog day center in Singapore", "assets/img/catSafari.png"),
+    Invitation(DateTime.now(), "Albers", "Dog Safari", 3, "56 Doggo street",
+        "Cat day center in Singapore", "assets/img/catSafari.png")
   ];
   List listItem = ["Filter 1", "Filter 2", "Filter 3", "Filter 4"];
 
-  Widget _invitationWidget(var width,Invitation invitationC) {
+  Widget _invitationWidget(var width, Invitation invitationC) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -202,8 +204,8 @@ class _InboxScreen extends State<InboxScreen> {
                         });
                       }))),
           //MAIN CONTAINER
-          _invitationWidget(width,testInvite),
-          _invitationWidget(width,testInvite),
+          _invitationWidget(width, testInvite),
+          _invitationWidget(width, testInvite),
           SafeArea(child: Container(child: Text(" ")))
         ]))));
   }
