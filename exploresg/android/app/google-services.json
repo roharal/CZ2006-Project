@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "260411152458",
+    "project_id": "exploresg-hdmilf",
+    "storage_bucket": "exploresg-hdmilf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260411152458:android:0e48926b49091a311c6eb3",
+        "android_client_info": {
+          "package_name": "com.hdmilf.exploresg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260411152458-3e4t2e4u0a3ikfqjm8poeletcu2qbtqc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWVjLxCAhoCuzslT2KyAHI4GTXI8-_268"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260411152458-3e4t2e4u0a3ikfqjm8poeletcu2qbtqc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "260411152458-mqhrt62uskskjfdq524r91qu7jvna2at.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hdmilf.exploresg"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

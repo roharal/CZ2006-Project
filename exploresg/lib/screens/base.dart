@@ -2,6 +2,7 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/screens/favourites.dart';
 import 'package:exploresg/screens/home.dart';
 import 'package:exploresg/screens/inbox.dart';
+import 'package:exploresg/screens/aftersearch.dart';
 import 'package:exploresg/screens/profile.dart';
 import 'package:exploresg/screens/tracker.dart';
 import 'package:flutter/material.dart';
@@ -25,37 +26,45 @@ class _BaseScreen extends State<BaseScreen> {
       FavouriteScreen(),
       TrackerScreen(),
       InboxScreen(),
-      ProfileScreen()
+      ProfileScreen(),
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.home),
-        activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
-        inactiveColorPrimary: Colors.grey,
-      ),
+          icon: Icon(Icons.home),
+          activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
+          inactiveColorPrimary: Colors.grey,
+          routeAndNavigatorSettings:
+              RouteAndNavigatorSettings(initialRoute: '/', routes: {
+            // Add routes to the specific screen that has screen navigation
+            // PlaceScreen.routeName: (context) => PlaceScreen(),
+          })),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.favorite),
-        activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
-        inactiveColorPrimary: Colors.grey,
-      ),
+          icon: Icon(Icons.favorite),
+          activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
+          inactiveColorPrimary: Colors.grey,
+          routeAndNavigatorSettings:
+              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.list_alt_outlined),
-        activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
-        inactiveColorPrimary: Colors.grey,
-      ),
+          icon: Icon(Icons.list_alt_outlined),
+          activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
+          inactiveColorPrimary: Colors.grey,
+          routeAndNavigatorSettings:
+              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.markunread_mailbox_outlined),
-        activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
-        inactiveColorPrimary: Colors.grey,
-      ),
+          icon: Icon(Icons.markunread_mailbox_outlined),
+          activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
+          inactiveColorPrimary: Colors.grey,
+          routeAndNavigatorSettings:
+              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.person_sharp),
-        activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
-        inactiveColorPrimary: Colors.grey,
-      ),
+          icon: Icon(Icons.person_sharp),
+          activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
+          inactiveColorPrimary: Colors.grey,
+          routeAndNavigatorSettings:
+              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
     ];
   }
 
