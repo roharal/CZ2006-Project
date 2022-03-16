@@ -55,12 +55,14 @@ Widget placeContainer(Place place, double width, double height, Widget e) {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              "assets/img/catSafari.png",
-              height: 100,
-              width: 100,
-              fit: BoxFit.fill,
-            ),
+            ClipRRect(
+                borderRadius: BorderRadius.circular(16.0),
+                child: Image.network(
+                  place.image,
+                  fit: BoxFit.fill,
+                  height: 100,
+                  width: 100,
+                )),
             SizedBox(width: 20),
             Expanded(
                 child: Column(

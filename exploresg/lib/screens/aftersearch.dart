@@ -230,13 +230,15 @@ class _AfterSearchState extends State<AfterSearchScreen> {
       "fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place ",
       "Singapore 512345 Happy Road",
       4,
-      false);
+      false,
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg');
   Place secondtestplace = Place(
       "school",
       "weeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeee",
       "Singapore 123456 yeeeehooo",
       2,
-      false);
+      false,
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg');
 
   @override
   Widget build(BuildContext context) {
