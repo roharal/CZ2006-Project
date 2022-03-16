@@ -11,20 +11,14 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreen extends State<InboxScreen> {
+  final DateFormat formatterDate = DateFormat('dd-MM-yyyy');
+  final DateFormat formatterTime = DateFormat('HH:MM');
   var valueChoose;
-  Invitation testInvite = Invitation(
-      DateTime.now(),
-      "Oshwad",
-      "Cat Safari",
-      3,
-      "56 Nanyang Ave",
-      "Dog day center in Singapore",
-      "assets/img/catSafari.png");
   List<Invitation> invitationList = [
-    Invitation(DateTime.now(), "Oshwad", "Cat Safari", 3, "56 Nanyang Ave",
+    Invitation(DateTime.now(), "Oshwad", "Cat Safari", 4.5, "56 Nanyang Ave",
         "Dog day center in Singapore", "assets/img/catSafari.png"),
-    Invitation(DateTime.now(), "Albers", "Dog Safari", 3, "56 Doggo street",
-        "Cat day center in Singapore", "assets/img/catSafari.png")
+    Invitation(DateTime.now(), "Albers", "Dog Safari", 1.7, "56 Doggo street",
+        "Cat day center in Singapore", "assets/img/dog.jpg")
   ];
   List listItem = ["Filter 1", "Filter 2", "Filter 3", "Filter 4"];
 
@@ -87,7 +81,7 @@ class _InboxScreen extends State<InboxScreen> {
                                 fontSize: 23,
                                 fontWeight: FontWeight.bold)),
                         RatingBarIndicator(
-                          rating: 2.75,
+                          rating: invitationC.placeRating,
                           itemBuilder: (context, index) => Icon(
                             Icons.star,
                             color: Colors.amber,
@@ -113,14 +107,14 @@ class _InboxScreen extends State<InboxScreen> {
                 style: TextStyle(
                     fontFamily: "AvenirLtStd", fontWeight: FontWeight.w100))),
         Container(
-            child: Text("Date: " + invitationC.inviteTime.day.toString(),
+            child: Text("Date: " + formatterDate.format(invitationC.inviteTime),
                 style: TextStyle(
                   fontFamily: "AvenirLtStd",
                   fontSize: 14,
                 )),
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
         Container(
-            child: Text(invitationC.inviteTime.hour.toString(),
+            child: Text("Time: " + formatterTime.format(invitationC.inviteTime),
                 style: TextStyle(
                   fontFamily: "AvenirLtStd",
                   fontSize: 14,
@@ -204,8 +198,7 @@ class _InboxScreen extends State<InboxScreen> {
                         });
                       }))),
           //MAIN CONTAINER
-          _invitationWidget(width, testInvite),
-          _invitationWidget(width, testInvite),
+          Column(children: invitationList.map((invite){return _invitationWidget(width, invite);}).toList(),),
           SafeArea(child: Container(child: Text(" ")))
         ]))));
   }
@@ -215,7 +208,7 @@ class Invitation {
   DateTime inviteTime;
   var inviter;
   var placeName;
-  var placeRating;
+  double placeRating;
   var placeAddress;
   var placeImage;
   var placeDesc;
