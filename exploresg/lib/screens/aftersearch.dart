@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
-import 'package:exploresg/helper/models.dart';
+import 'package:exploresg/models/Place.dart';
 
 class AfterSearchScreen extends StatefulWidget {
   const AfterSearchScreen({Key? key}) : super(key: key);
