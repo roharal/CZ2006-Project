@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -11,6 +10,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
+
+  // _moveToAnotherPageWithinNavBar() {
+  //   pushNewScreenWithRouteSettings(
+  //       context,
+  //       screen: PlaceScreen(), // class you're moving into
+  //       settings: RouteSettings(name: PlaceScreen.routeName), // remember to include routeName at the base class
+  //       pageTransitionAnimation: PageTransitionAnimation.cupertino
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +34,6 @@ class _HomeScreen extends State<HomeScreen> {
             children: [
               topBar("home", height, width, 'assets/img/homeTop.png'),
               textMajor("find places", Colors.black, 26),
-
             ],
           )
         ),
