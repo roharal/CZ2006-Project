@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:exploresg/screens/base.dart';
-import 'package:exploresg/screens/login.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +27,7 @@ class _SplashScreen extends State<SplashScreen> {
   }
 
   _homePage() {
-    Navigator.pushReplacementNamed(context, BaseScreen.routeName);
-    //Navigator.pushReplacementNamed(context, SignUpScreen.routeName); //for testing
+    Navigator.pushReplacementNamed(context, SignUpScreen.routeName);
   }
 
   @override
@@ -64,7 +61,7 @@ class _SplashScreen extends State<SplashScreen> {
               left: width/4.5,
               child: SizedBox(
                 width: width/3,
-                child: textMinor("discover new places and invite your friend to go together!"),
+                child: textMinor("discover new places and invite your friend to go together!", Colors.black),
               ),
             ),
             Positioned(
@@ -76,8 +73,8 @@ class _SplashScreen extends State<SplashScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      textMinor("Copyright HDMILF 2022"),
-                      textMinor("All rights reserved")
+                      textMinor("Copyright HDMILF 2022",Colors.black),
+                      textMinor("All rights reserved",Colors.black)
                     ],
                   ),
                 )
