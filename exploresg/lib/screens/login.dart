@@ -20,12 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final _loginKey = GlobalKey<FormState>();
   FirebaseApi _firebaseApi = FirebaseApi();
 
-  Widget _topBar(double width, double height) {
+  Widget _topBar(double width) {
     return FittedBox(
         fit: BoxFit.fill,
         child: SvgPicture.asset('assets/img/login-top.svg',
           width: width,
-          height: height * 0.4,
         )
     );
   }
@@ -33,8 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _login(double width, double height) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 40),
+      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       width: width - 80,
-      height: height * 0.5,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -42,9 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 25),
-            textMajor("sign in", Colors.black, 36),
-            SizedBox(height: 30),
+            textMajor("sign in", Color(0xff22254C), 36),
+            SizedBox(height: 10),
             _loginForm(),
             SizedBox(height: 30),
             _progressButton(width, height),
@@ -65,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          textMinor("don't have an account?", Colors.black),
+          textMinor("don't have an account?", Color(0xff22254C)),
           SizedBox(width: 5,),
           textMinor("sign up", createMaterialColor(Color(0xff6488E5)))
         ],
@@ -79,12 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
       height:  height * 0.05,
       child: ElevatedButton(
         onPressed: _validateLogin,
-        child: textMinor("Login", Colors.white),
+        child: textMinor("sign in", Colors.white),
         style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-            primary: Color(0xff6488E5),
-            elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+          primary: Color(0xff6488E5),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
         ),
       ),
     );
@@ -105,8 +103,19 @@ class _LoginScreenState extends State<LoginScreen> {
           obscureText: false,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: "Email",
-            prefixIcon: Icon(Icons.email),
+            hintText: "email",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.email,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
           ),
           keyboardType: TextInputType.emailAddress,
           validator: _validateEmail,
@@ -124,8 +133,19 @@ class _LoginScreenState extends State<LoginScreen> {
           obscureText: true,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: "Password",
-            prefixIcon: Icon(Icons.lock),
+            hintText: "password",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.lock,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
           ),
           keyboardType: TextInputType.text,
           validator: _validatePassword,
@@ -143,8 +163,19 @@ class _LoginScreenState extends State<LoginScreen> {
           obscureText: false,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: "Username",
-            prefixIcon: Icon(Icons.alternate_email),
+            hintText: "username",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.alternate_email,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
           ),
           keyboardType: TextInputType.text,
           validator: _validateUsername,
@@ -167,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            textMinor("Login using", Colors.black),
+            textMinor("login using", Color(0xff22254C)),
             SizedBox(
               width: 5,
             ),
@@ -277,23 +308,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         backgroundColor: Color(0xfffffcec),
         body: SingleChildScrollView(
-          child: Container(
-            height: _height - 20,
-            child: Stack(
-              children: [
-                Positioned(child: _topBar(_width, _height)),
-                Positioned(
-                  top: _height * 0.25,
-                  child: _login(_width, _height),
-                ),
-                Positioned(
-                  right: 0,
-                  left: 0,
-                  bottom: _height * 0.05,
-                  child: _loginLabel(),
-                )
-              ],
-            ),
+          child: Column(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(child: _topBar(_width)),
+                  Positioned(
+                    top: _height * 0.25,
+                    child: _login(_width, _height),
+                  ),
+                ],
+              ),
+              SizedBox(height: _height*0.3),
+              _loginLabel(),
+            ],
           ),
         )
     );
