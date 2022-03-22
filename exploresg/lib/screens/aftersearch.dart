@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
-import 'package:exploresg/models/Place.dart';
 
 class AfterSearchScreen extends StatefulWidget {
-  const AfterSearchScreen({Key? key}) : super(key: key);
-
+  static const routeName = "/aftersearch";
   @override
   State<AfterSearchScreen> createState() => _AfterSearchState();
 }
@@ -41,8 +39,8 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("filter by"), value: "filter by"),
-              DropdownMenuItem(child: textMinor("b"), value: "b")
+                  child: textMinor("filter by", Colors.black), value: "filter by"),
+              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -57,8 +55,8 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         0.49 * width,
         DropdownButtonFormField<String>(
             items: [
-              DropdownMenuItem(child: textMinor("sort by"), value: "sort by"),
-              DropdownMenuItem(child: textMinor("b"), value: "b")
+              DropdownMenuItem(child: textMinor("sort by", Colors.black), value: "sort by"),
+              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -74,8 +72,8 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("place type"), value: "place type"),
-              DropdownMenuItem(child: textMinor("a"), value: "a")
+                  child: textMinor("place type", Colors.black), value: "place type"),
+              DropdownMenuItem(child: textMinor("a", Colors.black), value: "a")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -175,9 +173,9 @@ class _AfterSearchState extends State<AfterSearchScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                textMinor("keyword search"),
+                textMinor("keyword search", Colors.black),
                 _searchSwitch(),
-                textMinor("dropdown list")
+                textMinor("dropdown list", Colors.black)
               ],
             ),
             _searchByCategory == false
@@ -193,60 +191,42 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         ));
   }
 
-  Widget _addFav(Place place) {
-    return Expanded(
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-          Row(children: [
-            InkWell(
-                onTap: () {
-                  print("<3 pressed");
-                  setState(() {
-                    place.likes = !place.likes;
-                  });
-                  print(place.likes);
-                },
-                child: place.likes
-                    ? Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      )
-                    : Icon(
-                        Icons.favorite_border,
-                        color: Colors.grey,
-                      )),
-            SizedBox(
-              width: 10,
-            ),
-            textMinor("add to favourites")
-          ])
-        ]));
-  }
-
-  Place testplace = Place(
-      "home",
-      "fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place ",
-      "Singapore 512345 Happy Road",
-      4,
-      false,
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg');
-  Place secondtestplace = Place(
-      "school",
-      "weeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeee",
-      "Singapore 123456 yeeeehooo",
-      2,
-      false,
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg');
+  // Widget _addFav(Place place) {
+  //   return Expanded(
+  //       child: Row(
+  //           crossAxisAlignment: CrossAxisAlignment.end,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //         Row(children: [
+  //           InkWell(
+  //               onTap: () {
+  //                 print("<3 pressed");
+  //                 setState(() {
+  //                   place.likes = !place.likes;
+  //                 });
+  //                 print(place.likes);
+  //               },
+  //               child: place.likes
+  //                   ? Icon(
+  //                       Icons.favorite,
+  //                       color: Colors.red,
+  //                     )
+  //                   : Icon(
+  //                       Icons.favorite_border,
+  //                       color: Colors.grey,
+  //                     )),
+  //           SizedBox(
+  //             width: 10,
+  //           ),
+  //           textMinor("add to favourites", Colors.black)
+  //         ])
+  //       ]));
+  // }
 
   @override
   Widget build(BuildContext context) {
-    List<Place> places = [testplace, secondtestplace];
-
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    var place;
 
     return Scaffold(
         backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
@@ -256,16 +236,18 @@ class _AfterSearchState extends State<AfterSearchScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-              topBar("places", height, width, 'assets/img/afterSearchTop.png'),
-              SizedBox(height: 10),
-              _searchTools(0.80 * width, 0.3 * height),
-              SizedBox(height: 20),
-              for (place in places)
-                placeContainer(
-                    place, 0.8 * width, 0.3 * height, _addFav(place)),
-              SizedBox(
-                height: 0.1 * height,
-              ),
-            ]))));
+                      topBar("places", height, width, 'assets/img/afterSearchTop.png'),
+                      SizedBox(height: 10),
+                      _searchTools(0.80 * width, 0.3 * height),
+                      SizedBox(height: 20),
+              // for (place in places)
+              //   placeContainer(
+              //       place, 0.8 * width, 0.3 * height, _addFav(place)),
+                      SizedBox(height: 0.1 * height),
+                    ]
+                )
+            )
+        )
+    );
   }
 }
