@@ -1,4 +1,4 @@
-import 'package:exploresg/models/Place.dart';
+import 'package:exploresg/models/place.dart';
 
 class Invitation {
   late Place place;
