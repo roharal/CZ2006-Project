@@ -1,9 +1,11 @@
 import 'dart:ffi';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../models/Place.dart';
+import 'package:exploresg/models/place.dart';
 
 Text textMajor(String text, Color color, double size) {
   return Text(
@@ -12,24 +14,14 @@ Text textMajor(String text, Color color, double size) {
   );
 }
 
-Text textMinor(String text) {
+Text textMinor(String text, Color color) {
   return Text(
     text,
     style: TextStyle(
       fontFamily: 'AvenirLtStd',
       fontSize: 14,
-    ),
-  );
-}
-
-Text textMinorGrey(String text) {
-  return Text(
-    text,
-    style: TextStyle(
-      fontFamily: 'AvenirLtStd',
-      fontSize: 14,
-      color: Colors.grey,
-    ),
+      color: color
+    )
   );
 }
 
@@ -71,6 +63,50 @@ Widget topBar(String title, double height, double width, String imagePath) {
         child: textMajor(title, Colors.white, 36),
       )
     ],
+  );
+}
+
+void showAlert(BuildContext context, String title, String content) async {
+  Platform.isIOS
+      ? await showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: new Text(title),
+          content: new Text(content),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      })
+      : await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: new Text(title),
+          content: new Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      }
+  );
+}
+
+Widget progressionIndicator() {
+  return Center(
+    child: CircularProgressIndicator(),
   );
 }
 
@@ -135,8 +171,8 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   @override
+  // bool _searchByKeyword = true;
   // ignore: override_on_non_overriding_member
-  bool _searchByKeyword = true;
   String filterbydropdownValue = 'filter by';
   String sortbydropdownValue = 'sort by';
   Widget build(BuildContext context) {
@@ -154,9 +190,9 @@ class _SearchState extends State<Search> {
                 focusColor: Colors.white,
                 items: [
                   DropdownMenuItem(
-                      child: textMinorGrey("filter by"), value: "filter by"),
+                      child: textMinor("filter by", Colors.grey), value: "filter by"),
                   DropdownMenuItem(
-                      child: textMinorGrey("distance"), value: "distance")
+                      child: textMinor("distance", Colors.grey), value: "distance")
                 ],
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -180,9 +216,9 @@ class _SearchState extends State<Search> {
                 focusColor: Colors.white,
                 items: [
                   DropdownMenuItem(
-                      child: textMinorGrey("sort by"), value: "sort by"),
+                      child: textMinor("sort by", Colors.grey), value: "sort by"),
                   DropdownMenuItem(
-                      child: textMinorGrey("distance"), value: "distance")
+                      child: textMinor("distance", Colors.grey), value: "distance")
                 ],
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -218,7 +254,7 @@ Widget placeContainer(Place place, double width, double height, Widget e) {
             ClipRRect(
                 borderRadius: BorderRadius.circular(16.0),
                 child: Image.network(
-                  place.image,
+                  place.images.length != 0 ? place.images[0] : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
                   fit: BoxFit.fill,
                   height: 100,
                   width: 100,
@@ -228,7 +264,7 @@ Widget placeContainer(Place place, double width, double height, Widget e) {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  textMajor(place.placename, Colors.grey, 20),
+                  textMajor(place.placeName, Colors.grey, 20),
                   RatingBarIndicator(
                     rating: place.ratings,
                     itemBuilder: (context, index) => Icon(
@@ -239,7 +275,7 @@ Widget placeContainer(Place place, double width, double height, Widget e) {
                     itemSize: width / 20,
                     direction: Axis.horizontal,
                   ),
-                  textMinor(place.placeaddress)
+                  textMinor(place.placeAddress, Colors.black)
                 ]))
           ],
         ),
@@ -249,7 +285,7 @@ Widget placeContainer(Place place, double width, double height, Widget e) {
         Expanded(
             child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
-                child: textMinor(place.placedesc))),
+                child: textMinor(place.placeDesc, Colors.black))),
         e
       ]));
 }
