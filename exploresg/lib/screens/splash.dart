@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:flutter/material.dart';
 
@@ -15,19 +17,26 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreen extends State<SplashScreen> {
 
+  Auth _auth = Auth();
+
   @override
   void initState() {
     super.initState();
     _timer();
   }
 
-  _timer() async {
+  Future<Timer> _timer() async {
     var d = Duration(seconds: 3);
     return Timer(d, _homePage);
   }
 
-  _homePage() {
-    Navigator.pushReplacementNamed(context, SignUpScreen.routeName);
+  void _homePage() {
+    var user = _auth.getCurrentUser();
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+    } else {
+      Navigator.pushReplacementNamed(context, SignUpScreen.routeName);
+    }
   }
 
   @override
