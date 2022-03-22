@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
 
-  late String id, username, firstName, lastName, email, picture, mobileNumber;
+  late String id, username, firstName, lastName, email, picture, mobileNumber, interest;
   late String? token;
   late bool emailVerified, numberVerified;
 
-  UserModel(this.id, this.username, this.firstName, this.lastName, this.email, this.token, this.picture, this.mobileNumber, this.emailVerified, this.numberVerified);
+  UserModel(this.id, this.username, this.firstName, this.lastName, this.email, this.token, this.picture, this.mobileNumber, this.emailVerified, this.numberVerified, this.interest);
 
   void setId(String id) {
     this.id = id;
@@ -40,7 +40,8 @@ class UserModel {
         picture = snapshot["picture"],
         mobileNumber = snapshot["mobileNumber"],
         emailVerified = snapshot["emailVerified"],
-        numberVerified = snapshot["numberVerified"];
+        numberVerified = snapshot["numberVerified"],
+        interest = snapshot["interest"];
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -53,5 +54,6 @@ class UserModel {
     "mobileNumber": mobileNumber,
     "emailVerified": emailVerified,
     "numberVerified": numberVerified,
+    "interest":interest
   };
 }
