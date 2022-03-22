@@ -56,11 +56,19 @@ class FirebaseApi {
     }
   }
 
-  Future<DocumentSnapshot> getDocumentByIdFromCollection(String collection, String id) {
-    return _firestore.collection(collection).doc(id).get();
+  Future createDocumentByIdFromCollection(String collection, String id, Map<String, dynamic> data) async {
+    await _firestore.collection(collection).doc(id).set(data);
+  }
+
+  Future<DocumentSnapshot> getDocumentByIdFromCollection(String collection, String id) async {
+    return await _firestore.collection(collection).doc(id).get();
   }
 
   Future updateDocumentByIdFromCollection(String collection, String id, Map<String, dynamic> data) async {
     await _firestore.collection(collection).doc(id).update(data);
+  }
+
+  Future deleteDocumentByIdFromCollection(String collection, String id) async {
+    await _firestore.collection(collection).doc(id).delete();
   }
 }
