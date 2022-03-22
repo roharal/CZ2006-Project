@@ -291,7 +291,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "",
         "",
         false,
-        false
+        false,
+        ""
     );
     await _firebaseApi.createUserFromEmail(user, _password).then((value) {
       setState(() {
