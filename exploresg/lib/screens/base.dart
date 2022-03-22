@@ -38,6 +38,7 @@ class _BaseScreen extends State<BaseScreen> {
           inactiveColorPrimary: Colors.grey,
           routeAndNavigatorSettings:
               RouteAndNavigatorSettings(initialRoute: '/', routes: {
+                AfterSearchScreen.routeName: (context) => AfterSearchScreen()
             // Add routes to the specific screen that has screen navigation
             // PlaceScreen.routeName: (context) => PlaceScreen(),
           })),
