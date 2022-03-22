@@ -22,12 +22,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   static final validUsername = RegExp(r'^[a-zA-Z0-9]+$');
   late String _email, _password, _username, _first, _last;
 
-  Widget _topBar(double width, double height) {
+  Widget _topBar(double width) {
     return FittedBox(
       fit: BoxFit.fill,
       child: SvgPicture.asset('assets/img/login-top.svg',
         width: width,
-        height: height * 0.4,
+        //height: height * 0.4,
       )
     );
   }
@@ -39,8 +39,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "First Name",
-          prefixIcon: Icon(Icons.account_circle),
+          hintText: 'first name',
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
+          ),
+          icon: Icon(
+            Icons.account_circle,
+            color: Color(0xffD1D1D6),
+          ),
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
         ),
         validator: _validateName,
         onSaved: (String? saved) {
@@ -57,8 +68,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "Last Name",
-          prefixIcon: Icon(Icons.account_circle),
+          hintText: "last name",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
+          ),
+          icon: Icon(
+            Icons.account_circle,
+            color: Color(0xffD1D1D6),
+          ),
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
         ),
         validator: _validateName,
         onSaved: (String? saved) {
@@ -75,8 +97,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           obscureText: false,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: "Email",
-            prefixIcon: Icon(Icons.email),
+            hintText: "email",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.email,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
           ),
           keyboardType: TextInputType.emailAddress,
           validator: _validateEmail,
@@ -94,8 +127,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           obscureText: true,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: "Password",
-            prefixIcon: Icon(Icons.lock),
+            hintText: "password",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.lock,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
           ),
           keyboardType: TextInputType.text,
           validator: _validatePassword,
@@ -113,8 +157,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           obscureText: false,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: "Username",
-            prefixIcon: Icon(Icons.alternate_email),
+            hintText: "username",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.alternate_email,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
           ),
           keyboardType: TextInputType.text,
           onChanged: (value) {
@@ -150,8 +205,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _signUp(double width, double height) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 40),
+      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       width: width - 80,
-      height: height * 0.65,
+      //height: height * 0.65,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -159,9 +215,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 25),
-            textMajor("sign up", Colors.black, 36),
-            SizedBox(height: 30),
+            //SizedBox(height: 25),
+            textMajor("sign up", Color(0xff22254C), 36),
+            SizedBox(height: 10),
             _registerForm(),
             SizedBox(height: 30),
             _progressButton(width, height)
@@ -178,7 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          textMinor("already have an account?", Colors.black),
+          textMinor("already have an account?", Color(0xff22254C)),
           SizedBox(width: 5,),
           textMinor("sign in", createMaterialColor(Color(0xff6488E5)))
         ],
@@ -187,20 +243,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _registerButton(double width, double height) {
-    return SizedBox(
-      width: width,
-      height:  height * 0.05,
-      child: ElevatedButton(
-        onPressed: _isChecked ? _validateRegister : _validateUsername,
-        child: _isChecked ? textMinor("Register", Colors.white)
-            : textMinor("Check username", Colors.white),
-
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-            primary: Color(0xff6488E5),
-            elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
-        ),
+    return ElevatedButton(
+      onPressed: _isChecked ? _validateRegister : _validateUsername,
+      child: _isChecked ? textMinor("register", Colors.white)
+          : textMinor("check username", Colors.white),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        primary: Color(0xff6488E5),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
       ),
     );
   }
@@ -314,23 +365,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       backgroundColor: Color(0xfffffcec),
       body: SingleChildScrollView(
-        child: Container(
-          height: _height - 20,
-          child: Stack(
-            children: [
-              Positioned(child: _topBar(_width, _height)),
-              Positioned(
-                top: _height * 0.17,
-                child: _signUp(_width, _height),
-              ),
-              Positioned(
-                right: 0,
-                left: 0,
-                bottom: _height * 0.05,
-                child: _loginLabel(),
-              )
-            ],
-          ),
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(child: _topBar(_width)),
+                Positioned(
+                  top: _height * 0.2,
+                  child: _signUp(_width, _height),
+                ),
+              ],
+            ),
+            SizedBox(height: _height*0.4),
+            _loginLabel()
+          ],
         ),
       )
     );
