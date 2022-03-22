@@ -1,7 +1,10 @@
+import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/places_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
-import 'package:exploresg/models/Place.dart';
+import 'package:exploresg/models/place.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,6 +27,12 @@ class _HomeScreen extends State<HomeScreen> {
   String _filterbydropdownValue = 'filter by';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
+  PlacesApi _placesApi = PlacesApi();
+  FirebaseApi _firebaseApi = FirebaseApi();
+  Auth _auth = Auth();
+  List<Place> _places = [];
+  bool _isLoaded = false;
+
 
   InputDecoration dropdownDeco = InputDecoration(
       border: InputBorder.none,
@@ -33,7 +42,7 @@ class _HomeScreen extends State<HomeScreen> {
       disabledBorder: InputBorder.none,
       labelStyle: TextStyle(color: Colors.black, fontSize: 16));
 
-  Container _dropdownlist(double width, DropdownButtonFormField DDL) {
+  Container _dropDownList(double width, DropdownButtonFormField DDL) {
     return Container(
         width: width,
         padding: EdgeInsets.symmetric(horizontal: 0.1 * width),
@@ -44,13 +53,13 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Container _filterDropDown(double width) {
-    return _dropdownlist(
+    return _dropDownList(
         0.49 * width,
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("filter by"), value: "filter by"),
-              DropdownMenuItem(child: textMinor("b"), value: "b")
+                  child: textMinor("filter by", Colors.black), value: "filter by"),
+              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -61,12 +70,12 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Container _sortDropDown(double width) {
-    return _dropdownlist(
+    return _dropDownList(
         0.49 * width,
         DropdownButtonFormField<String>(
             items: [
-              DropdownMenuItem(child: textMinor("sort by"), value: "sort by"),
-              DropdownMenuItem(child: textMinor("b"), value: "b")
+              DropdownMenuItem(child: textMinor("sort by", Colors.black), value: "sort by"),
+              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -77,13 +86,13 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Container _placeTypeDropDown(double width) {
-    return _dropdownlist(
+    return _dropDownList(
         width,
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("place type"), value: "place type"),
-              DropdownMenuItem(child: textMinor("a"), value: "a")
+                  child: textMinor("place type", Colors.black), value: "place type"),
+              DropdownMenuItem(child: textMinor("a", Colors.black), value: "a")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -166,6 +175,12 @@ class _HomeScreen extends State<HomeScreen> {
                 _filterbydropdownValue +
                 _sortbydropdownValue +
                 _searchController.text);
+            // pushNewScreenWithRouteSettings(
+            //           context,
+            //           screen: AfterSearchScreen(), // class you're moving into
+            //           settings: RouteSettings(name: AfterSearchScreen.routeName), // remember to include routeName at the base class
+            //           pageTransitionAnimation: PageTransitionAnimation.cupertino
+            //       );
           },
           child: Text("Go!",
               style: TextStyle(
@@ -183,9 +198,9 @@ class _HomeScreen extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                textMinor("keyword search"),
+                textMinor("keyword search", Colors.black),
                 _searchSwitch(),
-                textMinor("dropdown list")
+                textMinor("dropdown list", Colors.black)
               ],
             ),
             _searchByCategory == false
@@ -228,53 +243,172 @@ class _HomeScreen extends State<HomeScreen> {
             SizedBox(
               width: 10,
             ),
-            textMinor("add to favourites")
+            textMinor("add to favourites",Colors.black)
           ])
         ]));
   }
 
-  Place testplace = Place(
-      "home",
-      "fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun placfun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place fun place ",
-      "Singapore 512345 Happy Road",
-      4,
-      false,
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg');
-  Place secondtestplace = Place(
-      "school",
-      "weeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeeeweeeeeeee",
-      "Singapore 123456 yeeeehooo",
-      2,
-      false,
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg');
+  @override
+  void initState() {
+    super.initState();
+    _loadRecommendations();
+  }
+  // accounting
+  // airport
+  // amusement_park
+  // aquarium
+  // art_gallery
+  // atm
+  // bakery
+  // bank
+  // bar
+  // beauty_salon
+  // bicycle_store
+  // book_store
+  // bowling_alley
+  // bus_station
+  // cafe
+  // campground
+  // car_dealer
+  // car_rental
+  // car_repair
+  // car_wash
+  // casino
+  // cemetery
+  // church
+  // city_hall
+  // clothing_store
+  // convenience_store
+  // courthouse
+  // dentist
+  // department_store
+  // doctor
+  // drugstore
+  // electrician
+  // electronics_store
+  // embassy
+  // fire_station
+  // florist
+  // funeral_home
+  // furniture_store
+  // gas_station
+  // gym
+  // hair_care
+  // hardware_store
+  // hindu_temple
+  // home_goods_store
+  // hospital
+  // insurance_agency
+  // jewelry_store
+  // laundry
+  // lawyer
+  // library
+  // light_rail_station
+  // liquor_store
+  // local_government_office
+  // locksmith
+  // lodging
+  // meal_delivery
+  // meal_takeaway
+  // mosque
+  // movie_rental
+  // movie_theater
+  // moving_company
+  // museum
+  // night_club
+  // painter
+  // park
+  // parking
+  // pet_store
+  // pharmacy
+  // physiotherapist
+  // plumber
+  // police
+  // post_office
+  // primary_school
+  // real_estate_agency
+  // restaurant
+  // roofing_contractor
+  // rv_park
+  // school
+  // secondary_school
+  // shoe_store
+  // shopping_mall
+  // spa
+  // stadium
+  // storage
+  // store
+  // subway_station
+  // supermarket
+  // synagogue
+  // taxi_stand
+  // tourist_attraction
+  // train_station
+  // transit_station
+  // travel_agency
+  // university
+  // veterinary_care
+  // zoo
+  // String lat, String long, int radius, String type, String input
+  // var result1 = await _placesApi.nearbySearchFromText("1.333975", "103.928671", 5000, "secondary_school","&keyword=school");
 
+  void _loadRecommendations() async {
+    String uid = _auth.getCurrentUser()!.uid;
+    String interest = "";
+    List<Place> _mixPlaces = [];
+    await _firebaseApi.getDocumentByIdFromCollection("users", uid).then((value) {
+      interest = value["interest"];
+    }).onError((error, stackTrace) {
+      showAlert(context, "Retrieve User Profile", error.toString());
+    });
+    if (interest != "") {
+      var split = interest.split(",");
+      for (String s in split) {
+        var result = await _placesApi.nearbySearchFromText("1.333975", "103.928671", 10000, s , "");
+        for (var i in result!) {
+          _mixPlaces.add(i);
+        }
+      }
+      _mixPlaces = (_mixPlaces..shuffle());
+      while (_mixPlaces.length > 5) {
+        _mixPlaces.removeLast();
+      }
+    }
+    _places = _mixPlaces;
+    setState(() {
+      _isLoaded = true;
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    List<Place> places = [testplace, secondtestplace];
-
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    var place;
-    return Scaffold(
-        backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
+    return _isLoaded ? Scaffold(
+        backgroundColor: createMaterialColor(Color(0xfffffcec)),
         body: Container(
             child: SingleChildScrollView(
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-              topBar("home", height, width, 'assets/img/homeTop.png'),
-              SizedBox(height: 10),
-              textMajor("find places", Colors.black, 26),
-              _searchTools(0.80 * width, 0.3 * height),
-              Image.asset("assets/img/stringAccent.png"),
-              textMajor("explore", Colors.black, 26),
-              for (place in places)
-                placeContainer(
-                    place, 0.8 * width, 0.3 * height, _addFav(place)),
-              SizedBox(
-                height: 0.1 * height,
-              )
-            ]))));
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    topBar("home", height, width, 'assets/img/homeTop.png'),
+                    SizedBox(height: 10),
+                    textMajor("find places", Colors.black, 26),
+                    _searchTools(0.80 * width, 0.3 * height),
+                    Image.asset("assets/img/stringAccent.png"),
+                    textMajor("explore", Colors.black, 26),
+                    for (Place place in _places)
+                      placeContainer(
+                          place, 0.8 * width, 0.3 * height, _addFav(place)),
+                    SizedBox(height: 0.1 * height)
+                  ]
+                )
+            )
+        )
+    ) : Container(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
