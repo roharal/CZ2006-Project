@@ -292,7 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "",
         false,
         false,
-        ""
+        "shopping_mall,cafe,park"
     );
     await _firebaseApi.createUserFromEmail(user, _password).then((value) {
       setState(() {
