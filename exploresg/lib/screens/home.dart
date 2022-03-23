@@ -33,7 +33,6 @@ class _HomeScreen extends State<HomeScreen> {
   List<Place> _places = [];
   bool _isLoaded = false;
 
-
   InputDecoration dropdownDeco = InputDecoration(
       border: InputBorder.none,
       focusedBorder: InputBorder.none,
@@ -58,7 +57,8 @@ class _HomeScreen extends State<HomeScreen> {
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("filter by", Colors.black), value: "filter by"),
+                  child: textMinor("filter by", Colors.black),
+                  value: "filter by"),
               DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
             ],
             decoration: dropdownDeco,
@@ -74,7 +74,8 @@ class _HomeScreen extends State<HomeScreen> {
         0.49 * width,
         DropdownButtonFormField<String>(
             items: [
-              DropdownMenuItem(child: textMinor("sort by", Colors.black), value: "sort by"),
+              DropdownMenuItem(
+                  child: textMinor("sort by", Colors.black), value: "sort by"),
               DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
             ],
             decoration: dropdownDeco,
@@ -91,7 +92,8 @@ class _HomeScreen extends State<HomeScreen> {
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("place type", Colors.black), value: "place type"),
+                  child: textMinor("place type", Colors.black),
+                  value: "place type"),
               DropdownMenuItem(child: textMinor("a", Colors.black), value: "a")
             ],
             decoration: dropdownDeco,
@@ -243,7 +245,7 @@ class _HomeScreen extends State<HomeScreen> {
             SizedBox(
               width: 10,
             ),
-            textMinor("add to favourites",Colors.black)
+            textMinor("add to favourites", Colors.black)
           ])
         ]));
   }
@@ -356,7 +358,9 @@ class _HomeScreen extends State<HomeScreen> {
     String uid = _auth.getCurrentUser()!.uid;
     String interest = "";
     List<Place> _mixPlaces = [];
-    await _firebaseApi.getDocumentByIdFromCollection("users", uid).then((value) {
+    await _firebaseApi
+        .getDocumentByIdFromCollection("users", uid)
+        .then((value) {
       interest = value["interest"];
     }).onError((error, stackTrace) {
       showAlert(context, "Retrieve User Profile", error.toString());
@@ -364,7 +368,8 @@ class _HomeScreen extends State<HomeScreen> {
     if (interest != "") {
       var split = interest.split(",");
       for (String s in split) {
-        var result = await _placesApi.nearbySearchFromText("1.333975", "103.928671", 10000, s , "");
+        var result = await _placesApi.nearbySearchFromText(
+            "1.333975", "103.928671", 10000, s, "");
         for (var i in result!) {
           _mixPlaces.add(i);
         }
@@ -375,40 +380,42 @@ class _HomeScreen extends State<HomeScreen> {
       }
     }
     _places = _mixPlaces;
+    var result = await _placesApi
+        .placeDetailsSearchFromText('ChIJN1t_tDeuEmsRUsoyG83frY4');
+    _places.add(result!);
     setState(() {
       _isLoaded = true;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    return _isLoaded ? Scaffold(
-        backgroundColor: createMaterialColor(Color(0xfffffcec)),
-        body: Container(
-            child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    topBar("home", height, width, 'assets/img/homeTop.png'),
-                    SizedBox(height: 10),
-                    textMajor("find places", Colors.black, 26),
-                    _searchTools(0.80 * width, 0.3 * height),
-                    Image.asset("assets/img/stringAccent.png"),
-                    textMajor("explore", Colors.black, 26),
-                    for (Place place in _places)
-                      placeContainer(
-                          place, 0.8 * width, 0.3 * height, _addFav(place)),
-                    SizedBox(height: 0.1 * height)
-                  ]
-                )
-            )
-        )
-    ) : Container(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return _isLoaded
+        ? Scaffold(
+            backgroundColor: createMaterialColor(Color(0xfffffcec)),
+            body: Container(
+                child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                  topBar("home", height, width, 'assets/img/homeTop.png'),
+                  SizedBox(height: 10),
+                  textMajor("find places", Colors.black, 26),
+                  _searchTools(0.80 * width, 0.3 * height),
+                  Image.asset("assets/img/stringAccent.png"),
+                  textMajor("explore", Colors.black, 26),
+                  for (Place place in _places)
+                    placeContainer(
+                        place, 0.8 * width, 0.3 * height, _addFav(place)),
+                  SizedBox(height: 0.1 * height)
+                ]))))
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }

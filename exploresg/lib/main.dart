@@ -23,12 +23,10 @@ class MyApp extends StatelessWidget {
         LoginScreen.routeName: (context) => LoginScreen(),
         SignUpScreen.routeName: (context) => SignUpScreen(),
       },
-
       onGenerateRoute: (RouteSettings settings) {
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },
-
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );
