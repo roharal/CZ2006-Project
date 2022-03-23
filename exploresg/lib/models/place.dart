@@ -6,6 +6,7 @@ class Place {
   late List<dynamic> types;
   late int userTotalRatings;
   late List<String> images;
+  late List<String> opening_hours;
 
   //constructor
   Place(
@@ -19,8 +20,7 @@ class Place {
       this.types,
       this.userTotalRatings,
       this.images,
-      this.openNow
-      );
+      this.openNow);
 
   void pressLike() {
     this.likes = !this.likes;
@@ -50,4 +50,7 @@ class Place {
     return this.id;
   }
 
+  void setOpeningHours(opening_hours) {
+    this.opening_hours = opening_hours;
+  }
 }
