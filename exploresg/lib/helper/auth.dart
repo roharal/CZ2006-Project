@@ -11,16 +11,36 @@ class Auth {
     return auth.signOut();
   }
 
-  Future<User> signInEmail(String email, String password) async {
-    UserCredential result = await auth.signInWithEmailAndPassword(email: email, password: password);
-    final User user = result.user!;
-    return user;
+  Future signInEmail(String email, String password) async {
+    try {
+      UserCredential result = await auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      final User user = result.user!;
+      return user;
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
   }
 
-  Future<User> signUpEmail(email, password) async {
-    UserCredential result = await auth.createUserWithEmailAndPassword(email: email, password: password);
-    final User user = result.user!;
-    return user;
+  Future signUpEmail(email, password) async {
+    try {
+      UserCredential result = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      final User user = result.user!;
+      return user;
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
   }
 
+  Future signOut() async {
+    try {
+      return await auth.signOut();
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
+  }
 }
