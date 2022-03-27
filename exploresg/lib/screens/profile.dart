@@ -22,6 +22,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   FirebaseApi _firebaseApi = FirebaseApi();
   Auth _auth = Auth();
   late UserModel _userModel;
+  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -41,6 +42,64 @@ class _ProfileScreen extends State<ProfileScreen> {
     });
   }
 
+  Future<void> showInformationDialog(BuildContext context, String attr) async {
+    return await showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController _textEditingController =
+            TextEditingController();
+        return AlertDialog(
+          content: Form(
+              key: _formkey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Change $attr"),
+                  TextFormField(
+                    controller: _textEditingController,
+                    validator: (value) {
+                      return value!.isNotEmpty ? null : "Invalid field";
+                    },
+                    decoration: InputDecoration(hintText: "Enter some text"),
+                  )
+                ],
+              )),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed:(){
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Submit"),
+              onPressed: () {
+                if (_formkey.currentState!.validate()) {
+                  _firebaseApi.updateDocumentByIdFromCollection("users",
+                      _userModel.id, {attr: _textEditingController.text});
+                  Future.delayed(Duration(milliseconds: 100), () {
+                    setState(() {
+                      switch(attr){
+                        case "username": {
+                          _userModel.username = _textEditingController.text;
+                        }
+                        break;
+                        case "email":{
+                          _userModel.email = _textEditingController.text;
+                        }
+                      }
+
+                    });
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +116,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                   topBar(
                       "my account", height, width, 'assets/img/accountTop.png'),
                   FutureBuilder(
-                    future: storage.downloadURL(_userModel.picture,"user_pfp"),
+                    future: storage.downloadURL(_userModel.picture, "user_pfp"),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
@@ -86,82 +145,65 @@ class _ProfileScreen extends State<ProfileScreen> {
                   Text("@" + _userModel.username,
                       style:
                           TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
-                  Row( mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                          padding: EdgeInsets.all(5),
-                          width: 200,
-                          height: 40,
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Enter a display name"),
-                            onChanged: (value){
-                              setState(() {
-                                value = value;
-                                print(value);
-                              });
-                            },
-                          )),
                       ElevatedButton(
-                          child: Icon(Icons.done),
-                          onPressed: (){
-                            if(value != ""){
-                              setState(() {
-                                _firebaseApi.updateDocumentByIdFromCollection("users", _userModel.id,
-                                    {'name':value});
-                              });
-                            }
+                          child: Text("Change username"),
+                          onPressed: () async {
+                            await showInformationDialog(context, "username");
                           },
                           style: ButtonStyle(
                               backgroundColor:
-                              MaterialStateProperty.all(Colors.grey),
+                                  MaterialStateProperty.all(Colors.grey),
                               shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
+                                      RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                  ))))
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final results = await FilePicker.platform.pickFiles(
-                          allowMultiple: false,
-                          type: FileType.custom,
-                          allowedExtensions: ['png', 'jpg']);
-                      if (results == null) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('No file selected'),
-                        ));
-                        return null;
-                      }
-                      final path = results.files.single.path!;
-                      final fileName = _userModel.username + "_pfp";
-                      final updateUserMap = {'picture':fileName};
+                                borderRadius: BorderRadius.circular(18.0),
+                              )))),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final results = await FilePicker.platform.pickFiles(
+                              allowMultiple: false,
+                              type: FileType.custom,
+                              allowedExtensions: ['png', 'jpg']);
+                          if (results == null) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('No file selected'),
+                            ));
+                            return null;
+                          }
+                          final path = results.files.single.path!;
+                          final fileName = _userModel.username + "_pfp";
+                          final updateUserMap = {'picture': fileName};
 
-                      print(path);
-                      print(fileName);
+                          print(path);
+                          print(fileName);
 
-                      storage
-                          .uploadFile(path, fileName,"user_pfp")
-                          .then((value) => print('Done'));
-                      setState(() {
-                        _firebaseApi.updateDocumentByIdFromCollection("users", _userModel.id, updateUserMap);
-                        _userModel.picture = fileName;
-                      });
-
-                    },
-                    child: Text("Change profile picture"),
-                    style:ButtonStyle(
-                        backgroundColor:
-                        MaterialStateProperty.all(Colors.grey),
-                        shape: MaterialStateProperty.all<
-                            RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
+                          storage
+                              .uploadFile(path, fileName, "user_pfp")
+                              .then((value) => print('Done'));
+                          _firebaseApi.updateDocumentByIdFromCollection(
+                              "users", _userModel.id, updateUserMap);
+                          Future.delayed(Duration(milliseconds: 100), () {
+                            setState(() {
+                              _userModel.picture = fileName;
+                            });
+                          });
+                        },
+                        child: Text("Change profile picture"),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.grey),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
                             ))),
+                      ),
+                    ],
                   ),
+
                   Container(
                       width: double.infinity,
                       child: Image(
@@ -199,7 +241,9 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   fontFamily: "AvenirLtStd",
                                   fontWeight: FontWeight.bold,
                                 )),
-                            onPressed: null,
+                            onPressed: () async {
+                              await showInformationDialog(context, "email");
+                            },
                             style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all(Colors.grey),
