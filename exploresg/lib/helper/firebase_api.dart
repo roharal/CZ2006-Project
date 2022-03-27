@@ -4,6 +4,8 @@ import 'package:exploresg/helper/auth.dart';
 import 'package:exploresg/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 
 class FirebaseApi {
   Auth _auth = Auth();
@@ -72,3 +74,4 @@ class FirebaseApi {
     await _firestore.collection(collection).doc(id).delete();
   }
 }
+
