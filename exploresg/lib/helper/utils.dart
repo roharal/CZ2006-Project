@@ -25,6 +25,17 @@ Text textMinor(String text, Color color) {
   );
 }
 
+Text textMinorBold(String text, Color color) {
+  return Text(
+      text,
+      style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: color
+      )
+  );
+}
 MaterialColor createMaterialColor(Color color) {
   List strengths = <double>[.05];
   final swatch = <int, Color>{};
@@ -237,12 +248,11 @@ class _SearchState extends State<Search> {
   }
 }
 
-Widget placeContainer(Place place, double width, double height, Widget e) {
+Widget placeContainer(Place place, double width, double height) {
   return Container(
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20))),
-      margin: EdgeInsets.symmetric(vertical: 5),
       padding: EdgeInsets.symmetric(
           vertical: 0.05 * height, horizontal: 0.05 * width),
       width: width,
@@ -282,11 +292,6 @@ Widget placeContainer(Place place, double width, double height, Widget e) {
         SizedBox(
           height: 20,
         ),
-        Expanded(
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: textMinor(place.placeDesc, Colors.black))),
-        e
       ]));
 }
 
