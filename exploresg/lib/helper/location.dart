@@ -1,7 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class Locator{
+class Locator {
   var geoLocator = Geolocator();
 
   Future<LatLng> getLongLang() async {
