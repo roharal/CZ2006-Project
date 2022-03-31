@@ -4,8 +4,6 @@ import 'package:exploresg/helper/auth.dart';
 import 'package:exploresg/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 
 class FirebaseApi {
   Auth _auth = Auth();
@@ -58,8 +56,13 @@ class FirebaseApi {
     }
   }
 
-  Future createDocumentByIdFromCollection(String collection, String id, Map<String, dynamic> data) async {
-    await _firestore.collection(collection).doc(id).set(data);
+  Future createDocumentByIdFromCollection(String collection, bool useOwnID, Map<String, dynamic> data, [String? id]) async {
+    if (useOwnID) {
+      await _firestore.collection(collection).doc(id).set(data);
+    } else {
+      String key = _firestore.collection(collection).doc().id;
+      await _firestore.collection(collection).doc(key).set(data);
+    }
   }
 
   Future<DocumentSnapshot> getDocumentByIdFromCollection(String collection, String id) async {
