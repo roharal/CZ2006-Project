@@ -25,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
         fit: BoxFit.fill,
         child: SvgPicture.asset('assets/img/login-top.svg',
           width: width,
+          height: width
         )
     );
   }
@@ -48,14 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
             _progressButton(width, height),
             SizedBox(height: 5),
             _useUsernameOrEmail(),
-            SizedBox(height: 20,),
-            _forgotPassword()
+            SizedBox(height: 5,),
+            _forgotPassword(),
           ]
       ),
     );
   }
 
-  Widget _loginLabel() {
+  Widget _signupLabel() {
     return InkWell(
       onTap: () {
         Navigator.pushReplacementNamed(context, SignUpScreen.routeName);
@@ -235,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (value == null || value.isEmpty) {
       return "Password cannot be empty";
     } else if (value.length < 8) {
-      return "Password must contain at least 6 characters";
+      return "Password must contain at least 8 characters";
     }
     return null;
   }
@@ -307,24 +308,26 @@ class _LoginScreenState extends State<LoginScreen> {
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: Color(0xfffffcec),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
+        body:SingleChildScrollView(
+            child: Container(
+              height: _height - 20,
+              child: Stack(
                 children: [
                   Positioned(child: _topBar(_width)),
                   Positioned(
                     top: _height * 0.25,
-                    child: _login(_width, _height),
+                    child: Column(
+                      children: [
+                        _login(_width, _height),
+                        SizedBox(height: 10),
+                        _signupLabel(),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              SizedBox(height: _height*0.3),
-              _loginLabel(),
-            ],
-          ),
-        )
+            )
+        ),
     );
   }
 }
