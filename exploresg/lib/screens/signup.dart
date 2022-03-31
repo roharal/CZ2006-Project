@@ -27,6 +27,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       fit: BoxFit.fill,
       child: SvgPicture.asset('assets/img/login-top.svg',
         width: width,
+        height: width
         //height: height * 0.4,
       )
     );
@@ -207,7 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       margin: EdgeInsets.symmetric(horizontal: 40),
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       width: width - 80,
-      //height: height * 0.65,
+      // height: height * 0.65,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -365,22 +366,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       backgroundColor: Color(0xfffffcec),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned(child: _topBar(_width)),
-                Positioned(
-                  top: _height * 0.2,
-                  child: _signUp(_width, _height),
+        child: Container(
+          height: _height - 20,
+          child: Stack(
+            children: [
+              Positioned(child: _topBar(_width)),
+              Positioned(
+                top: _height * 0.2,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    _signUp(_width, _height),
+                    SizedBox(height: 10,),
+                    _loginLabel()
+                  ],
                 ),
-              ],
-            ),
-            SizedBox(height: _height*0.4),
-            _loginLabel()
-          ],
-        ),
+              ),
+            ],
+          ),
+        )
       )
     );
   }
