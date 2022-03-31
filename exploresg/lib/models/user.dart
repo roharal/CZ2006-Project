@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
 
-  late String id, username, firstName, lastName, email, picture, mobileNumber, interest;
-  late String? token;
-  late bool emailVerified, numberVerified;
+  String id, username, firstName, lastName, email, picture, mobileNumber, interest;
+  String? token;
+  bool emailVerified, numberVerified;
 
   UserModel(this.id, this.username, this.firstName, this.lastName, this.email, this.token, this.picture, this.mobileNumber, this.emailVerified, this.numberVerified, this.interest);
 
