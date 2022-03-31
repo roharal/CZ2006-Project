@@ -2,6 +2,7 @@ import 'package:exploresg/helper/auth.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/user.dart';
+import 'package:exploresg/screens/login.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/storage_service.dart';
@@ -115,33 +116,33 @@ class _ProfileScreen extends State<ProfileScreen> {
                 children: [
                   topBar(
                       "my account", height, width, 'assets/img/accountTop.png'),
-                  FutureBuilder(
-                    future: storage.downloadURL(_userModel.picture, "user_pfp"),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          width: width * 1 / 3,
-                          height: width * 1 / 3,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      }
+                          FutureBuilder(
+                            future: storage.downloadURL(_userModel.picture, "user_pfp"),
+                            builder:
+                                (BuildContext context, AsyncSnapshot<String> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.done &&
+                                  snapshot.hasData) {
+                                return Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  width: width * 1 / 3,
+                                  height: width * 1 / 3,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(
+                                      snapshot.data!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              }
 
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          !snapshot.hasData) {
-                        return CircularProgressIndicator();
-                      }
-                      return Container();
-                    },
-                  ),
+                              if (snapshot.connectionState == ConnectionState.waiting ||
+                                  !snapshot.hasData) {
+                                return CircularProgressIndicator();
+                              }
+                              return Container();
+                            },
+                          ),
                   Text("@" + _userModel.username,
                       style:
                           TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
@@ -316,7 +317,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   fontFamily: "AvenirLtStd",
                                   fontWeight: FontWeight.bold,
                                 )),
-                            onPressed: null,
+                            onPressed: () {
+                              _auth.logOut();
+                              Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (Route<dynamic> route) => false);
+                            },
                             style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all(Colors.grey),
