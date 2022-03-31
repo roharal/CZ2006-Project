@@ -1,12 +1,20 @@
 import 'package:exploresg/helper/utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:exploresg/models/place.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+class Places2ScreenArgs {
+  final Place place;
+  Places2ScreenArgs(this.place);
+}
+
 class Places2Screen extends StatefulWidget {
+  static const routeName = "/places2Screen";
+  final Place place;
+  Places2Screen({required this.place});
+
   @override
   State<StatefulWidget> createState() {
     return _Places2Screen();
@@ -36,6 +44,12 @@ class _Places2Screen extends State<Places2Screen> {
 
   //String _curExpStatus;
   String dropdownValue = 'explored';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
 
   Widget _upVec() {
     return Container(
