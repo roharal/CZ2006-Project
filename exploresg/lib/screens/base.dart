@@ -3,6 +3,7 @@ import 'package:exploresg/screens/favourites.dart';
 import 'package:exploresg/screens/home.dart';
 import 'package:exploresg/screens/inbox.dart';
 import 'package:exploresg/screens/aftersearch.dart';
+import 'package:exploresg/screens/places.dart';
 import 'package:exploresg/screens/profile.dart';
 import 'package:exploresg/screens/tracker.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +37,27 @@ class _BaseScreen extends State<BaseScreen> {
           icon: Icon(Icons.home),
           activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
           inactiveColorPrimary: Colors.grey,
-          routeAndNavigatorSettings:
-              RouteAndNavigatorSettings(initialRoute: '/', routes: {
-                AfterSearchScreen.routeName: (context) => AfterSearchScreen()
-            // Add routes to the specific screen that has screen navigation
-            // PlaceScreen.routeName: (context) => PlaceScreen(),
-          })),
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/home',
+              onGenerateRoute: (RouteSettings? settings) {
+                switch (settings!.name) {
+                  case Places2Screen.routeName: {
+                    final Places2ScreenArgs args = settings.arguments as Places2ScreenArgs;
+                    return MaterialPageRoute(
+                        builder: (context) {
+                          return Places2Screen(place: args.place);
+                        });
+                    // ignore: dead_code
+                    break;
+                  };
+                  case AfterSearchScreen.routeName: {
+                    break;
+                  }
+                }
+                return null;
+              }
+          ),
+      ),
       PersistentBottomNavBarItem(
           icon: Icon(Icons.favorite),
           activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
