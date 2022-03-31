@@ -1,6 +1,7 @@
 import 'package:exploresg/helper/auth.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/places_api.dart';
+import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
@@ -32,6 +33,12 @@ class _HomeScreen extends State<HomeScreen> {
   Auth _auth = Auth();
   List<Place> _places = [];
   bool _isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecommendations();
+  }
 
   InputDecoration dropdownDeco = InputDecoration(
       border: InputBorder.none,
@@ -218,12 +225,15 @@ class _HomeScreen extends State<HomeScreen> {
         ));
   }
 
-  Widget _addFav(Place place) {
-    return Expanded(
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+  Widget _addFav(Place place, double height, double width) {
+    return Container(
+      color: Colors.white,
+      width: width,
+      height: height,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
           Row(children: [
             InkWell(
                 onTap: () {
@@ -250,11 +260,32 @@ class _HomeScreen extends State<HomeScreen> {
         ]));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRecommendations();
+  Widget recommendedList(List<Place> places, double height, double width) {
+    return Container(
+      height: 0.8 * height,
+      width: 0.8 * width,
+      child: ListView.builder(
+        itemCount: places.length,
+        itemBuilder: (context, index) {
+          return Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context,
+                        Places2Screen.routeName,
+                        arguments: Places2ScreenArgs(_places[index]));
+                  },
+                  child: placeContainer(places[index], width, 0.2 * height),
+                ),
+                _addFav(places[index], 0.05 * height, width),
+                SizedBox(height: 5,)
+              ]
+          );},
+      )
+    );
   }
+
   // accounting
   // airport
   // amusement_park
@@ -380,9 +411,6 @@ class _HomeScreen extends State<HomeScreen> {
       }
     }
     _places = _mixPlaces;
-    var result = await _placesApi
-        .placeDetailsSearchFromText('ChIJN1t_tDeuEmsRUsoyG83frY4');
-    _places.add(result!);
     setState(() {
       _isLoaded = true;
     });
@@ -400,22 +428,24 @@ class _HomeScreen extends State<HomeScreen> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                  topBar("home", height, width, 'assets/img/homeTop.png'),
-                  SizedBox(height: 10),
-                  textMajor("find places", Colors.black, 26),
-                  _searchTools(0.80 * width, 0.3 * height),
-                  Image.asset("assets/img/stringAccent.png"),
-                  textMajor("explore", Colors.black, 26),
-                  for (Place place in _places)
-                    placeContainer(
-                        place, 0.8 * width, 0.3 * height, _addFav(place)),
-                  SizedBox(height: 0.1 * height)
-                ]))))
-        : Container(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+                        children:[
+                          topBar("home", height, width, 'assets/img/homeTop.png'),
+                          SizedBox(height: 10),
+                          textMajor("find places", Colors.black, 26),
+                          _searchTools(0.80 * width, 0.3 * height),
+                          Image.asset("assets/img/stringAccent.png"),
+                          textMajor("explore", Colors.black, 26),
+                          recommendedList(_places, height, width),
+                          SizedBox(height: 20)
+                        ]
+                    )
+                )
+            )
+    ) :
+    Container(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
