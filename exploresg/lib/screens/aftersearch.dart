@@ -1,19 +1,61 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exploresg/screens/home.dart';
+import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
+import 'package:exploresg/helper/places_api.dart';
+import 'package:exploresg/helper/firebase_api.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/models/place.dart';
+import 'package:exploresg/helper/location.dart';
+
+class ScreenArguments {
+  final String placetype;
+  final int max;
+  final int min;
+  final String sort;
+  final String text;
+
+  ScreenArguments(this.placetype, this.max, this.min, this.sort, this.text);
+}
 
 class AfterSearchScreen extends StatefulWidget {
   static const routeName = "/aftersearch";
+  final String placetype;
+  final int max;
+  final int min;
+  final String sort;
+  final String text;
+  AfterSearchScreen(this.placetype, this.max, this.min, this.sort, this.text);
+
   @override
+  //const _placetypedropdownValue = screenArguments.sort
   State<AfterSearchScreen> createState() => _AfterSearchState();
 }
 
 class _AfterSearchState extends State<AfterSearchScreen> {
   bool _searchByCategory = false;
-  String _placetypedropdownValue = 'place type';
+
+  String _placetypedropdownValue = 'place';
   String _filterbydropdownValue = 'filter by';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
+
+  PlacesApi _placesApi = PlacesApi();
+  List<Place> _places = [];
+  bool _isLoaded = false;
+
+  void initState() {
+    super.initState();
+    _loadSearch(ScreenArguments(
+        widget.placetype, widget.max, widget.min, widget.sort, widget.text));
+  }
 
   InputDecoration dropdownDeco = InputDecoration(
       border: InputBorder.none,
@@ -33,36 +75,201 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         child: DDL);
   }
 
-  Container _filterDropDown(double width) {
-    return _dropdownlist(
-        0.49 * width,
-        DropdownButtonFormField<String>(
-            items: [
-              DropdownMenuItem(
-                  child: textMinor("filter by", Colors.black), value: "filter by"),
-              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
-            ],
-            decoration: dropdownDeco,
-            isExpanded: true,
-            value: _filterbydropdownValue,
-            onChanged: (String? newValue) {
-              _filterbydropdownValue = newValue!;
-            }));
+  // Container _filterDropDown(double width) {
+  //   return _dropdownlist(
+  //       0.49 * width,
+  //       DropdownButtonFormField<String>(
+  //           items: [
+  //             DropdownMenuItem(
+  //                 child: textMinor("filter by", Colors.black),
+  //                 value: "filter by"),
+  //             DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
+  //           ],
+  //           decoration: dropdownDeco,
+  //           isExpanded: true,
+  //           value: _filterbydropdownValue,
+  //           onChanged: (String? newValue) {
+  //             _filterbydropdownValue = newValue!;
+  //           }));
+  // }
+  double _distvalue = 50000;
+  RangeValues _pricevalues = RangeValues(0, 4);
+  RangeValues _ratingvalues = RangeValues(1, 5);
+
+  int _maxfilter = 0;
+  int _minfilter = 4;
+
+  Widget _ratingfilter(double width) {
+    final double min = 1;
+    final double max = 5;
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(min),
+            Expanded(
+              child: RangeSlider(
+                values: _ratingvalues,
+                min: min,
+                max: max,
+                divisions: 5,
+                labels: RangeLabels(
+                  _ratingvalues.start.round().toString(),
+                  _ratingvalues.end.round().toString(),
+                ),
+                //showValueIndicator: true,
+                onChanged: (values) {
+                  setState(() {
+                    _ratingvalues = values;
+                    _maxfilter = values.start.round();
+                    _minfilter = values.end.round();
+                    print(values);
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(max),
+          ],
+        ));
   }
+
+  Widget _pricefilter(double width) {
+    final double min = 0;
+    final double max = 4;
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(min),
+            Expanded(
+              child: RangeSlider(
+                values: _pricevalues,
+                min: min,
+                max: max,
+                divisions: 4,
+                labels: RangeLabels(
+                  _pricevalues.start.round().toString(),
+                  _pricevalues.end.round().toString(),
+                ),
+                //showValueIndicator: true,
+                onChanged: (values) {
+                  setState(() {
+                    _pricevalues = values;
+                    _maxfilter = values.start.round();
+                    _minfilter = values.end.round();
+                    print(values);
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(max),
+          ],
+        ));
+  }
+
+  Widget _distancefilter(double width) {
+    final double min = 0;
+    final double max = 50000;
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(min),
+            Expanded(
+              child: CupertinoSlider(
+                value: _distvalue,
+                min: min,
+                max: max,
+                divisions: 100000,
+                // labels: RangeLabels(
+                //   _distvalues.start.round().toString(),
+                //   _distvalues.end.round().toString(),
+                // ),
+                //showValueIndicator: true,
+                onChanged: (value) {
+                  setState(() {
+                    _distvalue = value;
+                    _maxfilter = value.round();
+                    _minfilter = 0;
+                    print(value);
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(max),
+          ],
+        ));
+  }
+
+  Widget buildSideLabel(double value) {
+    return Container(
+      width: 30,
+      child: Text(
+        value.round().toString(),
+        style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _displayfiltered(double width) {
+    if (_sortbydropdownValue == 'distance') {
+      return _distancefilter(width);
+    } else if (_sortbydropdownValue == 'ratings') {
+      return _ratingfilter(width);
+    } else if (_sortbydropdownValue == 'price') {
+      return _pricefilter(width);
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+
+  // Container _sortDropDown(double width) {
+  //   return _dropdownlist(
+  //       0.49 * width,
+  //       DropdownButtonFormField<String>(
+  //           items: [
+  //             DropdownMenuItem(
+  //                 child: textMinor("sort by", Colors.black), value: "sort by"),
+  //             DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
+  //           ],
+  //           decoration: dropdownDeco,
+  //           isExpanded: true,
+  //           value: _sortbydropdownValue,
+  //           onChanged: (String? newValue) {
+  //             _sortbydropdownValue = newValue!;
+  //           }));
+  // }
 
   Container _sortDropDown(double width) {
     return _dropdownlist(
         0.49 * width,
         DropdownButtonFormField<String>(
             items: [
-              DropdownMenuItem(child: textMinor("sort by", Colors.black), value: "sort by"),
-              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
+              DropdownMenuItem(
+                  child: textMinor("sort by", Colors.black), value: "sort by"),
+              DropdownMenuItem(
+                  child: textMinor("distance", Colors.black),
+                  value: "distance"),
+              DropdownMenuItem(
+                  child: textMinor("ratings", Colors.black), value: "ratings"),
+              DropdownMenuItem(
+                  child: textMinor("price", Colors.black), value: "price")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
             value: _sortbydropdownValue,
             onChanged: (String? newValue) {
-              _sortbydropdownValue = newValue!;
+              setState(() {
+                _sortbydropdownValue = newValue!;
+                _displayfiltered(width);
+              });
             }));
   }
 
@@ -72,7 +279,8 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  child: textMinor("place type", Colors.black), value: "place type"),
+                  child: textMinor("place type", Colors.black),
+                  value: "place type"),
               DropdownMenuItem(child: textMinor("a", Colors.black), value: "a")
             ],
             decoration: dropdownDeco,
@@ -92,10 +300,9 @@ class _AfterSearchState extends State<AfterSearchScreen> {
       child: Container(
         child: TextField(
           onSubmitted: (value) {
-            print(_placetypedropdownValue +
-                _filterbydropdownValue +
-                _sortbydropdownValue +
-                _searchController.text);
+            print(_placetypedropdownValue);
+            print(_sortbydropdownValue);
+            print(_searchController.text);
           },
           controller: _searchController,
           cursorColor: Colors.grey,
@@ -141,7 +348,7 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         ));
   }
 
-  Align _goButton() {
+  Align _goButton(ScreenArguments screenArguments) {
     return Align(
         alignment: Alignment.topRight,
         child: TextButton(
@@ -151,12 +358,7 @@ class _AfterSearchState extends State<AfterSearchScreen> {
                   RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18.0),
               ))),
-          onPressed: () {
-            print(_placetypedropdownValue +
-                _filterbydropdownValue +
-                _sortbydropdownValue +
-                _searchController.text);
-          },
+          onPressed: () {},
           child: Text("Go!",
               style: TextStyle(
                   fontFamily: 'AvenirLtStd',
@@ -165,7 +367,8 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         ));
   }
 
-  Widget _searchTools(double width, double height) {
+  Widget _searchTools(
+      double width, double height, ScreenArguments screenArguments) {
     return Container(
         width: width,
         child: Column(
@@ -182,72 +385,150 @@ class _AfterSearchState extends State<AfterSearchScreen> {
                 ? _searchBar(width, height)
                 : _placeTypeDropDown(width),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              _filterDropDown(width),
               SizedBox(width: 0.02 * width),
               _sortDropDown(width)
             ]),
-            _goButton()
+            _displayfiltered(width),
+            _goButton(screenArguments),
           ],
         ));
   }
 
-  // Widget _addFav(Place place) {
-  //   return Expanded(
-  //       child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.end,
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //         Row(children: [
-  //           InkWell(
-  //               onTap: () {
-  //                 print("<3 pressed");
-  //                 setState(() {
-  //                   place.likes = !place.likes;
-  //                 });
-  //                 print(place.likes);
-  //               },
-  //               child: place.likes
-  //                   ? Icon(
-  //                       Icons.favorite,
-  //                       color: Colors.red,
-  //                     )
-  //                   : Icon(
-  //                       Icons.favorite_border,
-  //                       color: Colors.grey,
-  //                     )),
-  //           SizedBox(
-  //             width: 10,
-  //           ),
-  //           textMinor("add to favourites", Colors.black)
-  //         ])
-  //       ]));
-  // }
+  Widget _addFav(Place place, double height, double width) {
+    return Container(
+        color: Colors.white,
+        width: width,
+        height: height,
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(children: [
+                InkWell(
+                    onTap: () {
+                      print("<3 pressed");
+                      setState(() {
+                        place.likes = !place.likes;
+                      });
+                      print(place.likes);
+                    },
+                    child: place.likes
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            color: Colors.grey,
+                          )),
+                SizedBox(
+                  width: 10,
+                ),
+                textMinor("add to favourites", Colors.black)
+              ])
+            ]));
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  void _loadSearch(ScreenArguments screenArguments) async {
+    // String uid = _auth.getCurrentUser()!.uid;
+    // String interest = "";
+    List<Place> _mixPlaces = [];
+    // await _firebaseApi
+    //     .getDocumentByIdFromCollection("users", uid)
+    //     .then((value) {
+    //   interest = value["interest"];
+    // }).onError((error, stackTrace) {
+    //   showAlert(context, "Retrieve User Profile", error.toString());
+    // });
+    // if (interest != "") {
+    //   var split = interest.split(",");
+    // for (String s in split) {
+    //   var result = await _placesApi.nearbySearchFromText(
+    //       "1.4430557283012149", "103.80793159927359", 10000, s, "");
+    //   for (var i in result!) {
+    //     _mixPlaces.add(i);
+    //   }
+    // }
+    Locator location = new Locator();
+    Position userLoc = await location.getLongLang();
+
+    String lat = userLoc.latitude.toString();
+    String long = userLoc.longitude.toString();
+
+    // print(lat);
+    // print(long);
+
+    if (screenArguments.sort == 'distance') {
+      var result = await _placesApi.nearbySearchFromText(
+          lat, long, screenArguments.max, screenArguments.text, "");
+      for (var i in result!) {
+        _mixPlaces.add(i);
+      }
+    }
+    _places = _mixPlaces;
+    setState(() {
+      _isLoaded = true;
+    });
+  }
+
+  Widget _printSearch(List<Place> places, double height, double width) {
+    return Container(
+        height: height,
+        width: width,
+        child: ListView.builder(
+            //shrinkWrap: true,
+            itemCount: places.length,
+            itemBuilder: (context, index) {
+              return Container(
+                  height: 0.3 * height,
+                  child: Column(children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, Places2Screen.routeName,
+                            arguments: Places2ScreenArgs(_places[index]));
+                      },
+                      child: placeContainer(places[index], width, 0.2 * height),
+                    ),
+                    _addFav(places[index], 0.05 * height, width),
+                  ]));
+            }));
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    // LatLng userLoc = Locator.getLongLang() as LatLng;
+    //final homeargs = ModalRoute.of(context)!.settings.arguments;
 
-    return Scaffold(
-        backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
-        body: Container(
-            child: SingleChildScrollView(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      topBar("places", height, width, 'assets/img/afterSearchTop.png'),
-                      SizedBox(height: 10),
-                      _searchTools(0.80 * width, 0.3 * height),
-                      SizedBox(height: 20),
-              // for (place in places)
-              //   placeContainer(
-              //       place, 0.8 * width, 0.3 * height, _addFav(place)),
-                      SizedBox(height: 0.1 * height),
-                    ]
-                )
-            )
-        )
-    );
+    return _isLoaded
+        ? Scaffold(
+            backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
+            body: Container(
+                //height: 220.0,
+                child: SingleChildScrollView(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        //mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                  // Container(
+                  //     alignment: Alignment.center,
+                  _printSearch(_places, height, width)
+                ]))))
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }

@@ -41,23 +41,29 @@ class _BaseScreen extends State<BaseScreen> {
               initialRoute: '/home',
               onGenerateRoute: (RouteSettings? settings) {
                 switch (settings!.name) {
-                  case Places2Screen.routeName: {
-                    final Places2ScreenArgs args = settings.arguments as Places2ScreenArgs;
-                    return MaterialPageRoute(
-                        builder: (context) {
-                          return Places2Screen(place: args.place);
-                        });
-                    // ignore: dead_code
-                    break;
-                  };
-                  case AfterSearchScreen.routeName: {
-                    break;
-                  }
+                  case Places2Screen.routeName:
+                    {
+                      final Places2ScreenArgs args =
+                          settings.arguments as Places2ScreenArgs;
+                      return MaterialPageRoute(builder: (context) {
+                        return Places2Screen(place: args.place);
+                      });
+                      // ignore: dead_code
+                      break;
+                    }
+                  case AfterSearchScreen.routeName:
+                    {
+                      final ScreenArguments args =
+                          settings.arguments as ScreenArguments;
+                      return MaterialPageRoute(builder: (context) {
+                        return AfterSearchScreen(args.placetype, args.max,
+                            args.min, args.sort, args.text);
+                      });
+                    }
                 }
-                return null;
               }
-          ),
-      ),
+              //return null;
+              )),
       PersistentBottomNavBarItem(
           icon: Icon(Icons.favorite),
           activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
