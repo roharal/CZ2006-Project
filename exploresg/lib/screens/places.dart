@@ -2,7 +2,7 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
-
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class Places2ScreenArgs {
@@ -49,7 +49,6 @@ class _Places2Screen extends State<Places2Screen> {
   void initState() {
     super.initState();
   }
-
 
   Widget _upVec() {
     return Container(
@@ -328,19 +327,35 @@ class _Places2Screen extends State<Places2Screen> {
     }
   }
 
+  // Widget _distanceFilter() {
+  //   RangeValues _currentRangeValues = RangeValues(0, 10);
+  //   return RangeSlider(
+  //     //values: RangeValues(_startValue, _endValue),
+  //     values: _currentRangeValues,
+  //     min: 0,
+  //     max: 10,
+  //     labels: RangeLabels(
+  //       // _startValue.round().toString(),
+  //       // _endValue.round().toString(),
+  //       _currentRangeValues.start.round().toString(),
+  //       _currentRangeValues.end.round().toString(),
+  //     ),
+  //     onChanged: (RangeValues values) {
+  //       setState(() {
+  //         // _currentRangeValues = values;
+  //         print(_currentRangeValues);
+  //         // _startValue = values.start;
+  //         // _endValue = values.end;
+  //         _currentRangeValues = values;
+  //       });
+  //     },
+  //   );
+  // }
+
   static const double _hPad = 16.0;
 
   @override
   Widget build(BuildContext context) {
-    // List<DropdownMenuItem<String>> get dropdownItems {
-    //   List<DropdownMenuItem<String>> statusItems = [
-    //     DropdownMenuItem(child: Text("Unexplored"), value: "USA"),
-    //     DropdownMenuItem(child: Text("To explore"), value: "Canada"),
-    //     DropdownMenuItem(child: Text("Explored"), value: "Brazil"),
-    //   ];
-    //   return statusItems;
-    // }
-
     return Scaffold(
         backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
         body: Column(children: [
@@ -387,7 +402,8 @@ class _Places2Screen extends State<Places2Screen> {
                         ))
                   ]),
                 ),
-                _statusText()
+                _statusText(),
+                //_distanceFilter()
               ])))
         ]));
   }
