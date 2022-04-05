@@ -4,6 +4,7 @@ import 'package:exploresg/helper/auth.dart';
 import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:exploresg/screens/interests.dart';
 
 import '../helper/utils.dart';
 
@@ -33,7 +34,7 @@ class _SplashScreen extends State<SplashScreen> {
   void _homePage() {
     var user = _auth.getCurrentUser();
     if (user != null) {
-      Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+      Navigator.pushReplacementNamed(context, InterestsScreen.routeName);
     } else {
       Navigator.pushReplacementNamed(context, SignUpScreen.routeName);
     }
