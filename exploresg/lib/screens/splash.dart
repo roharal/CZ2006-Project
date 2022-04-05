@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/screens/base.dart';
-import 'package:exploresg/screens/signup.dart';
+import 'package:exploresg/screens/login.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/utils.dart';
@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreen extends State<SplashScreen> {
 
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _SplashScreen extends State<SplashScreen> {
     if (user != null) {
       Navigator.pushReplacementNamed(context, BaseScreen.routeName);
     } else {
-      Navigator.pushReplacementNamed(context, SignUpScreen.routeName);
+      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
     }
   }
 
