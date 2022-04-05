@@ -79,7 +79,7 @@ class PlacesApi {
         for (dynamic n in result["results"]) {
           Map<String, String> coor = {};
           var lat = n["geometry"]["location"]["lat"];
-          var long = n["geometry"]["location"]["long"];
+          var long = n["geometry"]["location"]["lng"];
           coor["lat"] = lat.toString();
           coor["long"] = long.toString();
           List<String> photos = [];
@@ -133,7 +133,7 @@ class PlacesApi {
         dynamic n = result["result"];
         Map<String, String> coor = {};
         var lat = n["geometry"]["location"]["lat"];
-        var long = n["geometry"]["location"]["long"];
+        var long = n["geometry"]["location"]["lng"];
         coor["lat"] = lat.toString();
         coor["long"] = long.toString();
         List<String> photos = [];
