@@ -1,5 +1,7 @@
-import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/google_sign_it.dart';
 import 'package:exploresg/screens/base.dart';
+import 'package:exploresg/screens/forgotpassword.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _username, _password, _email;
   bool _isLoading = false, _useEmail = false;
   final _loginKey = GlobalKey<FormState>();
-  FirebaseApi _firebaseApi = FirebaseApi();
+  AuthController _auth = AuthController();
+  GoogleSignInProvider _googleSignInProvider = GoogleSignInProvider();
 
   Widget _topBar(double width) {
     return FittedBox(
@@ -50,6 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 5),
             _useUsernameOrEmail(),
             SizedBox(height: 5,),
+            _googleRegisterButton(width, height),
+            SizedBox(height: 5),
             _forgotPassword(),
           ]
       ),
@@ -226,10 +231,39 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _forgotPassword() {
     return InkWell(
       onTap: () {
-        print("forget password shit");
+        Navigator.pushReplacementNamed(context, ForgotPasswordPage.routeName);
       },
       child: textMinor("forgot my password", Color(0xff6488E5)),
     );
+  }
+
+  Widget _googleRegisterButton(double width, double height)  {
+    return ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            primary: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20))),
+        onPressed: () async {
+          var result = await _googleSignInProvider.googleLogin(context: context);
+          if (result != null) {
+            var bool = await _auth.checkUserExist(result.uid);
+            if (!bool) {
+              var error = await _auth.createUserFromGoogleSignIn(result);
+              if (error != null) {
+                showAlert(context, "Google Sign In Error", error);
+              } else {
+                Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+              }
+            } else {
+              Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+            }
+
+          }
+        },
+        icon: Image.asset("assets/img/google_logo.png", width: 30, height: 30,),
+        label: textMinor('sign in with google', Colors.black));
   }
 
   String? _validatePassword(String? value) {
@@ -275,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _emailLogin(String email, String password) async {
-    await _firebaseApi.loginUsingEmail(email, password).then((value) {
+    await _auth.loginUsingEmail(email, password).then((value) {
       setState(() {
         _isLoading = false;
         if (value == null) {
@@ -291,9 +325,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _usernameLogin() async {
-    String uid = await _firebaseApi.getUidfromUsername(_username);
+    String uid = await _auth.getUidfromUsername(_username);
     if (uid != "notFound") {
-      await _firebaseApi.getDocumentByIdFromCollection("users", uid).then((value) {
+      await _auth.getUserFromId(uid).then((value) {
         _emailLogin(value["email"], _password);
       }).onError((error, stackTrace) {
         print(stackTrace);
