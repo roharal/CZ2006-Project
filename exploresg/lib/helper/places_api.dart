@@ -22,51 +22,6 @@ class PlacesApi {
   String placeDetailsSearchURL =
       "https://maps.googleapis.com/maps/api/place/details/json";
 
-  // Future<List<Place>?> findPlaceFromText(String input, String fields) async {
-  //   List<Place> places = [];
-  //   final request = Uri.parse("$findPlacesURL?input=$input&inputtype=textquery&fields=$fields&key=$API_KEY");
-  //   final response = await _client.get(request);
-  //   if (response.statusCode == 200) {
-  //     final result = json.decode(response.body);
-  //     if (result["status"] == "OK") {
-  //       for (dynamic n in result["candidates"]) {
-  //         var imageAttr = n["photos"][0];
-  //         var imageWidth = imageAttr["width"];
-  //         var imageRef = imageAttr["photo_reference"];
-  //         String imagePath = "$placesPhotoURL?maxwidth=$imageWidth&photo_reference=$imageRef&key=$API_KEY";
-  //         Place place = Place(
-  //             n["place_id"],
-  //             n["name"],
-  //             "",
-  //             n["formatted_address"],
-  //             n["rating"],
-  //             false,
-  //             imagePath
-  //         );
-  //         places.add(place);
-  //       }
-  //       return places;
-  //     } else {
-  //       print(result["status"]);
-  //       print("error");
-  //       return places;
-  //     }
-  //   }
-
-  // Place(
-  //     this.id,
-  //     this.placeName,
-  //     this.placeDesc,
-  //     this.placeAddress,
-  //     this.ratings,
-  //     this.likes,
-  //     this.image,
-  //     this.coordinates,
-  //     this.types,
-  //     this.userTotalRatings,
-  //     this.images
-  //     );
-
   Future<List<Place>?> nearbySearchFromText(
       String lat, String long, int radius, String type, String input) async {
     List<Place> places = [];

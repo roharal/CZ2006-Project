@@ -3,6 +3,7 @@ import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/places_api.dart';
+import 'package:exploresg/screens/aftersearch.dart';
 import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,6 @@ class _HomeScreen extends State<HomeScreen> {
   // }
   bool _searchByCategory = false;
   String _placetypedropdownValue = 'place type';
-  String _filterbydropdownValue = 'filter by';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
   PlacesApi _placesApi = PlacesApi();
@@ -60,22 +60,142 @@ class _HomeScreen extends State<HomeScreen> {
         child: DDL);
   }
 
-  Container _filterDropDown(double width) {
-    return _dropDownList(
-        0.49 * width,
-        DropdownButtonFormField<String>(
-            items: [
-              DropdownMenuItem(
-                  child: textMinor("filter by", Colors.black),
-                  value: "filter by"),
-              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
-            ],
-            decoration: dropdownDeco,
-            isExpanded: true,
-            value: _filterbydropdownValue,
-            onChanged: (String? newValue) {
-              _filterbydropdownValue = newValue!;
-            }));
+  double _distvalue = 50000;
+  RangeValues _pricevalues = RangeValues(0, 4);
+  RangeValues _ratingvalues = RangeValues(1, 5);
+
+  int _maxfilter = 0;
+  int _minfilter = 4;
+
+  Widget _ratingfilter(double width) {
+    final double min = 1;
+    final double max = 5;
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(min),
+            Expanded(
+              child: RangeSlider(
+                values: _ratingvalues,
+                min: min,
+                max: max,
+                divisions: 5,
+                labels: RangeLabels(
+                  _ratingvalues.start.round().toString(),
+                  _ratingvalues.end.round().toString(),
+                ),
+                //showValueIndicator: true,
+                onChanged: (values) {
+                  setState(() {
+                    _ratingvalues = values;
+                    _maxfilter = values.start.round();
+                    _minfilter = values.end.round();
+                    print(values);
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(max),
+          ],
+        ));
+  }
+
+  Widget _pricefilter(double width) {
+    final double min = 0;
+    final double max = 4;
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(min),
+            Expanded(
+              child: RangeSlider(
+                values: _pricevalues,
+                min: min,
+                max: max,
+                divisions: 4,
+                labels: RangeLabels(
+                  _pricevalues.start.round().toString(),
+                  _pricevalues.end.round().toString(),
+                ),
+                //showValueIndicator: true,
+                onChanged: (values) {
+                  setState(() {
+                    _pricevalues = values;
+                    _maxfilter = values.start.round();
+                    _minfilter = values.end.round();
+                    print(values);
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(max),
+          ],
+        ));
+  }
+
+  Widget _distancefilter(double width) {
+    final double min = 0;
+    final double max = 50000;
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(min),
+            Expanded(
+              child: CupertinoSlider(
+                value: _distvalue,
+                min: min,
+                max: max,
+                divisions: 100000,
+                // labels: RangeLabels(
+                //   _distvalues.start.round().toString(),
+                //   _distvalues.end.round().toString(),
+                // ),
+                //showValueIndicator: true,
+                onChanged: (value) {
+                  setState(() {
+                    _distvalue = value;
+                    _maxfilter = value.round();
+                    _minfilter = 0;
+                    print(value);
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(max),
+          ],
+        ));
+  }
+
+  Widget buildSideLabel(double value) {
+    return Container(
+      width: 40,
+      child: Text(
+        value.round().toString(),
+        style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _displayfiltered(double width) {
+    if (_sortbydropdownValue == 'distance') {
+      return _distancefilter(width);
+    } else if (_sortbydropdownValue == 'ratings') {
+      return _ratingfilter(width);
+    } else if (_sortbydropdownValue == 'price') {
+      return _pricefilter(width);
+    } else {
+      return SizedBox.shrink();
+    }
   }
 
   Container _sortDropDown(double width) {
@@ -85,13 +205,22 @@ class _HomeScreen extends State<HomeScreen> {
             items: [
               DropdownMenuItem(
                   child: textMinor("sort by", Colors.black), value: "sort by"),
-              DropdownMenuItem(child: textMinor("b", Colors.black), value: "b")
+              DropdownMenuItem(
+                  child: textMinor("distance", Colors.black),
+                  value: "distance"),
+              DropdownMenuItem(
+                  child: textMinor("ratings", Colors.black), value: "ratings"),
+              DropdownMenuItem(
+                  child: textMinor("price", Colors.black), value: "price")
             ],
             decoration: dropdownDeco,
             isExpanded: true,
             value: _sortbydropdownValue,
             onChanged: (String? newValue) {
-              _sortbydropdownValue = newValue!;
+              setState(() {
+                _sortbydropdownValue = newValue!;
+                _displayfiltered(width);
+              });
             }));
   }
 
@@ -122,10 +251,9 @@ class _HomeScreen extends State<HomeScreen> {
       child: Container(
         child: TextField(
           onSubmitted: (value) {
-            print(_placetypedropdownValue +
-                _filterbydropdownValue +
-                _sortbydropdownValue +
-                _searchController.text);
+            print(_placetypedropdownValue);
+            print(_sortbydropdownValue);
+            print(_searchController.text);
           },
           controller: _searchController,
           cursorColor: Colors.grey,
@@ -182,16 +310,32 @@ class _HomeScreen extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(18.0),
               ))),
           onPressed: () {
-            print(_placetypedropdownValue +
-                _filterbydropdownValue +
-                _sortbydropdownValue +
-                _searchController.text);
-            // pushNewScreenWithRouteSettings(
-            //           context,
-            //           screen: AfterSearchScreen(), // class you're moving into
-            //           settings: RouteSettings(name: AfterSearchScreen.routeName), // remember to include routeName at the base class
-            //           pageTransitionAnimation: PageTransitionAnimation.cupertino
-            //       );
+            Navigator.pushNamed(context, AfterSearchScreen.routeName,
+                arguments: ScreenArguments(_placetypedropdownValue, _maxfilter,
+                    _minfilter, _sortbydropdownValue, _searchController.text));
+            // print(_maxfilter);
+            // print(_minfilter);
+            // print(_sortbydropdownValue);
+            // print(_searchController.text);
+
+            // pushNewScreenWithRouteSettings(context,
+            //     screen: AfterSearchScreen(ScreenArguments(
+            //         _placetypedropdownValue,
+            //         _maxfilter,
+            //         _minfilter,
+            //         _sortbydropdownValue,
+            //         _searchController.text)), // class you're moving into
+            //     //settings: RouteSettings(name: AfterSearchScreen.), // remember to include routeName at the base class
+            //     settings: RouteSettings(
+            //       name: '/aftersearch',
+            //       arguments: ScreenArguments(
+            //           _placetypedropdownValue,
+            //           _maxfilter,
+            //           _minfilter,
+            //           _sortbydropdownValue,
+            //           _searchController.text),
+            //     ),
+            //     pageTransitionAnimation: PageTransitionAnimation.cupertino);
           },
           child: Text("Go!",
               style: TextStyle(
@@ -218,10 +362,10 @@ class _HomeScreen extends State<HomeScreen> {
                 ? _searchBar(width, height)
                 : _placeTypeDropDown(width),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              _filterDropDown(width),
               SizedBox(width: 0.02 * width),
               _sortDropDown(width)
             ]),
+            _displayfiltered(width),
             _goButton()
           ],
         ));

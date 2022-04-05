@@ -28,6 +28,4 @@ class Locator {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     return LatLng(position.latitude,position.longitude);
   }
-
-
 }
