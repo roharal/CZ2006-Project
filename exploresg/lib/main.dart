@@ -3,6 +3,7 @@ import 'package:exploresg/screens/login.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:exploresg/screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:exploresg/screens/interests.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         BaseScreen.routeName: (context) => BaseScreen(),
         LoginScreen.routeName: (context) => LoginScreen(),
         SignUpScreen.routeName: (context) => SignUpScreen(),
+        InterestScreen.routeName: (context) => InterestScreen(),
       },
       onGenerateRoute: (RouteSettings settings) {
         assert(false, 'Need to implement ${settings.name}');

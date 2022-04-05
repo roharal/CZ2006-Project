@@ -4,6 +4,7 @@ import 'package:exploresg/helper/auth.dart';
 import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:exploresg/screens/interests.dart';
 
 import '../helper/utils.dart';
 
