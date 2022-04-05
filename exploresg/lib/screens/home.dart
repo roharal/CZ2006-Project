@@ -1,5 +1,7 @@
-import 'package:exploresg/helper/auth.dart';
+
+import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,7 +32,7 @@ class _HomeScreen extends State<HomeScreen> {
   TextEditingController _searchController = new TextEditingController();
   PlacesApi _placesApi = PlacesApi();
   FirebaseApi _firebaseApi = FirebaseApi();
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
   List<Place> _places = [];
   bool _isLoaded = false;
 
@@ -383,37 +385,42 @@ class _HomeScreen extends State<HomeScreen> {
   // veterinary_care
   // zoo
   // String lat, String long, int radius, String type, String input
-  // var result1 = await _placesApi.nearbySearchFromText("1.333975", "103.928671", 5000, "secondary_school","&keyword=school");
 
   void _loadRecommendations() async {
     String uid = _auth.getCurrentUser()!.uid;
     String interest = "";
-    List<Place> _mixPlaces = [];
-    await _firebaseApi
-        .getDocumentByIdFromCollection("users", uid)
-        .then((value) {
-      interest = value["interest"];
-    }).onError((error, stackTrace) {
-      showAlert(context, "Retrieve User Profile", error.toString());
-    });
-    if (interest != "") {
-      var split = interest.split(",");
-      for (String s in split) {
-        var result = await _placesApi.nearbySearchFromText(
-            "1.333975", "103.928671", 10000, s, "");
-        for (var i in result!) {
-          _mixPlaces.add(i);
+    Locator locator = new Locator();
+    var coor = await locator.getCurrentLocation();
+    if (coor != null) {
+      List<Place> _mixPlaces = [];
+      await _firebaseApi
+          .getDocumentByIdFromCollection("users", uid)
+          .then((value) {
+        interest = value["interest"];
+      }).onError((error, stackTrace) {
+        showAlert(context, "Retrieve User Profile", error.toString());
+      });
+      if (interest != "") {
+        var split = interest.split(",");
+        for (String s in split) {
+          var result = await _placesApi.nearbySearchFromText(
+              coor.latitude.toString(), coor.longitude.toString(), 10000, s, "");
+          for (var i in result!) {
+            _mixPlaces.add(i);
+          }
+        }
+        _mixPlaces = (_mixPlaces..shuffle());
+        while (_mixPlaces.length > 5) {
+          _mixPlaces.removeLast();
         }
       }
-      _mixPlaces = (_mixPlaces..shuffle());
-      while (_mixPlaces.length > 5) {
-        _mixPlaces.removeLast();
-      }
+      _places = _mixPlaces;
+      setState(() {
+        _isLoaded = true;
+      });
+    } else {
+      showAlert(context, "Location Permission Error", "Location permission either disable or disabled. Please enable to enjoy the full experience.");
     }
-    _places = _mixPlaces;
-    setState(() {
-      _isLoaded = true;
-    });
   }
 
   @override
