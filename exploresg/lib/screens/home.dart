@@ -1,5 +1,4 @@
 import 'package:exploresg/helper/recommendations_controller.dart';
-
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/location.dart';
@@ -116,12 +115,12 @@ class _HomeScreen extends State<HomeScreen> {
         child: DDL);
   }
 
-  double _distvalue = 50000;
+  double _distvalue = 15000;
   RangeValues _pricevalues = RangeValues(0, 4);
   RangeValues _ratingvalues = RangeValues(1, 5);
 
-  int _maxfilter = 0;
-  int _minfilter = 4;
+  int _minfilter = 0;
+  int _maxfilter = 4;
 
   Widget _ratingfilter(double width) {
     final double min = 1;
@@ -132,7 +131,9 @@ class _HomeScreen extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSideLabel(min),
+            buildSideLabel(
+              _minfilter.toString(),
+            ),
             Expanded(
               child: RangeSlider(
                 values: _ratingvalues,
@@ -147,14 +148,14 @@ class _HomeScreen extends State<HomeScreen> {
                 onChanged: (values) {
                   setState(() {
                     _ratingvalues = values;
-                    _maxfilter = values.start.round();
-                    _minfilter = values.end.round();
+                    _minfilter = values.start.round();
+                    _maxfilter = values.end.round();
                     print(values);
                   });
                 },
               ),
             ),
-            buildSideLabel(max),
+            buildSideLabel(_maxfilter.toString()),
           ],
         ));
   }
@@ -168,7 +169,7 @@ class _HomeScreen extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSideLabel(min),
+            buildSideLabel(_minfilter.toString()),
             Expanded(
               child: RangeSlider(
                 values: _pricevalues,
@@ -183,34 +184,34 @@ class _HomeScreen extends State<HomeScreen> {
                 onChanged: (values) {
                   setState(() {
                     _pricevalues = values;
-                    _maxfilter = values.start.round();
-                    _minfilter = values.end.round();
+                    _minfilter = values.start.round();
+                    _maxfilter = values.end.round();
                     print(values);
                   });
                 },
               ),
             ),
-            buildSideLabel(max),
+            buildSideLabel(_maxfilter.toString()),
           ],
         ));
   }
 
   Widget _distancefilter(double width) {
     final double min = 0;
-    final double max = 50000;
+    final double max = 15000;
 
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSideLabel(min),
+            buildSideLabel("0 km"),
             Expanded(
               child: CupertinoSlider(
                 value: _distvalue,
                 min: min,
                 max: max,
-                divisions: 100000,
+                divisions: 1500,
                 // labels: RangeLabels(
                 //   _distvalues.start.round().toString(),
                 //   _distvalues.end.round().toString(),
@@ -226,16 +227,16 @@ class _HomeScreen extends State<HomeScreen> {
                 },
               ),
             ),
-            buildSideLabel(max),
+            buildSideLabel((_maxfilter / 1000).toString() + "km"),
           ],
         ));
   }
 
-  Widget buildSideLabel(double value) {
+  Widget buildSideLabel(String value) {
     return Container(
-      width: 40,
+      width: 60,
       child: Text(
-        value.round().toString(),
+        value,
         style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 13),
         textAlign: TextAlign.center,
       ),
@@ -430,8 +431,11 @@ class _HomeScreen extends State<HomeScreen> {
   Widget _addFav(Place place, double height, double width) {
     return Container(
         color: Colors.white,
+
+        width: width,
+        height: height,
         child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(children: [
@@ -440,7 +444,6 @@ class _HomeScreen extends State<HomeScreen> {
                       await _favouritesController.addOrRemoveFav(place.id);
                       _favourites =
                           await _favouritesController.getFavouritesList();
-
                       print("<3 pressed");
                       setState(() {
                         place.likes = !place.likes;
@@ -585,6 +588,48 @@ class _HomeScreen extends State<HomeScreen> {
   // veterinary_care
   // zoo
   // String lat, String long, int radius, String type, String input
+
+  void _loadRecommendations() async {
+    String uid = _auth.getCurrentUser()!.uid;
+    String interest = "";
+    Locator locator = new Locator();
+    var coor = await locator.getCurrentLocation();
+    if (coor != null) {
+      List<Place> _mixPlaces = [];
+      await _firebaseApi
+          .getDocumentByIdFromCollection("users", uid)
+          .then((value) {
+        interest = value["interest"];
+      }).onError((error, stackTrace) {
+        showAlert(context, "Retrieve User Profile", error.toString());
+      });
+      if (interest != "") {
+        var split = interest.split(",");
+        for (String s in split) {
+          var result = await _placesApi.nearbySearchFromText(
+              coor.latitude.toString(),
+              coor.longitude.toString(),
+              10000,
+              s,
+              "");
+          for (var i in result!) {
+            _mixPlaces.add(i);
+          }
+        }
+        _mixPlaces = (_mixPlaces..shuffle());
+        while (_mixPlaces.length > 5) {
+          _mixPlaces.removeLast();
+        }
+      }
+      _places = _mixPlaces;
+      setState(() {
+        _isLoaded = true;
+      });
+    } else {
+      showAlert(context, "Location Permission Error",
+          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

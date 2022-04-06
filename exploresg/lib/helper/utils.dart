@@ -243,7 +243,14 @@ class _SearchState extends State<Search> {
   }
 }
 
-Widget placeContainer(Place place, double width, double height) {
+Widget _printDist(distance) {
+  return (distance != null)
+      ? textMinor(distance.toString() + "km", Colors.black)
+      : SizedBox();
+}
+
+Widget placeContainer(Place place, double width, double height,
+    [double? distance]) {
   return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -282,7 +289,11 @@ Widget placeContainer(Place place, double width, double height) {
                     itemSize: width / 20,
                     direction: Axis.horizontal,
                   ),
-                  textMinor(place.placeAddress, Colors.black)
+                  textMinor(place.placeAddress, Colors.black),
+
+                  //include dist for afterseach
+                  // textMinor(distance.toString() + "km", Colors.black)
+                  _printDist(distance)
                 ]))
           ],
         ),
