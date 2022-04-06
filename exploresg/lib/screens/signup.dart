@@ -2,6 +2,7 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/user.dart';
 import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/login.dart';
+import 'package:exploresg/screens/verify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:exploresg/helper/firebase_api.dart';
@@ -14,7 +15,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
   FirebaseApi _firebaseApi = FirebaseApi();
   final _registerKey = GlobalKey<FormState>();
   bool _isLoading = false, _isChecked = false;
@@ -24,13 +24,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _topBar(double width) {
     return FittedBox(
-      fit: BoxFit.fill,
-      child: SvgPicture.asset('assets/img/login-top.svg',
-        width: width,
-        height: width
-        //height: height * 0.4,
-      )
-    );
+        fit: BoxFit.fill,
+        child: SvgPicture.asset('assets/img/login-top.svg',
+            width: width, height: width
+            //height: height * 0.4,
+            ));
   }
 
   Widget _firstTextField() {
@@ -117,8 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           onSaved: (String? saved) {
             _email = saved!.trim();
           },
-        )
-    );
+        ));
   }
 
   Widget _passwordTextField() {
@@ -147,8 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           onSaved: (String? saved) {
             _password = saved!;
           },
-        )
-    );
+        ));
   }
 
   Widget _usernameTextField() {
@@ -184,8 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           onSaved: (String? saved) {
             _username = saved!.trim().toLowerCase();
           },
-        )
-    );
+        ));
   }
 
   Widget _registerForm() {
@@ -213,20 +208,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            //SizedBox(height: 25),
-            textMajor("sign up", Color(0xff22254C), 36),
-            SizedBox(height: 10),
-            _registerForm(),
-            SizedBox(height: 30),
-            _progressButton(width, height)
-          ]
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        //SizedBox(height: 25),
+        textMajor("sign up", Color(0xff22254C), 36),
+        SizedBox(height: 10),
+        _registerForm(),
+        SizedBox(height: 30),
+        _progressButton(width, height)
+      ]),
     );
   }
-  
+
   Widget _loginLabel() {
     return InkWell(
       onTap: () {
@@ -236,7 +228,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           textMinor("already have an account?", Color(0xff22254C)),
-          SizedBox(width: 5,),
+          SizedBox(
+            width: 5,
+          ),
           textMinor("sign in", createMaterialColor(Color(0xff6488E5)))
         ],
       ),
@@ -246,14 +240,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _registerButton(double width, double height) {
     return ElevatedButton(
       onPressed: _isChecked ? _validateRegister : _validateUsername,
-      child: _isChecked ? textMinor("register", Colors.white)
+      child: _isChecked
+          ? textMinor("register", Colors.white)
           : textMinor("check username", Colors.white),
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        primary: Color(0xff6488E5),
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
-      ),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          primary: Color(0xff6488E5),
+          elevation: 0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
     );
   }
 
@@ -261,7 +256,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
       width: width * 0.6,
       height: height * 0.05,
-      child: _isLoading ? progressionIndicator() : _registerButton(width, height),
+      child:
+          _isLoading ? progressionIndicator() : _registerButton(width, height),
     );
   }
 
@@ -295,7 +291,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _validateUsername() async {
     if (!validUsername.hasMatch(_username)) {
-      showAlert(context, "Invalid username", "Username cannot contain special characters!");
+      showAlert(context, "Invalid username",
+          "Username cannot contain special characters!");
     } else if (_username.isEmpty) {
       showAlert(context, "Invalid username", "Username cannot be empty!");
     } else if (_username.length < 4) {
@@ -311,9 +308,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() {
           _isChecked = !_isTaken;
           if (_isTaken) {
-            showAlert(context, "Username taken", "Change to another unique username!");
+            showAlert(context, "Username taken",
+                "Change to another unique username!");
           } else {
-            showAlert(context, "Congratulation!", "The username is yours to take!");
+            showAlert(
+                context, "Congratulations!", "The username is yours to take!");
           }
         });
       });
@@ -333,26 +332,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _createUser() async {
-    UserModel user = UserModel(
-        "",
-        _username,
-        _first,
-        _last,
-        _email,
-        "",
-        "",
-        "",
-        false,
-        false,
-        "shopping_mall,cafe,park"
-    );
+    UserModel user = UserModel("", _username, _first, _last, _email, "", "", "",
+        false, false, "shopping_mall,cafe,park");
     await _firebaseApi.createUserFromEmail(user, _password).then((value) {
       setState(() {
         _isLoading = false;
       });
       if (value == null) {
         print("user created");
-        Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+        Navigator.pushReplacementNamed(context, VerifyScreen.routeName);
       } else {
         showAlert(context, "Sign Up Error", value.toString());
       }
@@ -364,9 +352,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Color(0xfffffcec),
-      body: SingleChildScrollView(
-        child: Container(
+        backgroundColor: Color(0xfffffcec),
+        body: SingleChildScrollView(
+            child: Container(
           height: _height - 20,
           child: Stack(
             children: [
@@ -378,15 +366,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   children: [
                     _signUp(_width, _height),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     _loginLabel()
                   ],
                 ),
               ),
             ],
           ),
-        )
-      )
-    );
+        )));
   }
 }

@@ -16,7 +16,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreen extends State<SplashScreen> {
-
   AuthController _auth = AuthController();
 
   @override
@@ -31,12 +30,13 @@ class _SplashScreen extends State<SplashScreen> {
   }
 
   void _homePage() {
-    var user = _auth.getCurrentUser();
-    if (user != null) {
-      Navigator.pushReplacementNamed(context, BaseScreen.routeName);
-    } else {
-      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-    }
+    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    // var user = _auth.getCurrentUser();
+    // if (user != null) {
+    //   Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+    // } else {
+    //   Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    // }
   }
 
   @override
@@ -50,27 +50,24 @@ class _SplashScreen extends State<SplashScreen> {
         child: Stack(
           children: [
             Image.asset('assets/img/splash.png',
-                height: height,
-                width: width,
-                fit: BoxFit.fill
-            ),
+                height: height, width: width, fit: BoxFit.fill),
             Positioned(
-              top: height/4,
-              left: width/4.5,
+              top: height / 4,
+              left: width / 4.5,
               child: textMajor("explore", Colors.black, 36),
-
             ),
             Positioned(
-                top: height/3.5,
-                left: width/2.2,
-                child: textMajor("SG", Colors.black, 36)
-            ),
+                top: height / 3.5,
+                left: width / 2.2,
+                child: textMajor("SG", Colors.black, 36)),
             Positioned(
-              top: height/2.9,
-              left: width/4.5,
+              top: height / 2.9,
+              left: width / 4.5,
               child: SizedBox(
-                width: width/3,
-                child: textMinor("discover new places and invite your friend to go together!", Colors.black),
+                width: width / 3,
+                child: textMinor(
+                    "discover new places and invite your friend to go together!",
+                    Colors.black),
               ),
             ),
             Positioned(
@@ -82,12 +79,11 @@ class _SplashScreen extends State<SplashScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      textMinor("Copyright HDMILF 2022",Colors.black),
-                      textMinor("All rights reserved",Colors.black)
+                      textMinor("Copyright HDMILF 2022", Colors.black),
+                      textMinor("All rights reserved", Colors.black)
                     ],
                   ),
-                )
-            )
+                ))
           ],
         ),
       ),
