@@ -1,4 +1,4 @@
-import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/user.dart';
@@ -21,7 +21,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   var emailAddress = "<EmailAddress@email.com>";
   bool _isLoaded = false;
   FirebaseApi _firebaseApi = FirebaseApi();
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
   late UserModel _userModel;
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 

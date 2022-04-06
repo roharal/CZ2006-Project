@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class FirebaseApi {
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseMessaging _fcm = FirebaseMessaging.instance;
 

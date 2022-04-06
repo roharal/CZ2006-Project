@@ -11,7 +11,7 @@ class InterestScreen extends StatefulWidget {
 class _InterestScreenState extends State<InterestScreen> {
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     buildMap();
   }
 

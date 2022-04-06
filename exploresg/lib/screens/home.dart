@@ -1,9 +1,19 @@
+
 import 'package:exploresg/helper/recommendations_controller.dart';
+
+
+import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/location.dart';
+import 'package:exploresg/helper/places_api.dart';
+import 'package:exploresg/screens/aftersearch.dart';
+
 import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
+
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'aftersearch.dart';
 import 'package:geolocator/geolocator.dart';
@@ -47,6 +57,7 @@ Future<Position> _determinePosition() async {
   return await Geolocator.getCurrentPosition();
 }
 
+
 class HomeScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -55,7 +66,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  //  _moveToAnotherPageWithinNavBar() {
+  // _moveToAnotherPageWithinNavBar() {
   //   pushNewScreenWithRouteSettings(
   //       context,
   //       screen: PlaceScreen(), // class you're moving into
@@ -67,8 +78,10 @@ class _HomeScreen extends State<HomeScreen> {
   String _placetypedropdownValue = 'place type';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
+
   RecommendationsController _recommendationsController =
       RecommendationsController();
+
   List<Place> _places = [];
   bool _isLoaded = false;
   FavouritesController _favouritesController = FavouritesController();
@@ -234,7 +247,6 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _displayfiltered(double width) {
     if (_sortbydropdownValue == 'distance') {
-      _determinePosition();
       return _distancefilter(width);
     } else if (_sortbydropdownValue == 'ratings') {
       return _ratingfilter(width);
@@ -420,6 +432,7 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
+
         color: Colors.white,
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -453,31 +466,132 @@ class _HomeScreen extends State<HomeScreen> {
                 textMinor("add to favourites", Colors.black)
               ])
             ]));
+
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
     return Container(
-        height: 0.8 * height,
-        width: 0.8 * width,
-        child: ListView.builder(
-          itemCount: places.length,
-          itemBuilder: (context, index) {
-            return Column(children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, Places2Screen.routeName,
-                      arguments: Places2ScreenArgs(_places[index]));
-                },
-                child: placeContainer(places[index], width, 0.3 * height),
-              ),
-              _addFav(places[index], 0.05 * height, width),
-              SizedBox(
-                height: 5,
-              )
-            ]);
-          },
-        ));
+      height: 0.8 * height,
+      width: 0.8 * width,
+      child: ListView.builder(
+        itemCount: places.length,
+        itemBuilder: (context, index) {
+          return Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context,
+                        Places2Screen.routeName,
+                        arguments: Places2ScreenArgs(_places[index]));
+                  },
+                  child: placeContainer(places[index], width, 0.2 * height),
+                ),
+                _addFav(places[index], 0.05 * height, width),
+                SizedBox(height: 5,)
+              ]
+          );},
+      )
+    );
   }
+
+  // accounting
+  // airport
+  // amusement_park
+  // aquarium
+  // art_gallery
+  // atm
+  // bakery
+  // bank
+  // bar
+  // beauty_salon
+  // bicycle_store
+  // book_store
+  // bowling_alley
+  // bus_station
+  // cafe
+  // campground
+  // car_dealer
+  // car_rental
+  // car_repair
+  // car_wash
+  // casino
+  // cemetery
+  // church
+  // city_hall
+  // clothing_store
+  // convenience_store
+  // courthouse
+  // dentist
+  // department_store
+  // doctor
+  // drugstore
+  // electrician
+  // electronics_store
+  // embassy
+  // fire_station
+  // florist
+  // funeral_home
+  // furniture_store
+  // gas_station
+  // gym
+  // hair_care
+  // hardware_store
+  // hindu_temple
+  // home_goods_store
+  // hospital
+  // insurance_agency
+  // jewelry_store
+  // laundry
+  // lawyer
+  // library
+  // light_rail_station
+  // liquor_store
+  // local_government_office
+  // locksmith
+  // lodging
+  // meal_delivery
+  // meal_takeaway
+  // mosque
+  // movie_rental
+  // movie_theater
+  // moving_company
+  // museum
+  // night_club
+  // painter
+  // park
+  // parking
+  // pet_store
+  // pharmacy
+  // physiotherapist
+  // plumber
+  // police
+  // post_office
+  // primary_school
+  // real_estate_agency
+  // restaurant
+  // roofing_contractor
+  // rv_park
+  // school
+  // secondary_school
+  // shoe_store
+  // shopping_mall
+  // spa
+  // stadium
+  // storage
+  // store
+  // subway_station
+  // supermarket
+  // synagogue
+  // taxi_stand
+  // tourist_attraction
+  // train_station
+  // transit_station
+  // travel_agency
+  // university
+  // veterinary_care
+  // zoo
+  // String lat, String long, int radius, String type, String input
 
   @override
   Widget build(BuildContext context) {
@@ -491,20 +605,24 @@ class _HomeScreen extends State<HomeScreen> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                  topBar("home", height, width, 'assets/img/homeTop.png'),
-                  SizedBox(height: 10),
-                  textMajor("find places", Colors.black, 26),
-                  _searchTools(0.80 * width, 0.3 * height),
-                  Image.asset("assets/img/stringAccent.png"),
-                  textMajor("explore", Colors.black, 26),
-                  recommendedList(_places, height, width),
-                  SizedBox(height: 20)
-                ]))))
-        : Container(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+                        children:[
+                          topBar("home", height, width, 'assets/img/homeTop.png'),
+                          SizedBox(height: 10),
+                          textMajor("find places", Colors.black, 26),
+                          _searchTools(0.80 * width, 0.3 * height),
+                          Image.asset("assets/img/stringAccent.png"),
+                          textMajor("explore", Colors.black, 26),
+                          recommendedList(_places, height, width),
+                          SizedBox(height: 20)
+                        ]
+                    )
+                )
+            )
+    ) :
+    Container(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

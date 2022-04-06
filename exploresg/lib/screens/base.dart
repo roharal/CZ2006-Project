@@ -39,6 +39,7 @@ class _BaseScreen extends State<BaseScreen> {
           inactiveColorPrimary: Colors.grey,
           routeAndNavigatorSettings: RouteAndNavigatorSettings(
               initialRoute: '/home',
+              // ignore: body_might_complete_normally_nullable
               onGenerateRoute: (RouteSettings? settings) {
                 switch (settings!.name) {
                   case Places2Screen.routeName:
@@ -56,7 +57,7 @@ class _BaseScreen extends State<BaseScreen> {
                       final ScreenArguments args =
                           settings.arguments as ScreenArguments;
                       return MaterialPageRoute(builder: (context) {
-                        return AfterSearchScreen(args.placetype, args.max,
+                        return AfterSearchScreen(args.placeType, args.max,
                             args.min, args.sort, args.text);
                       });
                     }
