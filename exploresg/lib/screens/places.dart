@@ -100,7 +100,9 @@ class _Places2Screen extends State<Places2Screen> {
           color: Colors.grey,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Image.network(place.images[0]));
+        child: place.images.length > 0
+            ? Image.network(place.images[0])
+            : Image.asset('assets/img/catsafari.png'));
   }
 
   Widget _ratings() {

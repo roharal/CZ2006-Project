@@ -69,8 +69,22 @@ class _BaseScreen extends State<BaseScreen> {
           icon: Icon(Icons.favorite),
           activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
           inactiveColorPrimary: Colors.grey,
-          routeAndNavigatorSettings:
-              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/favourites',
+              onGenerateRoute: (RouteSettings? settings) {
+                switch (settings!.name) {
+                  case Places2Screen.routeName:
+                    {
+                      final Places2ScreenArgs args =
+                          settings.arguments as Places2ScreenArgs;
+                      return MaterialPageRoute(builder: (context) {
+                        return Places2Screen(place: args.place);
+                      });
+                      // ignore: dead_code
+                      break;
+                    }
+                }
+              })),
       PersistentBottomNavBarItem(
           icon: Icon(Icons.list_alt_outlined),
           activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
