@@ -61,13 +61,12 @@ class _AfterSearchState extends State<AfterSearchScreen> {
 
   Future<void> _loadPage() async {
     _loadSearch(ScreenArguments(
-        widget.placetype, widget.max, widget.min, widget.sort, widget.text));
+        widget.placeType, widget.max, widget.min, widget.sort, widget.text));
     _favourites = await _favouritesController
         .getFavouritesList(); // i think this function can be defined in a controller class instead
     setState(() {
       _isLoaded = true;
     });
-
   }
 
   InputDecoration dropdownDeco = InputDecoration(
@@ -490,12 +489,12 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         _isLoaded = true;
       });
     } else {
-      showAlert(context, "Location Permission Error", "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+      showAlert(context, "Location Permission Error",
+          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
     }
 
     // print(lat);
     // print(long);
-
   }
 
   Widget _printSearch(List<Place> places, double height, double width) {

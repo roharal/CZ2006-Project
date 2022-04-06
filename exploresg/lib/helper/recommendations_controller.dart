@@ -1,10 +1,10 @@
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/models/place.dart';
-import 'auth.dart';
+import 'package:exploresg/helper/authController.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RecommendationsController {
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   PlacesApi _placesApi = PlacesApi();
 

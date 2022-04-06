@@ -1,8 +1,8 @@
-import 'auth.dart';
+import 'package:exploresg/helper/authController.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FavouritesController {
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void updateFavOnDB(uid, favourites) async {

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exploresg/helper/auth.dart';
+import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
@@ -51,7 +51,7 @@ class _Places2Screen extends State<Places2Screen> {
   FavouritesController _favouritesController = FavouritesController();
   FirebaseApi _firebaseApi = FirebaseApi();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Auth _auth = Auth();
+  AuthController _auth = AuthController();
   List<String> _favourites = [];
   bool _isLoaded = false;
 
@@ -135,7 +135,7 @@ class _Places2Screen extends State<Places2Screen> {
               color: Colors.amber,
             ),
             itemCount: 5,
-            itemSize: 5,
+            itemSize: 20,
             direction: Axis.horizontal,
           ),
           Image.asset('assets/img/ratingStars.png')
@@ -156,38 +156,36 @@ class _Places2Screen extends State<Places2Screen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        color: Colors.white,
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(children: [
-                InkWell(
-                    onTap: () async {
-                      await _favouritesController.addOrRemoveFav(place.id);
-                      _favourites =
-                          await _favouritesController.getFavouritesList();
-                      setState(() {
-                        place.likes = !place.likes;
-                        print(_favourites);
-                      });
-                      print(place.likes);
-                    },
-                    child: _favourites.contains(place.id)
-                        ? Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.favorite_border,
-                            color: Colors.grey,
-                          )),
-                SizedBox(
-                  width: 10,
-                ),
-                textMinor("add to favourites", Colors.black)
-              ])
-            ]));
+          Row(children: [
+            InkWell(
+                onTap: () async {
+                  await _favouritesController.addOrRemoveFav(place.id);
+                  _favourites = await _favouritesController.getFavouritesList();
+                  setState(() {
+                    place.likes = !place.likes;
+                    print(_favourites);
+                  });
+                  print(place.likes);
+                },
+                child: _favourites.contains(place.id)
+                    ? Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : Icon(
+                        Icons.favorite_border,
+                        color: Colors.grey,
+                      )),
+            SizedBox(
+              width: 10,
+            ),
+            textMinor("add to favourites", Colors.black)
+          ])
+        ]));
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {

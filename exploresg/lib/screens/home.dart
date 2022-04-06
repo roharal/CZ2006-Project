@@ -1,6 +1,4 @@
-
 import 'package:exploresg/helper/recommendations_controller.dart';
-
 
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
@@ -56,7 +54,6 @@ Future<Position> _determinePosition() async {
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
 }
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -432,7 +429,6 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-
         color: Colors.white,
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -466,33 +462,30 @@ class _HomeScreen extends State<HomeScreen> {
                 textMinor("add to favourites", Colors.black)
               ])
             ]));
-
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
     return Container(
-      height: 0.8 * height,
-      width: 0.8 * width,
-      child: ListView.builder(
-        itemCount: places.length,
-        itemBuilder: (context, index) {
-          return Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                        context,
-                        Places2Screen.routeName,
-                        arguments: Places2ScreenArgs(_places[index]));
-                  },
-                  child: placeContainer(places[index], width, 0.2 * height),
-                ),
-                _addFav(places[index], 0.05 * height, width),
-                SizedBox(height: 5,)
-              ]
-          );},
-      )
-    );
+        height: 0.8 * height,
+        width: 0.8 * width,
+        child: ListView.builder(
+          itemCount: places.length,
+          itemBuilder: (context, index) {
+            return Column(children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, Places2Screen.routeName,
+                      arguments: Places2ScreenArgs(_places[index]));
+                },
+                child: placeContainer(places[index], 0.8 * width, 0.3 * height),
+              ),
+              _addFav(places[index], 0.05 * height, width),
+              SizedBox(
+                height: 5,
+              )
+            ]);
+          },
+        ));
   }
 
   // accounting
@@ -605,24 +598,20 @@ class _HomeScreen extends State<HomeScreen> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children:[
-                          topBar("home", height, width, 'assets/img/homeTop.png'),
-                          SizedBox(height: 10),
-                          textMajor("find places", Colors.black, 26),
-                          _searchTools(0.80 * width, 0.3 * height),
-                          Image.asset("assets/img/stringAccent.png"),
-                          textMajor("explore", Colors.black, 26),
-                          recommendedList(_places, height, width),
-                          SizedBox(height: 20)
-                        ]
-                    )
-                )
-            )
-    ) :
-    Container(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+                        children: [
+                  topBar("home", height, width, 'assets/img/homeTop.png'),
+                  SizedBox(height: 10),
+                  textMajor("find places", Colors.black, 26),
+                  _searchTools(0.80 * width, 0.3 * height),
+                  Image.asset("assets/img/stringAccent.png"),
+                  textMajor("explore", Colors.black, 26),
+                  recommendedList(_places, height, width),
+                  SizedBox(height: 20)
+                ]))))
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }
