@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:collection';
 
 import 'package:exploresg/screens/places.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class _AfterSearchState extends State<AfterSearchScreen> {
 
   PlacesApi _placesApi = PlacesApi();
   List<Place> _places = [];
+  List<double> _distance = [];
   bool _isLoaded = false;
 
   void initState() {
@@ -422,6 +424,16 @@ class _AfterSearchState extends State<AfterSearchScreen> {
             ]));
   }
 
+//SORT DISTANCE RETURNING PLACES ACCORDING TO ASCENDING DIST
+  // Widget _sortdistance(place, lat, long) {
+  //   List<PlaceDistance> list = [];
+  //   for (var i in place){
+  //     calculateDistance(lat, long, i, )
+  //   }
+  //   return distance;
+  // }
+
+  //returns distance in km
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos;
@@ -435,45 +447,98 @@ class _AfterSearchState extends State<AfterSearchScreen> {
     // String uid = _auth.getCurrentUser()!.uid;
     // String interest = "";
     List<Place> _mixPlaces = [];
-    // await _firebaseApi
-    //     .getDocumentByIdFromCollection("users", uid)
-    //     .then((value) {
-    //   interest = value["interest"];
-    // }).onError((error, stackTrace) {
-    //   showAlert(context, "Retrieve User Profile", error.toString());
-    // });
-    // if (interest != "") {
-    //   var split = interest.split(",");
-    // for (String s in split) {
-    //   var result = await _placesApi.nearbySearchFromText(
-    //       "1.4430557283012149", "103.80793159927359", 10000, s, "");
-    //   for (var i in result!) {
-    //     _mixPlaces.add(i);
-    //   }
-    // }
+
     Locator location = new Locator();
     var userLoc = await location.getCurrentLocation();
+
     if (userLoc != null) {
       String lat = userLoc.latitude.toString();
       String long = userLoc.longitude.toString();
+
       if (screenArguments.sort == 'distance') {
+        //_sortdistance(result, lat, long);
+        //List<PlaceDistance> list = [];
         var result = await _placesApi.nearbySearchFromText(
             lat, long, screenArguments.max, screenArguments.text, "");
+
+        print(result);
+        var distmap = {};
+
         for (var i in result!) {
+          //FN TO SORT PLACES BY DIST
+          distmap[i] = calculateDistance(
+              userLoc.latitude,
+              userLoc.longitude,
+              double.parse(i.coordinates["lat"]!),
+              double.parse(i.coordinates["long"]!));
+        }
+
+        var sortedKeys = distmap.keys.toList(growable: false)
+          ..sort((a, b) => distmap[a].compareTo(distmap[b]));
+        LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
+            key: (k) => k, value: (k) => distmap[k]);
+
+        for (var i in sortedMap.values) {
+          _distance.add(double.parse(i.toStringAsFixed(2)));
+        }
+
+        for (var i in sortedKeys) {
+          _mixPlaces.add(i);
+        }
+      } else if (screenArguments.sort == "ratings") {
+        var result = await _placesApi.nearbySearchFromText(
+            lat, long, 15000, screenArguments.text, "");
+
+        print(result);
+
+        var ratingsmap = {};
+
+        for (var i in result!) {
+          if (widget.min <= i.ratings && i.ratings <= widget.max) {
+            ratingsmap[i] = i.ratings;
+          }
+          print(i);
+        }
+        var sortedKeys = ratingsmap.keys.toList(growable: false)
+          ..sort((a, b) => ratingsmap[a].compareTo(ratingsmap[b]));
+        LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
+            key: (k) => k, value: (k) => ratingsmap[k]);
+
+        for (var i in sortedKeys) {
+          _mixPlaces.add(i);
+        }
+      } else if (screenArguments.sort == "price") {
+        var result = await _placesApi.nearbySearchFromText(
+            lat, long, 15000, screenArguments.text, "", widget.max, widget.min);
+
+        print(result);
+
+        var pricemap = {};
+
+        for (var i in result!) {
+          if (widget.min <= i.price && i.price <= widget.max)
+            pricemap[i] = i.price;
+
+          print(i);
+        }
+        var sortedKeys = pricemap.keys.toList(growable: false)
+          ..sort((a, b) => pricemap[a].compareTo(pricemap[b]));
+        LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
+            key: (k) => k, value: (k) => pricemap[k]);
+
+        for (var i in sortedKeys) {
           _mixPlaces.add(i);
         }
       }
+
       _places = _mixPlaces;
       setState(() {
         _isLoaded = true;
       });
     } else {
-      showAlert(context, "Location Permission Error", "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+      showAlert(context, "Location Permission Error",
+          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
     }
-
-    // print(lat);
-    // print(long);
-
   }
 
   Widget _printSearch(List<Place> places, double height, double width) {
@@ -492,7 +557,13 @@ class _AfterSearchState extends State<AfterSearchScreen> {
                         Navigator.pushNamed(context, Places2Screen.routeName,
                             arguments: Places2ScreenArgs(_places[index]));
                       },
-                      child: placeContainer(places[index], width, 0.2 * height),
+                      // child: placeContainer(places[index], width, 0.2 * height,
+                      //     _distance.removeAt(0)),
+                      child: placeContainer(
+                        places[index],
+                        width,
+                        0.2 * height,
+                      ),
                     ),
                     _addFav(places[index], 0.05 * height, width),
                   ]));
@@ -509,6 +580,16 @@ class _AfterSearchState extends State<AfterSearchScreen> {
     return _isLoaded
         ? Scaffold(
             backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
+            appBar: AppBar(
+                // Here we take the value from the MyHomePage object that was created by
+                // the App.build method, and use it to set our appbar title.
+                //title: Text(widget.title),
+                backgroundColor: Color(0xfffffcec),
+                automaticallyImplyLeading: true,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.grey),
+                  onPressed: () => Navigator.pop(context, false),
+                )),
             body: Container(
                 //height: 220.0,
                 child: SingleChildScrollView(

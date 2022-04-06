@@ -1,4 +1,3 @@
-
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/location.dart';
@@ -60,12 +59,12 @@ class _HomeScreen extends State<HomeScreen> {
         child: DDL);
   }
 
-  double _distvalue = 50000;
+  double _distvalue = 15000;
   RangeValues _pricevalues = RangeValues(0, 4);
   RangeValues _ratingvalues = RangeValues(1, 5);
 
-  int _maxfilter = 0;
-  int _minfilter = 4;
+  int _minfilter = 0;
+  int _maxfilter = 4;
 
   Widget _ratingfilter(double width) {
     final double min = 1;
@@ -76,7 +75,9 @@ class _HomeScreen extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSideLabel(min),
+            buildSideLabel(
+              _minfilter.toString(),
+            ),
             Expanded(
               child: RangeSlider(
                 values: _ratingvalues,
@@ -91,14 +92,14 @@ class _HomeScreen extends State<HomeScreen> {
                 onChanged: (values) {
                   setState(() {
                     _ratingvalues = values;
-                    _maxfilter = values.start.round();
-                    _minfilter = values.end.round();
+                    _minfilter = values.start.round();
+                    _maxfilter = values.end.round();
                     print(values);
                   });
                 },
               ),
             ),
-            buildSideLabel(max),
+            buildSideLabel(_maxfilter.toString()),
           ],
         ));
   }
@@ -112,7 +113,7 @@ class _HomeScreen extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSideLabel(min),
+            buildSideLabel(_minfilter.toString()),
             Expanded(
               child: RangeSlider(
                 values: _pricevalues,
@@ -127,34 +128,34 @@ class _HomeScreen extends State<HomeScreen> {
                 onChanged: (values) {
                   setState(() {
                     _pricevalues = values;
-                    _maxfilter = values.start.round();
-                    _minfilter = values.end.round();
+                    _minfilter = values.start.round();
+                    _maxfilter = values.end.round();
                     print(values);
                   });
                 },
               ),
             ),
-            buildSideLabel(max),
+            buildSideLabel(_maxfilter.toString()),
           ],
         ));
   }
 
   Widget _distancefilter(double width) {
     final double min = 0;
-    final double max = 50000;
+    final double max = 15000;
 
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildSideLabel(min),
+            buildSideLabel("0 km"),
             Expanded(
               child: CupertinoSlider(
                 value: _distvalue,
                 min: min,
                 max: max,
-                divisions: 100000,
+                divisions: 1500,
                 // labels: RangeLabels(
                 //   _distvalues.start.round().toString(),
                 //   _distvalues.end.round().toString(),
@@ -170,16 +171,16 @@ class _HomeScreen extends State<HomeScreen> {
                 },
               ),
             ),
-            buildSideLabel(max),
+            buildSideLabel((_maxfilter / 1000).toString() + "km"),
           ],
         ));
   }
 
-  Widget buildSideLabel(double value) {
+  Widget buildSideLabel(String value) {
     return Container(
-      width: 40,
+      width: 60,
       child: Text(
-        value.round().toString(),
+        value,
         style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 13),
         textAlign: TextAlign.center,
       ),
@@ -373,63 +374,61 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-      color: Colors.white,
-      width: width,
-      height: height,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(children: [
-            InkWell(
-                onTap: () {
-                  print("<3 pressed");
-                  setState(() {
-                    place.likes = !place.likes;
-                  });
-                  print(place.likes);
-                },
-                child: place.likes
-                    ? Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      )
-                    : Icon(
-                        Icons.favorite_border,
-                        color: Colors.grey,
-                      )),
-            SizedBox(
-              width: 10,
-            ),
-            textMinor("add to favourites", Colors.black)
-          ])
-        ]));
+        color: Colors.white,
+        width: width,
+        height: height,
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(children: [
+                InkWell(
+                    onTap: () {
+                      print("<3 pressed");
+                      setState(() {
+                        place.likes = !place.likes;
+                      });
+                      print(place.likes);
+                    },
+                    child: place.likes
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            color: Colors.grey,
+                          )),
+                SizedBox(
+                  width: 10,
+                ),
+                textMinor("add to favourites", Colors.black)
+              ])
+            ]));
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
     return Container(
-      height: 0.8 * height,
-      width: 0.8 * width,
-      child: ListView.builder(
-        itemCount: places.length,
-        itemBuilder: (context, index) {
-          return Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                        context,
-                        Places2Screen.routeName,
-                        arguments: Places2ScreenArgs(_places[index]));
-                  },
-                  child: placeContainer(places[index], width, 0.2 * height),
-                ),
-                _addFav(places[index], 0.05 * height, width),
-                SizedBox(height: 5,)
-              ]
-          );},
-      )
-    );
+        height: 0.8 * height,
+        width: 0.8 * width,
+        child: ListView.builder(
+          itemCount: places.length,
+          itemBuilder: (context, index) {
+            return Column(children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, Places2Screen.routeName,
+                      arguments: Places2ScreenArgs(_places[index]));
+                },
+                child: placeContainer(places[index], width, 0.2 * height),
+              ),
+              _addFav(places[index], 0.05 * height, width),
+              SizedBox(
+                height: 5,
+              )
+            ]);
+          },
+        ));
   }
 
   // accounting
@@ -548,7 +547,11 @@ class _HomeScreen extends State<HomeScreen> {
         var split = interest.split(",");
         for (String s in split) {
           var result = await _placesApi.nearbySearchFromText(
-              coor.latitude.toString(), coor.longitude.toString(), 10000, s, "");
+              coor.latitude.toString(),
+              coor.longitude.toString(),
+              10000,
+              s,
+              "");
           for (var i in result!) {
             _mixPlaces.add(i);
           }
@@ -563,7 +566,8 @@ class _HomeScreen extends State<HomeScreen> {
         _isLoaded = true;
       });
     } else {
-      showAlert(context, "Location Permission Error", "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+      showAlert(context, "Location Permission Error",
+          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
     }
   }
 
@@ -579,24 +583,20 @@ class _HomeScreen extends State<HomeScreen> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children:[
-                          topBar("home", height, width, 'assets/img/homeTop.png'),
-                          SizedBox(height: 10),
-                          textMajor("find places", Colors.black, 26),
-                          _searchTools(0.80 * width, 0.3 * height),
-                          Image.asset("assets/img/stringAccent.png"),
-                          textMajor("explore", Colors.black, 26),
-                          recommendedList(_places, height, width),
-                          SizedBox(height: 20)
-                        ]
-                    )
-                )
-            )
-    ) :
-    Container(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+                        children: [
+                  topBar("home", height, width, 'assets/img/homeTop.png'),
+                  SizedBox(height: 10),
+                  textMajor("find places", Colors.black, 26),
+                  _searchTools(0.80 * width, 0.3 * height),
+                  Image.asset("assets/img/stringAccent.png"),
+                  textMajor("explore", Colors.black, 26),
+                  recommendedList(_places, height, width),
+                  SizedBox(height: 20)
+                ]))))
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }
