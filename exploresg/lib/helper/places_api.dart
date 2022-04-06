@@ -105,6 +105,7 @@ class PlacesApi {
             photos.add(
                 "$placesPhotoURL?maxwidth=$imageWidth&photo_reference=$imageRef&key=$API_KEY");
           }
+
           var opening = n["opening_hours"];
           bool on = false;
           var opening_hours;
@@ -126,8 +127,11 @@ class PlacesApi {
               photos,
               on,
               n["price_level"]);
+
+        if (opening_hours != null) {
           place.setOpeningHours(opening_hours.cast<String>());
         }
+
         return place;
       } else {
         print(result["status"]);

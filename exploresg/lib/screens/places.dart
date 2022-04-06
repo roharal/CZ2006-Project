@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:exploresg/helper/favourites_controller.dart';
 
 class Places2ScreenArgs {
   final Place place;
@@ -44,10 +48,24 @@ class _Places2Screen extends State<Places2Screen> {
 
   //String _curExpStatus;
   String dropdownValue = 'explored';
+  FavouritesController _favouritesController = FavouritesController();
+  FirebaseApi _firebaseApi = FirebaseApi();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  AuthController _auth = AuthController();
+  List<String> _favourites = [];
+  bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    _init();
+  }
+
+  void _init() async {
+    _favourites = await _favouritesController.getFavouritesList();
+    setState(() {
+      _isLoaded = true;
+    });
   }
 
   Widget _upVec() {
@@ -74,7 +92,7 @@ class _Places2Screen extends State<Places2Screen> {
         ));
   }
 
-  Widget _placeImg() {
+  Widget _placeImg(Place place) {
     return Container(
         height: 178,
         width: 304,
@@ -82,7 +100,9 @@ class _Places2Screen extends State<Places2Screen> {
           color: Colors.grey,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Image.asset('assets/img/catSafari.png'));
+        child: place.images.length > 0
+            ? Image.network(place.images[0])
+            : Image.asset('assets/img/catsafari.png'));
   }
 
   Widget _ratings() {
@@ -105,22 +125,30 @@ class _Places2Screen extends State<Places2Screen> {
         ));
   }
 
-  Widget _starRatings() {
+  Widget _starRatings(Place place) {
     return Container(
         padding: const EdgeInsets.fromLTRB(40, 0, 40, 10),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Image.asset('assets/img/ratingStars.png'),
+          RatingBarIndicator(
+            rating: place.ratings,
+            itemBuilder: (context, index) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            itemCount: 5,
+            itemSize: 20,
+            direction: Axis.horizontal,
+          ),
           Image.asset('assets/img/ratingStars.png')
         ]));
   }
 
-  Widget _address() {
+  Widget _address(Place place) {
     return Container(
         padding: const EdgeInsets.fromLTRB(25, 5, 40, 0),
         child: Column(children: [
-          Text(
-              "address: 110 Turf Club Rd, Singapore 288000 \nhours: Open \nphone: +65 6314 9363 \ndescription: Dog day care center in Singapore \nsee reviews",
+          Text(place.placeAddress,
               style: TextStyle(
                 fontFamily: 'AvenirLtStd',
                 fontSize: 14,
@@ -128,12 +156,59 @@ class _Places2Screen extends State<Places2Screen> {
         ]));
   }
 
-  Widget _addToFav() {
+  Widget _addFav(Place place, double height, double width) {
     return Container(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Image.asset('assets/img/placesFav.png')],
-    ));
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+          Row(children: [
+            InkWell(
+                onTap: () async {
+                  await _favouritesController.addOrRemoveFav(place.id);
+                  _favourites = await _favouritesController.getFavouritesList();
+                  setState(() {
+                    place.likes = !place.likes;
+                    print(_favourites);
+                  });
+                  print(place.likes);
+                },
+                child: _favourites.contains(place.id)
+                    ? Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : Icon(
+                        Icons.favorite_border,
+                        color: Colors.grey,
+                      )),
+            SizedBox(
+              width: 10,
+            ),
+            textMinor("add to favourites", Colors.black)
+          ])
+        ]));
+  }
+
+  Widget recommendedList(List<Place> places, double height, double width) {
+    return Container(
+        height: 0.8 * height,
+        width: 0.8 * width,
+        child: ListView.builder(
+          itemCount: places.length,
+          itemBuilder: (context, index) {
+            return Column(children: [
+              InkWell(
+                onTap: () {},
+                child: placeContainer(places[index], width, 0.3 * height),
+              ),
+              _addFav(places[index], 0.05 * height, width),
+              SizedBox(
+                height: 5,
+              )
+            ]);
+          },
+        ));
   }
 
   Widget _lowVec() {
@@ -327,84 +402,77 @@ class _Places2Screen extends State<Places2Screen> {
     }
   }
 
-  // Widget _distanceFilter() {
-  //   RangeValues _currentRangeValues = RangeValues(0, 10);
-  //   return RangeSlider(
-  //     //values: RangeValues(_startValue, _endValue),
-  //     values: _currentRangeValues,
-  //     min: 0,
-  //     max: 10,
-  //     labels: RangeLabels(
-  //       // _startValue.round().toString(),
-  //       // _endValue.round().toString(),
-  //       _currentRangeValues.start.round().toString(),
-  //       _currentRangeValues.end.round().toString(),
-  //     ),
-  //     onChanged: (RangeValues values) {
-  //       setState(() {
-  //         // _currentRangeValues = values;
-  //         print(_currentRangeValues);
-  //         // _startValue = values.start;
-  //         // _endValue = values.end;
-  //         _currentRangeValues = values;
-  //       });
-  //     },
-  //   );
-  // }
-
   static const double _hPad = 16.0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
-        body: Column(children: [
-          Expanded(
-              child: SingleChildScrollView(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                _upVec(),
-                _back(),
-                Container(child: textMajor("Cat Safari", Colors.black, 36)),
-                _placeImg(),
-                _ratings(),
-                _starRatings(),
-                _address(),
-                _addToFav(),
-                _lowVec(),
-                Container(
-                    //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
-                    child: Text("my details",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'MadeSunflower',
-                          fontSize: 26,
-                        ))),
-                Container(
-                  padding: EdgeInsets.fromLTRB(25, 5, 5, 5),
-                  child: Column(children: [
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            Text("my status: ",
-                                style: TextStyle(
-                                  fontFamily: 'AvenirLtStd',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            SizedBox(width: 5),
-                            _dropDown(),
-                            //_renderDropdown();
-                          ],
-                        ))
-                  ]),
-                ),
-                _statusText(),
-                //_distanceFilter()
-              ])))
-        ]));
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    // List<DropdownMenuItem<String>> get dropdownItems {
+    //   List<DropdownMenuItem<String>> statusItems = [
+    //     DropdownMenuItem(child: Text("Unexplored"), value: "USA"),
+    //     DropdownMenuItem(child: Text("To explore"), value: "Canada"),
+    //     DropdownMenuItem(child: Text("Explored"), value: "Brazil"),
+    //   ];
+    //   return statusItems;
+    // }
+
+    return _isLoaded
+        ? Scaffold(
+            backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
+            body: Column(children: [
+              Expanded(
+                  child: SingleChildScrollView(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                    _upVec(),
+                    _back(),
+                    Container(
+                        child: textMajor(
+                            widget.place.placeName, Colors.black, 36)),
+                    _placeImg(widget.place),
+                    _ratings(),
+                    _starRatings(widget.place),
+                    _address(widget.place),
+                    _addFav(widget.place, 0.05 * height, width),
+                    _lowVec(),
+                    Container(
+                        //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
+                        child: Text("my details",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'MadeSunflower',
+                              fontSize: 26,
+                            ))),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(25, 5, 5, 5),
+                      child: Column(children: [
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: [
+                                Text("my status: ",
+                                    style: TextStyle(
+                                      fontFamily: 'AvenirLtStd',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                                SizedBox(width: 5),
+                                _dropDown(),
+                                //_renderDropdown();
+                              ],
+                            ))
+                      ]),
+                    ),
+                    _statusText()
+                  ])))
+            ]))
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }
