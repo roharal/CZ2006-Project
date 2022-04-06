@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:flutter_svg/svg.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
+class ForgotPasswordScreen extends StatefulWidget {
   static const routeName = "/forgetPW";
   @override
-  State<ForgotPasswordPage> createState() => _ForgetPasswordPageState();
+  State<ForgotPasswordScreen> createState() => _ForgetPasswordScreenState();
 }
 
-class _ForgetPasswordPageState extends State<ForgotPasswordPage> {
+class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget _topBar(double width) {
     return FittedBox(
         fit: BoxFit.fill,
@@ -40,8 +40,8 @@ class _ForgetPasswordPageState extends State<ForgotPasswordPage> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         textMajor("reset password", Color(0xff22254C), 30),
         SizedBox(height: 30),
-        textMinor('type your email', Color(0xff6488E5)),
-        SizedBox(height: 10),
+        textMinor('type your email...', Color(0xff6488E5)),
+        SizedBox(height: 30),
         _emailTextField()
       ]),
     );
@@ -85,12 +85,12 @@ class _ForgetPasswordPageState extends State<ForgotPasswordPage> {
                 children: [
                   Positioned(child: _topBar(_width)),
                   Positioned(
-                    top: _height * 0.25,
+                    top: _height * 0.3,
                     child: _resetPassword(_width, _height),
                   ),
                 ],
               ),
-              SizedBox(height: _height * 0.28),
+              SizedBox(height: _height * 0.2),
               _returnLogin()
             ],
           ),

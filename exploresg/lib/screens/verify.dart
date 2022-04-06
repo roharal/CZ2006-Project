@@ -37,11 +37,24 @@ class _VerifyScreenState extends State<VerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _height = MediaQuery.of(context).size.height;
+    final _width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Center(
-            child: textMinor(
-                'email has been sent to ${user.email} please verify',
-                Colors.black)));
+      backgroundColor: createMaterialColor(Color(0xfffffcec)),
+      body: Container(
+        height: _height,
+        width: _width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            textMinor('email sent to ${user.email}', Color(0xff6488E5)),
+            SizedBox(height: 10),
+            textMinor('please verify :)', Color(0xff6488E5)),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> checkEmailVerified() async {
