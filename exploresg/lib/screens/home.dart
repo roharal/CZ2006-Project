@@ -1,6 +1,4 @@
-import 'package:exploresg/helper/auth.dart';
-import 'package:exploresg/helper/firebase_api.dart';
-import 'package:exploresg/helper/places_api.dart';
+import 'package:exploresg/helper/recommendations_controller.dart';
 import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +8,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'aftersearch.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:exploresg/helper/favourites_controller.dart';
 
 Future<Position> _determinePosition() async {
   bool serviceEnabled;
@@ -68,16 +67,25 @@ class _HomeScreen extends State<HomeScreen> {
   String _placetypedropdownValue = 'place type';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
-  PlacesApi _placesApi = PlacesApi();
-  FirebaseApi _firebaseApi = FirebaseApi();
-  Auth _auth = Auth();
+  RecommendationsController _recommendationsController =
+      RecommendationsController();
   List<Place> _places = [];
   bool _isLoaded = false;
+  FavouritesController _favouritesController = FavouritesController();
+  List<String> _favourites = [];
 
   @override
   void initState() {
     super.initState();
-    _loadRecommendations();
+    _loadPage();
+  }
+
+  Future<void> _loadPage() async {
+    _places = await _recommendationsController.getRecommendationsList();
+    _favourites = await _favouritesController.getFavouritesList();
+    setState(() {
+      _isLoaded = true;
+    });
   }
 
   InputDecoration dropdownDeco = InputDecoration(
@@ -413,22 +421,24 @@ class _HomeScreen extends State<HomeScreen> {
   Widget _addFav(Place place, double height, double width) {
     return Container(
         color: Colors.white,
-        width: width,
-        height: height,
         child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(children: [
                 InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      await _favouritesController.addOrRemoveFav(place.id);
+                      _favourites =
+                          await _favouritesController.getFavouritesList();
+
                       print("<3 pressed");
                       setState(() {
                         place.likes = !place.likes;
                       });
                       print(place.likes);
                     },
-                    child: place.likes
+                    child: _favourites.contains(place.id)
                         ? Icon(
                             Icons.favorite,
                             color: Colors.red,
@@ -467,37 +477,6 @@ class _HomeScreen extends State<HomeScreen> {
             ]);
           },
         ));
-  }
-
-  void _loadRecommendations() async {
-    String uid = _auth.getCurrentUser()!.uid;
-    String interest = "";
-    List<Place> _mixPlaces = [];
-    await _firebaseApi
-        .getDocumentByIdFromCollection("users", uid)
-        .then((value) {
-      interest = value["interest"];
-    }).onError((error, stackTrace) {
-      showAlert(context, "Retrieve User Profile", error.toString());
-    });
-    if (interest != "") {
-      var split = interest.split(",");
-      for (String s in split) {
-        var result = await _placesApi.nearbySearchFromText(
-            "1.4430557283012149", "103.80793159927359", 10000, s, "");
-        for (var i in result!) {
-          _mixPlaces.add(i);
-        }
-      }
-      _mixPlaces = (_mixPlaces..shuffle());
-      while (_mixPlaces.length > 5) {
-        _mixPlaces.removeLast();
-      }
-    }
-    _places = _mixPlaces;
-    setState(() {
-      _isLoaded = true;
-    });
   }
 
   @override

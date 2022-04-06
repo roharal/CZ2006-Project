@@ -15,27 +15,19 @@ Text textMajor(String text, Color color, double size) {
 }
 
 Text textMinor(String text, Color color) {
-  return Text(
-    text,
-    style: TextStyle(
-      fontFamily: 'AvenirLtStd',
-      fontSize: 14,
-      color: color
-    )
-  );
+  return Text(text,
+      style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14, color: color));
 }
 
 Text textMinorBold(String text, Color color) {
-  return Text(
-      text,
+  return Text(text,
       style: TextStyle(
           fontFamily: 'AvenirLtStd',
           fontWeight: FontWeight.bold,
           fontSize: 14,
-          color: color
-      )
-  );
+          color: color));
 }
+
 MaterialColor createMaterialColor(Color color) {
   List strengths = <double>[.05];
   final swatch = <int, Color>{};
@@ -80,39 +72,38 @@ Widget topBar(String title, double height, double width, String imagePath) {
 void showAlert(BuildContext context, String title, String content) async {
   Platform.isIOS
       ? await showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: new Text(title),
-          content: new Text(content),
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      })
+          context: context,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: new Text(title),
+              content: new Text(content),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  isDefaultAction: true,
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          })
       : await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: new Text(title),
-          content: new Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      }
-  );
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: new Text(title),
+              content: new Text(content),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
 }
 
 Widget progressionIndicator() {
@@ -201,9 +192,11 @@ class _SearchState extends State<Search> {
                 focusColor: Colors.white,
                 items: [
                   DropdownMenuItem(
-                      child: textMinor("filter by", Colors.grey), value: "filter by"),
+                      child: textMinor("filter by", Colors.grey),
+                      value: "filter by"),
                   DropdownMenuItem(
-                      child: textMinor("distance", Colors.grey), value: "distance")
+                      child: textMinor("distance", Colors.grey),
+                      value: "distance")
                 ],
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -227,9 +220,11 @@ class _SearchState extends State<Search> {
                 focusColor: Colors.white,
                 items: [
                   DropdownMenuItem(
-                      child: textMinor("sort by", Colors.grey), value: "sort by"),
+                      child: textMinor("sort by", Colors.grey),
+                      value: "sort by"),
                   DropdownMenuItem(
-                      child: textMinor("distance", Colors.grey), value: "distance")
+                      child: textMinor("distance", Colors.grey),
+                      value: "distance")
                 ],
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -264,7 +259,9 @@ Widget placeContainer(Place place, double width, double height) {
             ClipRRect(
                 borderRadius: BorderRadius.circular(16.0),
                 child: Image.network(
-                  place.images.length != 0 ? place.images[0] : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
+                  place.images.length != 0
+                      ? place.images[0]
+                      : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
                   fit: BoxFit.fill,
                   height: 100,
                   width: 100,
