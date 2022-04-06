@@ -560,6 +560,7 @@ class _AfterSearchState extends State<AfterSearchScreen> {
       showAlert(context, "Location Permission Error",
           "Location permission either disable or disabled. Please enable to enjoy the full experience.");
     }
+  }
 
   Widget _printSearch(List<Place> places, double height, double width) {
     return Container(

@@ -128,18 +128,19 @@ class PlacesApi {
               on,
               n["price_level"]);
 
-        if (opening_hours != null) {
-          place.setOpeningHours(opening_hours.cast<String>());
-        }
+          if (opening_hours != null) {
+            place.setOpeningHours(opening_hours.cast<String>());
+          }
 
-        return place;
+          return place;
+        } else {
+          print(result["status"]);
+          return place;
+        }
       } else {
-        print(result["status"]);
+        print(response.statusCode);
         return place;
       }
-    } else {
-      print(response.statusCode);
-      return place;
     }
   }
 }

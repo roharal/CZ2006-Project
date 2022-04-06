@@ -431,7 +431,6 @@ class _HomeScreen extends State<HomeScreen> {
   Widget _addFav(Place place, double height, double width) {
     return Container(
         color: Colors.white,
-
         width: width,
         height: height,
         child: Row(
@@ -491,145 +490,47 @@ class _HomeScreen extends State<HomeScreen> {
         ));
   }
 
-  // accounting
-  // airport
-  // amusement_park
-  // aquarium
-  // art_gallery
-  // atm
-  // bakery
-  // bank
-  // bar
-  // beauty_salon
-  // bicycle_store
-  // book_store
-  // bowling_alley
-  // bus_station
-  // cafe
-  // campground
-  // car_dealer
-  // car_rental
-  // car_repair
-  // car_wash
-  // casino
-  // cemetery
-  // church
-  // city_hall
-  // clothing_store
-  // convenience_store
-  // courthouse
-  // dentist
-  // department_store
-  // doctor
-  // drugstore
-  // electrician
-  // electronics_store
-  // embassy
-  // fire_station
-  // florist
-  // funeral_home
-  // furniture_store
-  // gas_station
-  // gym
-  // hair_care
-  // hardware_store
-  // hindu_temple
-  // home_goods_store
-  // hospital
-  // insurance_agency
-  // jewelry_store
-  // laundry
-  // lawyer
-  // library
-  // light_rail_station
-  // liquor_store
-  // local_government_office
-  // locksmith
-  // lodging
-  // meal_delivery
-  // meal_takeaway
-  // mosque
-  // movie_rental
-  // movie_theater
-  // moving_company
-  // museum
-  // night_club
-  // painter
-  // park
-  // parking
-  // pet_store
-  // pharmacy
-  // physiotherapist
-  // plumber
-  // police
-  // post_office
-  // primary_school
-  // real_estate_agency
-  // restaurant
-  // roofing_contractor
-  // rv_park
-  // school
-  // secondary_school
-  // shoe_store
-  // shopping_mall
-  // spa
-  // stadium
-  // storage
-  // store
-  // subway_station
-  // supermarket
-  // synagogue
-  // taxi_stand
-  // tourist_attraction
-  // train_station
-  // transit_station
-  // travel_agency
-  // university
-  // veterinary_care
-  // zoo
-  // String lat, String long, int radius, String type, String input
-
-  void _loadRecommendations() async {
-    String uid = _auth.getCurrentUser()!.uid;
-    String interest = "";
-    Locator locator = new Locator();
-    var coor = await locator.getCurrentLocation();
-    if (coor != null) {
-      List<Place> _mixPlaces = [];
-      await _firebaseApi
-          .getDocumentByIdFromCollection("users", uid)
-          .then((value) {
-        interest = value["interest"];
-      }).onError((error, stackTrace) {
-        showAlert(context, "Retrieve User Profile", error.toString());
-      });
-      if (interest != "") {
-        var split = interest.split(",");
-        for (String s in split) {
-          var result = await _placesApi.nearbySearchFromText(
-              coor.latitude.toString(),
-              coor.longitude.toString(),
-              10000,
-              s,
-              "");
-          for (var i in result!) {
-            _mixPlaces.add(i);
-          }
-        }
-        _mixPlaces = (_mixPlaces..shuffle());
-        while (_mixPlaces.length > 5) {
-          _mixPlaces.removeLast();
-        }
-      }
-      _places = _mixPlaces;
-      setState(() {
-        _isLoaded = true;
-      });
-    } else {
-      showAlert(context, "Location Permission Error",
-          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
-    }
-  }
+  // void _loadRecommendations() async {
+  //   String uid = _auth.getCurrentUser()!.uid;
+  //   String interest = "";
+  //   Locator locator = new Locator();
+  //   var coor = await locator.getCurrentLocation();
+  //   if (coor != null) {
+  //     List<Place> _mixPlaces = [];
+  //     await _firebaseApi
+  //         .getDocumentByIdFromCollection("users", uid)
+  //         .then((value) {
+  //       interest = value["interest"];
+  //     }).onError((error, stackTrace) {
+  //       showAlert(context, "Retrieve User Profile", error.toString());
+  //     });
+  //     if (interest != "") {
+  //       var split = interest.split(",");
+  //       for (String s in split) {
+  //         var result = await _placesApi.nearbySearchFromText(
+  //             coor.latitude.toString(),
+  //             coor.longitude.toString(),
+  //             10000,
+  //             s,
+  //             "");
+  //         for (var i in result!) {
+  //           _mixPlaces.add(i);
+  //         }
+  //       }
+  //       _mixPlaces = (_mixPlaces..shuffle());
+  //       while (_mixPlaces.length > 5) {
+  //         _mixPlaces.removeLast();
+  //       }
+  //     }
+  //     _places = _mixPlaces;
+  //     setState(() {
+  //       _isLoaded = true;
+  //     });
+  //   } else {
+  //     showAlert(context, "Location Permission Error",
+  //         "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
