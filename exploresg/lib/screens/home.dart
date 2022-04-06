@@ -1,14 +1,62 @@
 
+import 'package:exploresg/helper/recommendations_controller.dart';
+
+
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/screens/aftersearch.dart';
+
 import 'package:exploresg/screens/places.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
+
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'aftersearch.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:exploresg/helper/favourites_controller.dart';
+
+Future<Position> _determinePosition() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  // Test if location services are enabled.
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled don't continue
+    // accessing the position and request users of the
+    // App to enable the location services.
+    return Future.error('Location services are disabled.');
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permissions are denied, next time you could try
+      // requesting permissions again (this is also where
+      // Android's shouldShowRequestPermissionRationale
+      // returned true. According to Android guidelines
+      // your App should show an explanatory UI now.
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    // Permissions are denied forever, handle appropriately.
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
+
+  // When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+  return await Geolocator.getCurrentPosition();
+}
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -30,16 +78,27 @@ class _HomeScreen extends State<HomeScreen> {
   String _placetypedropdownValue = 'place type';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
-  PlacesApi _placesApi = PlacesApi();
-  FirebaseApi _firebaseApi = FirebaseApi();
-  AuthController _auth = AuthController();
+
+  RecommendationsController _recommendationsController =
+      RecommendationsController();
+
   List<Place> _places = [];
   bool _isLoaded = false;
+  FavouritesController _favouritesController = FavouritesController();
+  List<String> _favourites = [];
 
   @override
   void initState() {
     super.initState();
-    _loadRecommendations();
+    _loadPage();
+  }
+
+  Future<void> _loadPage() async {
+    _places = await _recommendationsController.getRecommendationsList();
+    _favourites = await _favouritesController.getFavouritesList();
+    setState(() {
+      _isLoaded = true;
+    });
   }
 
   InputDecoration dropdownDeco = InputDecoration(
@@ -373,37 +432,41 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-      color: Colors.white,
-      width: width,
-      height: height,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(children: [
-            InkWell(
-                onTap: () {
-                  print("<3 pressed");
-                  setState(() {
-                    place.likes = !place.likes;
-                  });
-                  print(place.likes);
-                },
-                child: place.likes
-                    ? Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      )
-                    : Icon(
-                        Icons.favorite_border,
-                        color: Colors.grey,
-                      )),
-            SizedBox(
-              width: 10,
-            ),
-            textMinor("add to favourites", Colors.black)
-          ])
-        ]));
+
+        color: Colors.white,
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(children: [
+                InkWell(
+                    onTap: () async {
+                      await _favouritesController.addOrRemoveFav(place.id);
+                      _favourites =
+                          await _favouritesController.getFavouritesList();
+
+                      print("<3 pressed");
+                      setState(() {
+                        place.likes = !place.likes;
+                      });
+                      print(place.likes);
+                    },
+                    child: _favourites.contains(place.id)
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            color: Colors.grey,
+                          )),
+                SizedBox(
+                  width: 10,
+                ),
+                textMinor("add to favourites", Colors.black)
+              ])
+            ]));
+
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
@@ -529,43 +592,6 @@ class _HomeScreen extends State<HomeScreen> {
   // veterinary_care
   // zoo
   // String lat, String long, int radius, String type, String input
-
-  void _loadRecommendations() async {
-    String uid = _auth.getCurrentUser()!.uid;
-    String interest = "";
-    Locator locator = new Locator();
-    var coor = await locator.getCurrentLocation();
-    if (coor != null) {
-      List<Place> _mixPlaces = [];
-      await _firebaseApi
-          .getDocumentByIdFromCollection("users", uid)
-          .then((value) {
-        interest = value["interest"];
-      }).onError((error, stackTrace) {
-        showAlert(context, "Retrieve User Profile", error.toString());
-      });
-      if (interest != "") {
-        var split = interest.split(",");
-        for (String s in split) {
-          var result = await _placesApi.nearbySearchFromText(
-              coor.latitude.toString(), coor.longitude.toString(), 10000, s, "");
-          for (var i in result!) {
-            _mixPlaces.add(i);
-          }
-        }
-        _mixPlaces = (_mixPlaces..shuffle());
-        while (_mixPlaces.length > 5) {
-          _mixPlaces.removeLast();
-        }
-      }
-      _places = _mixPlaces;
-      setState(() {
-        _isLoaded = true;
-      });
-    } else {
-      showAlert(context, "Location Permission Error", "Location permission either disable or disabled. Please enable to enjoy the full experience.");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
