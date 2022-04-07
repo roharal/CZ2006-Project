@@ -49,7 +49,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       context: context,
       builder: (context) {
         final TextEditingController _textEditingController =
-            TextEditingController();
+        TextEditingController();
         return AlertDialog(
           content: Form(
               key: _formkey,
@@ -79,7 +79,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 if (_formkey.currentState!.validate()) {
                   _firebaseApi.updateDocumentByIdFromCollection("users",
                       _userModel.id, {attr: _textEditingController.text});
-                  Future.delayed(Duration(milliseconds: 100), () {
+                  Future.delayed(Duration(milliseconds: 1000), () {
                     setState(() {
                       switch (attr) {
                         case "username":
@@ -114,8 +114,8 @@ class _ProfileScreen extends State<ProfileScreen> {
             backgroundColor: MaterialStateProperty.all(Colors.grey),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-            ))));
+                  borderRadius: BorderRadius.circular(18.0),
+                ))));
   }
 
   Widget _changePFP() {
@@ -154,240 +154,269 @@ class _ProfileScreen extends State<ProfileScreen> {
           backgroundColor: MaterialStateProperty.all(Colors.grey),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-          ))),
+                borderRadius: BorderRadius.circular(18.0),
+              ))),
     );
+  }
+
+  Widget _changeEmail(width) {
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("email address",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: "AvenirLtStd",
+                      fontWeight: FontWeight.bold,
+                    )),
+                textMinor(_userModel.email, Colors.black)
+              ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () async {
+                await showInformationDialog(context, "email");
+              },
+              style: ButtonStyle(
+                  backgroundColor:
+                  MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<
+                      RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      )))))
+    ]);
+  }
+
+  Widget _changePassword(width){
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("password",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: "AvenirLtStd",
+                      fontWeight: FontWeight.bold,
+                    )),
+                Text("must be between 8-20 characters",
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: "AvenirLtStd",
+                    ))
+              ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChangePasswordScreen(),
+                ));
+              },
+              style: ButtonStyle(
+                  backgroundColor:
+                  MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<
+                      RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            18.0),
+                      )))))
+    ]);
+  }
+
+  Widget _manageInterests(width){
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("manage interest",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: "AvenirLtStd",
+                      fontWeight: FontWeight.bold,
+                    ))
+              ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: null,
+              style: ButtonStyle(
+                  backgroundColor:
+                  MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<
+                      RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            18.0),
+                      )))))
+    ]);
+  }
+
+  Widget _signOut(width){
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Sign out from account",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: "AvenirLtStd",
+                      fontWeight: FontWeight.bold,
+                    ))
+              ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("signout",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () {
+                _auth.logOut();
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamedAndRemoveUntil(
+                    LoginScreen.routeName,
+                        (Route<dynamic> route) => false);
+              },
+              style: ButtonStyle(
+                  backgroundColor:
+                  MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<
+                      RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            18.0),
+                      )))))
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery
+        .of(context)
+        .size
+        .height;
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return _isLoaded
         ? Scaffold(
-            backgroundColor: createMaterialColor(Color(0xfffffcec)),
-            body: Container(
-              child: SingleChildScrollView(
-                  child: Container(
-                      child: Column(
-                children: [
-                  topBar(
-                      "my account", height, width, 'assets/img/accountTop.png'),
-                  FutureBuilder(
-                    future: _userModel.picture == "" ? storage.downloadURL("user.png", "adminAssets"):storage.downloadURL(_userModel.picture, "user_pfp"),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      print("Hello" + snapshot.data.toString());
-                      print(_userModel.picture);
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          width: width * 1 / 3,
-                          height: width * 1 / 3,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
+      backgroundColor: createMaterialColor(Color(0xfffffcec)),
+      body: Container(
+        child: SingleChildScrollView(
+            child: Container(
+                child: Column(
+                  children: [
+                    topBar(
+                        "my account", height, width,
+                        'assets/img/accountTop.png'),
+                    FutureBuilder(
+                      future: _userModel.picture == "" ? storage.downloadURL(
+                          "user.png", "adminAssets") : storage.downloadURL(
+                          _userModel.picture, "user_pfp"),
+                      builder:
+                          (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        print("Hello" + snapshot.data.toString());
+                        print(_userModel.picture);
+                        if (snapshot.connectionState == ConnectionState.done &&
+                            snapshot.hasData) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            width: width * 1 / 3,
+                            height: width * 1 / 3,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image.network(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                        );
-                      }
+                          );
+                        }
 
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          !snapshot.hasData) {
-                        return CircularProgressIndicator();
-                      }
-                      return Container();
-                    },
-                  ),
-                  Text("@" + _userModel.username,
-                      style:
-                          TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _changeUsername(),
-                      _changePFP(),
-                    ],
-                  ),
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting ||
+                            !snapshot.hasData) {
+                          return CircularProgressIndicator();
+                        }
+                        return Container();
+                      },
+                    ),
+                    Text("@" + _userModel.username,
+                        style:
+                        TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _changeUsername(),
+                        _changePFP(),
+                      ],
+                    ),
 
-                  Container(
-                      width: double.infinity,
-                      child: Image(
-                          image: AssetImage("assets/img/stringAccent.png"),
-                          fit: BoxFit.fitWidth)),
-                  Container(
-                      padding: EdgeInsets.all(5),
-                      child: Text("Account settings",
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontFamily: "AvenirLtStd",
-                              fontWeight: FontWeight.bold))),
-                  Row(children: [
                     Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("email address",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              textMinor(_userModel.email, Colors.black)
-                            ])),
+                        width: double.infinity,
+                        child: Image(
+                            image: AssetImage("assets/img/stringAccent.png"),
+                            fit: BoxFit.fitWidth)),
                     Container(
-                        child: ElevatedButton(
-                            child: Text("change",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: () async {
-                              await showInformationDialog(context, "email");
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
-                  Row(children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("password",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              Text("must be between 8-20 characters",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontFamily: "AvenirLtStd",
-                                  ))
-                            ])),
-                    Container(
-                        child: ElevatedButton(
-                            child: Text("change",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ChangePasswordScreen(),
-                              ));
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
-                  Row(children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("manage interest",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                            ])),
-                    Container(
-                        child: ElevatedButton(
-                            child: Text("change",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: null,
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
-                  Row(children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Sign out from account",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                            ])),
-                    Container(
-                        child: ElevatedButton(
-                            child: Text("signou",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: () {
-                              _auth.logOut();
-                              Navigator.of(context, rootNavigator: true)
-                                  .pushNamedAndRemoveUntil(
-                                      LoginScreen.routeName,
-                                      (Route<dynamic> route) => false);
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
-                  Container(height: 20), //Space for the nav bar to scroll
-                ],
-              ))),
-            ),
-          )
+                        padding: EdgeInsets.all(5),
+                        child: Text("Account settings",
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontFamily: "AvenirLtStd",
+                                fontWeight: FontWeight.bold))),
+                    _changePassword(width),
+                    _manageInterests(width),
+                    _signOut(width),
+                    Container(height: 20), //Space for the nav bar to scroll
+                  ],
+                ))),
+      ),
+    )
         : Container(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
