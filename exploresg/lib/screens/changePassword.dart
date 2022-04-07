@@ -1,4 +1,3 @@
-import 'package:exploresg/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,9 +22,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   Widget _returnLogin() {
     return GestureDetector(
-      child: textMinor('return to login page', Color(0xff6488E5)),
+      child: textMinor('return to profile', Color(0xff6488E5)),
       onTap: () {
-        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+        Navigator.pop(context);
       },
     );
   }
@@ -40,7 +39,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textMajor("reset password", Color(0xff22254C), 30),
+        textMajor("change password", Color(0xff22254C), 30),
         SizedBox(height: 30),
         _emailTextField(),
         _sendRequest()
@@ -87,7 +86,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   borderRadius: BorderRadius.circular(20))),
           onPressed: () {
             auth.sendPasswordResetEmail(email: _email);
-            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            Navigator.pop(context);
           },
           child: textMinor(
             'send request',

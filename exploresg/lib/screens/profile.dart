@@ -69,7 +69,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           actions: [
             TextButton(
               child: Text("Cancel"),
-              onPressed:(){
+              onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
@@ -81,16 +81,17 @@ class _ProfileScreen extends State<ProfileScreen> {
                       _userModel.id, {attr: _textEditingController.text});
                   Future.delayed(Duration(milliseconds: 100), () {
                     setState(() {
-                      switch(attr){
-                        case "username": {
-                          _userModel.username = _textEditingController.text;
-                        }
-                        break;
-                        case "email":{
-                          _userModel.email = _textEditingController.text;
-                        }
+                      switch (attr) {
+                        case "username":
+                          {
+                            _userModel.username = _textEditingController.text;
+                          }
+                          break;
+                        case "email":
+                          {
+                            _userModel.email = _textEditingController.text;
+                          }
                       }
-
                     });
                   });
                   Navigator.of(context).pop();
@@ -100,6 +101,61 @@ class _ProfileScreen extends State<ProfileScreen> {
           ],
         );
       },
+    );
+  }
+
+  Widget _changeUsername() {
+    return ElevatedButton(
+        child: Text("Change username"),
+        onPressed: () async {
+          await showInformationDialog(context, "username");
+        },
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.grey),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ))));
+  }
+
+  Widget _changePFP() {
+    return ElevatedButton(
+      onPressed: () async {
+        final results = await FilePicker.platform.pickFiles(
+            allowMultiple: false,
+            type: FileType.custom,
+            allowedExtensions: ['png', 'jpg']);
+        if (results == null) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('No file selected'),
+          ));
+          return null;
+        }
+        final path = results.files.single.path!;
+        final fileName = _userModel.username + "_pfp";
+        final updateUserMap = {'picture': fileName};
+
+        print(path);
+        print(fileName);
+
+        storage
+            .uploadFile(path, fileName, "user_pfp")
+            .then((value) => print('Done'));
+        _firebaseApi.updateDocumentByIdFromCollection(
+            "users", _userModel.id, updateUserMap);
+        Future.delayed(Duration(milliseconds: 100), () {
+          setState(() {
+            _userModel.picture = fileName;
+          });
+        });
+      },
+      child: Text("Change profile picture"),
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.grey),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          ))),
     );
   }
 
@@ -117,92 +173,43 @@ class _ProfileScreen extends State<ProfileScreen> {
                 children: [
                   topBar(
                       "my account", height, width, 'assets/img/accountTop.png'),
-                          FutureBuilder(
-                            future: storage.downloadURL(_userModel.picture, "user_pfp"),
-                            builder:
-                                (BuildContext context, AsyncSnapshot<String> snapshot) {
-                              if (snapshot.connectionState == ConnectionState.done &&
-                                  snapshot.hasData) {
-                                return Container(
-                                  padding: EdgeInsets.symmetric(vertical: 5),
-                                  width: width * 1 / 3,
-                                  height: width * 1 / 3,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.network(
-                                      snapshot.data!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (snapshot.connectionState == ConnectionState.waiting ||
-                                  !snapshot.hasData) {
-                                return CircularProgressIndicator();
-                              }
-                              return Container();
-                            },
+                  FutureBuilder(
+                    future: _userModel.picture == "" ? storage.downloadURL("user.png", "adminAssets"):storage.downloadURL(_userModel.picture, "user_pfp"),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      print("Hello" + snapshot.data.toString());
+                      print(_userModel.picture);
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.hasData) {
+                        return Container(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          width: width * 1 / 3,
+                          height: width * 1 / 3,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            ),
                           ),
+                        );
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          !snapshot.hasData) {
+                        return CircularProgressIndicator();
+                      }
+                      return Container();
+                    },
+                  ),
                   Text("@" + _userModel.username,
                       style:
                           TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                          child: Text("Change username"),
-                          onPressed: () async {
-                            await showInformationDialog(context, "username");
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.grey),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              )))),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final results = await FilePicker.platform.pickFiles(
-                              allowMultiple: false,
-                              type: FileType.custom,
-                              allowedExtensions: ['png', 'jpg']);
-                          if (results == null) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('No file selected'),
-                            ));
-                            return null;
-                          }
-                          final path = results.files.single.path!;
-                          final fileName = _userModel.username + "_pfp";
-                          final updateUserMap = {'picture': fileName};
-
-                          print(path);
-                          print(fileName);
-
-                          storage
-                              .uploadFile(path, fileName, "user_pfp")
-                              .then((value) => print('Done'));
-                          _firebaseApi.updateDocumentByIdFromCollection(
-                              "users", _userModel.id, updateUserMap);
-                          Future.delayed(Duration(milliseconds: 100), () {
-                            setState(() {
-                              _userModel.picture = fileName;
-                            });
-                          });
-                        },
-                        child: Text("Change profile picture"),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.grey),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                            ))),
-                      ),
+                      _changeUsername(),
+                      _changePFP(),
                     ],
                   ),
 
@@ -284,9 +291,9 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   fontFamily: "AvenirLtStd",
                                   fontWeight: FontWeight.bold,
                                 )),
-                            onPressed: (){
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>
-                                  ChangePasswordScreen(),
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ChangePasswordScreen(),
                               ));
                             },
                             style: ButtonStyle(
@@ -358,16 +365,19 @@ class _ProfileScreen extends State<ProfileScreen> {
                                 )),
                             onPressed: () {
                               _auth.logOut();
-                              Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (Route<dynamic> route) => false);
+                              Navigator.of(context, rootNavigator: true)
+                                  .pushNamedAndRemoveUntil(
+                                      LoginScreen.routeName,
+                                      (Route<dynamic> route) => false);
                             },
                             style: ButtonStyle(
                                 backgroundColor:
-                                MaterialStateProperty.all(Colors.grey),
+                                    MaterialStateProperty.all(Colors.grey),
                                 shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
+                                        RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18.0),
-                                    )))))
+                                  borderRadius: BorderRadius.circular(18.0),
+                                )))))
                   ]),
                   Container(height: 20), //Space for the nav bar to scroll
                 ],
