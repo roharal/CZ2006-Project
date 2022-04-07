@@ -7,6 +7,7 @@ import 'package:exploresg/screens/verify.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:exploresg/screens/interests.dart';
 import 'package:flutter/material.dart';
+import 'package:exploresg/screens/changePassword.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
         SignUpScreen.routeName: (context) => SignUpScreen(),
         InterestScreen.routeName: (context) => InterestScreen(),
         VerifyScreen.routeName: (context) => VerifyScreen(),
-        ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen()
+        ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
+        ChangePasswordScreen.routeName: (context) => ChangePasswordScreen()
       },
       onGenerateRoute: (RouteSettings settings) {
         assert(false, 'Need to implement ${settings.name}');
