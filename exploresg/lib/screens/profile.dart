@@ -317,10 +317,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   fontFamily: "AvenirLtStd",
                                   fontWeight: FontWeight.bold,
                                 )),
-                            onPressed: () {
-                              _auth.logOut();
-                              Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (Route<dynamic> route) => false);
-                            },
+                            onPressed: null,
                             style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all(Colors.grey),
@@ -329,6 +326,43 @@ class _ProfileScreen extends State<ProfileScreen> {
                                     RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18.0),
                                 )))))
+                  ]),
+                  Row(children: [
+                    Container(
+                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        width: width * (3 / 4),
+                        // color: Colors.red,
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Sign out from account",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontFamily: "AvenirLtStd",
+                                    fontWeight: FontWeight.bold,
+                                  ))
+                            ])),
+                    Container(
+                        child: ElevatedButton(
+                            child: Text("signou",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: "AvenirLtStd",
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            onPressed: () {
+                              _auth.logOut();
+                              Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (Route<dynamic> route) => false);
+                            },
+                            style: ButtonStyle(
+                                backgroundColor:
+                                MaterialStateProperty.all(Colors.grey),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                    )))))
                   ]),
                   Container(height: 20), //Space for the nav bar to scroll
                 ],
