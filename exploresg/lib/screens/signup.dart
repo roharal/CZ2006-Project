@@ -1,7 +1,7 @@
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/user.dart';
-import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/login.dart';
+import 'package:exploresg/screens/verify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:exploresg/helper/firebase_api.dart';
@@ -332,14 +332,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _createUser() async {
     UserModel user = UserModel("", _username, _first, _last, _email, "", "", "",
+
         false, false, "shopping_mall,cafe,park", "");
+
     await _firebaseApi.createUserFromEmail(user, _password).then((value) {
       setState(() {
         _isLoading = false;
       });
       if (value == null) {
         print("user created");
-        Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+        Navigator.pushReplacementNamed(context, VerifyScreen.routeName);
       } else {
         showAlert(context, "Sign Up Error", value.toString());
       }

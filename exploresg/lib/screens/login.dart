@@ -16,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   late String _username, _password, _email;
   bool _isLoading = false, _useEmail = false;
   final _loginKey = GlobalKey<FormState>();
@@ -27,10 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return FittedBox(
         fit: BoxFit.fill,
         child: SvgPicture.asset('assets/img/login-top.svg',
-          width: width,
-          height: width
-        )
-    );
+            width: width, height: width));
   }
 
   Widget _login(double width, double height) {
@@ -42,22 +38,16 @@ class _LoginScreenState extends State<LoginScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            textMajor("sign in", Color(0xff22254C), 36),
-            SizedBox(height: 10),
-            _loginForm(),
-            SizedBox(height: 30),
-            _progressButton(width, height),
-            SizedBox(height: 5),
-            _useUsernameOrEmail(),
-            SizedBox(height: 5,),
-            _googleRegisterButton(width, height),
-            SizedBox(height: 5),
-            _forgotPassword(),
-          ]
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        textMajor("sign in", Color(0xff22254C), 36),
+        SizedBox(height: 10),
+        _loginForm(),
+        SizedBox(height: 30),
+        _progressButton(width, height),
+        SizedBox(height: 5),
+        _useUsernameOrEmail(),
+        _googleRegisterButton(width, height),
+      ]),
     );
   }
 
@@ -70,7 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           textMinor("don't have an account?", Color(0xff22254C)),
-          SizedBox(width: 5,),
+          SizedBox(
+            width: 5,
+          ),
           textMinor("sign up", createMaterialColor(Color(0xff6488E5)))
         ],
       ),
@@ -80,16 +72,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _loginButton(double width, double height) {
     return SizedBox(
       width: width,
-      height:  height * 0.05,
+      height: height * 0.05,
       child: ElevatedButton(
         onPressed: _validateLogin,
         child: textMinor("sign in", Colors.white),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-          primary: Color(0xff6488E5),
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
-        ),
+            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+            primary: Color(0xff6488E5),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20))),
       ),
     );
   }
@@ -128,8 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onSaved: (String? saved) {
             _email = saved!.trim();
           },
-        )
-    );
+        ));
   }
 
   Widget _passwordTextField() {
@@ -158,8 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onSaved: (String? saved) {
             _password = saved!;
           },
-        )
-    );
+        ));
   }
 
   Widget _usernameTextField() {
@@ -188,8 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onSaved: (saved) {
             _username = saved!.trim().toLowerCase();
           },
-        )
-    );
+        ));
   }
 
   Widget _useUsernameOrEmail() {
@@ -208,7 +197,8 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               width: 5,
             ),
-            _useEmail ? textMinor("username", Color(0xff6488E5))
+            _useEmail
+                ? textMinor("username", Color(0xff6488E5))
                 : textMinor("email", Color(0xff6488E5))
           ],
         ),
@@ -231,13 +221,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _forgotPassword() {
     return InkWell(
       onTap: () {
-        Navigator.pushReplacementNamed(context, ForgotPasswordPage.routeName);
+        Navigator.pushReplacementNamed(context, ForgotPasswordScreen.routeName);
       },
       child: textMinor("forgot my password", Color(0xff6488E5)),
     );
   }
 
-  Widget _googleRegisterButton(double width, double height)  {
+  Widget _googleRegisterButton(double width, double height) {
     return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -246,7 +236,8 @@ class _LoginScreenState extends State<LoginScreen> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20))),
         onPressed: () async {
-          var result = await _googleSignInProvider.googleLogin(context: context);
+          var result =
+              await _googleSignInProvider.googleLogin(context: context);
           if (result != null) {
             var bool = await _auth.checkUserExist(result.uid);
             if (!bool) {
@@ -259,10 +250,13 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               Navigator.pushReplacementNamed(context, BaseScreen.routeName);
             }
-
           }
         },
-        icon: Image.asset("assets/img/google_logo.png", width: 30, height: 30,),
+        icon: Image.asset(
+          "assets/img/google_logo.png",
+          width: 25,
+          height: 25,
+        ),
         label: textMinor('sign in with google', Colors.black));
   }
 
@@ -341,27 +335,28 @@ class _LoginScreenState extends State<LoginScreen> {
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
-        backgroundColor: Color(0xfffffcec),
-        body:SingleChildScrollView(
-            child: Container(
-              height: _height - 20,
-              child: Stack(
+      backgroundColor: Color(0xfffffcec),
+      body: SingleChildScrollView(
+          child: Container(
+        height: _height - 20,
+        child: Stack(
+          children: [
+            Positioned(child: _topBar(_width)),
+            Positioned(
+              top: _height * 0.25,
+              child: Column(
                 children: [
-                  Positioned(child: _topBar(_width)),
-                  Positioned(
-                    top: _height * 0.25,
-                    child: Column(
-                      children: [
-                        _login(_width, _height),
-                        SizedBox(height: 10),
-                        _signupLabel(),
-                      ],
-                    ),
-                  ),
+                  _login(_width, _height),
+                  SizedBox(height: 10),
+                  _signupLabel(),
+                  SizedBox(height: 5),
+                  _forgotPassword(),
                 ],
               ),
-            )
+            ),
+          ],
         ),
+      )),
     );
   }
 }

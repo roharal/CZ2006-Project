@@ -1,7 +1,9 @@
 import 'package:exploresg/screens/base.dart';
+import 'package:exploresg/screens/forgotpassword.dart';
 import 'package:exploresg/screens/login.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:exploresg/screens/splash.dart';
+import 'package:exploresg/screens/verify.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:exploresg/screens/interests.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,8 @@ class MyApp extends StatelessWidget {
         LoginScreen.routeName: (context) => LoginScreen(),
         SignUpScreen.routeName: (context) => SignUpScreen(),
         InterestScreen.routeName: (context) => InterestScreen(),
+        VerifyScreen.routeName: (context) => VerifyScreen(),
+        ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen()
       },
       onGenerateRoute: (RouteSettings settings) {
         assert(false, 'Need to implement ${settings.name}');
