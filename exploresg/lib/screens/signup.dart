@@ -332,7 +332,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _createUser() async {
     UserModel user = UserModel("", _username, _first, _last, _email, "", "", "",
-        false, false, "shopping_mall,cafe,park");
+
+        false, false, "shopping_mall,cafe,park", "");
+
     await _firebaseApi.createUserFromEmail(user, _password).then((value) {
       setState(() {
         _isLoading = false;

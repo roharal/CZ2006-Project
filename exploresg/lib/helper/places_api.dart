@@ -23,15 +23,19 @@ class PlacesApi {
       "https://maps.googleapis.com/maps/api/place/details/json";
 
   Future<List<Place>?> nearbySearchFromText(
-      String lat, String long, int radius, String type, String input) async {
+      String lat, String long, int radius, String type, String input,
+      [int? maxP, int? minP]) async {
     List<Place> places = [];
     final request = Uri.parse(
-        "$nearbySearchURL?location=$lat%2C$long&radius=$radius&type=$type$input&key=$API_KEY");
+        //"$nearbySearchURL?location=$lat%2C$long&radius=$radius&type=$type$input&key=$API_KEY");
+        "$nearbySearchURL?location=$lat%2C$long&radius=$radius&type=$type$input&maxprice=$maxP&minprice=$minP&key=$API_KEY");
     final response = await _client.get(request);
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       if (result["status"] == "OK") {
         for (dynamic n in result["results"]) {
+          if (n["place_id"] == 'ChIJyY4rtGcX2jERIKTarqz3AAQ') continue;
+
           Map<String, String> coor = {};
           var lat = n["geometry"]["location"]["lat"];
           var long = n["geometry"]["location"]["lng"];
@@ -63,7 +67,8 @@ class PlacesApi {
               n["types"],
               n["user_ratings_total"] == null ? 0 : n["user_ratings_total"],
               photos,
-              on);
+              on,
+              n["price_level"] == null ? 0 : n["price_level"]);
           places.add(place);
         }
         return places;
@@ -100,6 +105,7 @@ class PlacesApi {
             photos.add(
                 "$placesPhotoURL?maxwidth=$imageWidth&photo_reference=$imageRef&key=$API_KEY");
           }
+
           var opening = n["opening_hours"];
           bool on = false;
           var opening_hours;
@@ -119,17 +125,22 @@ class PlacesApi {
               n["types"],
               n["user_ratings_total"] == null ? 0 : n["user_ratings_total"],
               photos,
-              on);
-          place.setOpeningHours(opening_hours.cast<String>());
+              on,
+              n["price_level"]);
+
+          if (opening_hours != null) {
+            place.setOpeningHours(opening_hours.cast<String>());
+          }
+
+          return place;
+        } else {
+          print(result["status"]);
+          return place;
         }
-        return place;
       } else {
-        print(result["status"]);
+        print(response.statusCode);
         return place;
       }
-    } else {
-      print(response.statusCode);
-      return place;
     }
   }
 }
