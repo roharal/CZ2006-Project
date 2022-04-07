@@ -6,6 +6,7 @@ import 'package:exploresg/screens/login.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/storage_service.dart';
+import 'package:exploresg/screens/changePassword.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -283,7 +284,11 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   fontFamily: "AvenirLtStd",
                                   fontWeight: FontWeight.bold,
                                 )),
-                            onPressed: null,
+                            onPressed: (){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>
+                                  ChangePasswordScreen(),
+                              ));
+                            },
                             style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all(Colors.grey),
