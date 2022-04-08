@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/reviewsController.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
+import 'package:exploresg/screens/exploreReviews.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter/widgets.dart';
@@ -21,6 +24,7 @@ class Places2Screen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
+    print("ID HERE HERE" + place.getId());
     return _Places2Screen();
   }
 }
@@ -49,11 +53,15 @@ class _Places2Screen extends State<Places2Screen> {
   //String _curExpStatus;
   String dropdownValue = 'explored';
   FavouritesController _favouritesController = FavouritesController();
+  ReviewsController _reviewsController = ReviewsController();
   FirebaseApi _firebaseApi = FirebaseApi();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   AuthController _auth = AuthController();
+  final textController = TextEditingController();
   List<String> _favourites = [];
   bool _isLoaded = false;
+  double userRating = 0;
+  String userReview = '';
 
   @override
   void initState() {
@@ -111,16 +119,23 @@ class _Places2Screen extends State<Places2Screen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Google ratings: ",
+            Text("Google rating: ",
                 style: TextStyle(
                   fontFamily: 'AvenirLtStd',
                   fontSize: 14,
                 )),
-            Text("Explore ratings: ",
-                style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 14,
-                ))
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ReviewsScreen(place: widget.place),
+                ));
+              },
+              child: Text("exploreSG rating: ",
+                  style: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                  )),
+            )
           ],
         ));
   }
@@ -319,6 +334,7 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   Widget _explored() {
+    String userID = _auth.getCurrentUser()!.uid;
     return Container(
         padding: EdgeInsets.fromLTRB(25, 5, 5, 20),
         child: Column(children: [
@@ -333,15 +349,20 @@ class _Places2Screen extends State<Places2Screen> {
                   fontWeight: FontWeight.bold,
                 )),
             SizedBox(width: 10),
-            RatingBarIndicator(
-              rating: 4.0,
-              itemBuilder: (context, index) => Icon(
+            RatingBar.builder(
+              initialRating: 0,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 22,
+              itemBuilder: (context, _) => Icon(
                 Icons.star,
                 color: Colors.amber,
               ),
-              itemCount: 5,
-              itemSize: 20,
-              direction: Axis.horizontal,
+              onRatingUpdate: (rating) {
+                userRating = rating;
+              },
             ),
           ]),
           SizedBox(height: 20),
@@ -360,23 +381,23 @@ class _Places2Screen extends State<Places2Screen> {
                   borderRadius: BorderRadius.circular(20), color: Colors.white),
               child: Container(
                   child: TextField(
-                      decoration: new InputDecoration(
-                labelText:
-                    'describe your experience or record some\n nice memories...',
-                labelStyle: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 16,
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: const BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
+                    controller: textController,
+                    decoration: new InputDecoration(
+                    labelText: 'describe your experience or record some\n nice memories...',
+                    labelStyle: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 16,
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    ),
               )))),
           SizedBox(height: 8),
           ElevatedButton(
-            child: Text('recommend to someone',
+            child: Text('submit',
                 style: TextStyle(
                   fontFamily: 'AvenirLtStd',
                   color: Colors.white,
@@ -387,7 +408,14 @@ class _Places2Screen extends State<Places2Screen> {
                 primary: Color(0xffE56372),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20))),
-            onPressed: () {},
+            onPressed: () {
+              userReview = textController.text;
+              if(userRating != 0 && userReview != ''){
+                var data = {'userID': userID, 'rating': userRating, 'review_text': userReview};
+                _reviewsController.createReview(widget.place.id, userID, data);
+              }
+              else null;
+            },
           ),
         ]));
   }
@@ -416,6 +444,8 @@ class _Places2Screen extends State<Places2Screen> {
     //   ];
     //   return statusItems;
     // }
+    print("Place id is " + widget.place.id);
+    print(_reviewsController.getPlaceFromId(widget.place.id));
 
     return _isLoaded
         ? Scaffold(

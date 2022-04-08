@@ -55,4 +55,5 @@ class Place {
   void setOpeningHours(opening_hours) {
     this.opening_hours = opening_hours;
   }
+
 }
