@@ -1,18 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exploresg/models/place.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:collection/collection.dart';
 
 class ReviewsController {
-  FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   //create review
   Future createReview(String placeID, String userID, Map<String, dynamic> data) async {
-    bool placeExists = await checkPlaceExist(placeID);
+    bool exists = await placeExists(placeID);
 
-    if(!placeExists) {
+    if(!exists) {
       await _firestore
           .collection("place")
           .doc(placeID)
@@ -28,8 +24,8 @@ class ReviewsController {
   Future<DocumentSnapshot> getReviews(String placeID) async {
     var placeReviews;
     // check if a place document exists already
-    bool placeExists = await checkPlaceExist(placeID);
-    if (placeExists) {
+    bool exists = await placeExists(placeID);
+    if (exists) {
       placeReviews = await _firestore.collection("place/$placeID/reviews").doc().get();
     } else {
       placeReviews = null;
@@ -51,20 +47,60 @@ class ReviewsController {
   // Future<double> tabulateRatings(String placeID) async{
   //   var placeReviews;
   //   // check if a place document exists already
-  //   bool placeExists = await checkPlaceExist(placeID);
-  //   if (placeExists) {
+  //   bool exists = await checkPlaceExist(placeID);
+  //   if (exists) {
   //     placeReviews = await _firestore.collection("place/$placeID/reviews").doc().get();
   //   } else {
   //     return 0;
   //   }
   // }
+  Future<double> meanRating(String placeID) async {
+    List<double> _ratingsList = [0];
+
+    _firestore.collection("place/$placeID/reviews").get().then((querySnapshot){
+      querySnapshot.docs.forEach((user) {
+        _ratingsList.add(user['rating']);
+      });
+    });
+
+    double sum = _ratingsList.sum;
+    double mean = sum/(_ratingsList.length);
+    print(_ratingsList);
+    return mean;
+  }
+
 
   Future<DocumentSnapshot> getPlaceFromId(String id) async {
     return await _firestore.collection("place").doc(id).get();
   }
 
-  Future<bool> checkPlaceExist(String id) async {
-    var result = await this.getPlaceFromId(id);
+  Future<bool> placeExists(String placeID) async {
+    var result = await _firestore.collection("place").doc(placeID).get();
     return result.exists;
+  }
+
+  Future<bool> userReviewExists(String placeID, String userID) async {
+    var userReview = await _firestore.collection("place/$placeID/reviews").doc(userID).get();
+    return userReview.exists;
+  }
+
+  Future<double> getUserRating(String placeID, String userID) async {
+    var userReview = await _firestore.collection("place/$placeID/reviews").doc(userID).get();
+    if (userReview.exists) {
+      Map<String, dynamic> data = userReview.data()!;
+      var rating = data['rating'];
+      return rating;
+    }
+    return 0;
+  }
+
+  Future<String> getUserReview(String placeID, String userID) async {
+    var userReview = await _firestore.collection("place/$placeID/reviews").doc(userID).get();
+    if (userReview.exists) {
+      Map<String, dynamic> data = userReview.data()!;
+      var review = data['review_text'];
+      return review;
+    }
+    return '';
   }
 }
