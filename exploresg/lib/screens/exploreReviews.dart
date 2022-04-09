@@ -24,15 +24,25 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   ReviewsController _reviewsController = ReviewsController();
   AuthController _auth = AuthController();
   List<Review> reviews = [];
+  List<String> displayNames = [];
 
   @override
   void initState() {
     super.initState();
     _init();
+
   }
 
   void _init() async {
+    // Get list of reviews (List of Review class)
     reviews = await _reviewsController.returnAllReviews(widget.place.id);
+
+    String temp = '';
+    for (int i=0; i < reviews.length; i++){
+      temp = await _reviewsController.getUserName(reviews[i].getUserID());
+      displayNames.add(temp);
+    }
+
     setState(() {
       _isLoaded = true;
     });
@@ -121,10 +131,10 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   Widget _review(List<Review> reviews) {
     return ListView.builder(
       itemCount: reviews.length,
-      itemBuilder: (context, index){
+      itemBuilder: (context, index) {
         return Column(
           children: [
-            _reviewContainer(reviews[index].getUserID(), reviews[index].getUserRating(), reviews[index].getUserReview()),
+            _reviewContainer(displayNames[index], reviews[index].getUserRating(), reviews[index].getUserReview()),
             SizedBox(height: 20,)
           ],
         );
@@ -157,9 +167,11 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                     textMajor('reviews', Color(0xff22254C), 36),
                     SizedBox(height: 20),
                     reviews.isEmpty
-                        ? textMinor('no reviews to show...', Color(0xffd1d1d6))
+                        ? textMinor('no reviews to show', Color(0xffd1d1d6))
                         : _review(reviews),
-                    textMinor('no more to show...', Color(0xffd1d1d6))
+                    reviews.isEmpty
+                        ? Container()
+                        : textMinor('no more to show...', Color(0xffd1d1d6)),
                   ],
                 )
             ),
