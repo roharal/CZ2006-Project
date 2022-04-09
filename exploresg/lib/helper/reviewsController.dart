@@ -22,9 +22,7 @@ class ReviewsController {
     var placeData = await _firestore.collection("place").doc(placeID).get();
     Map<String, dynamic> dataMap = placeData.data()!;
     int totalNumRatings = dataMap['total_num_ratings'] + 1; //add this user's new review
-    print('total ratings for this place: '+totalNumRatings.toString());
     double averageRating = (dataMap['average_rating'] + data['rating'])/totalNumRatings; //calculate mean
-    print('average rating for this place: '+averageRating.toString());
     await _firestore.collection("place").doc(placeID)
         .set({'average_rating': averageRating, 'total_num_ratings': totalNumRatings});
   }
@@ -121,8 +119,16 @@ class ReviewsController {
     if (user.exists) {
       Map<String, dynamic> data = user.data()!;
       String displayName = data['firstName'] + ' ' + data['lastName'];
-      //print(displayName);
       return displayName;
+    }
+    return '';
+  }
+  Future<String> getPFP(String userID) async {
+    var user = await _firestore.collection("users").doc(userID).get();
+    if (user.exists) {
+      Map<String, dynamic> data = user.data()!;
+      String pfp = data['picture'];
+      return pfp;
     }
     return '';
   }

@@ -25,6 +25,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   AuthController _auth = AuthController();
   List<Review> reviews = [];
   List<String> displayNames = [];
+  List<String> PFPs = [];
 
   @override
   void initState() {
@@ -37,11 +38,18 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     // Get list of reviews (List of Review class)
     reviews = await _reviewsController.returnAllReviews(widget.place.id);
 
-    String temp = '';
+    String tempName = '';
     for (int i=0; i < reviews.length; i++){
-      temp = await _reviewsController.getUserName(reviews[i].getUserID());
-      displayNames.add(temp);
+      tempName = await _reviewsController.getUserName(reviews[i].getUserID());
+      displayNames.add(tempName);
     }
+
+    String tempPFP = '';
+    for (int i=0; i < reviews.length; i++){
+      tempPFP = await _reviewsController.getPFP(reviews[i].getUserID());
+      PFPs.add(tempPFP);
+    }
+    print('pfp urls '+PFPs.toString());
 
     setState(() {
       _isLoaded = true;
@@ -86,7 +94,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
         ));
   }
 
-  Widget _reviewContainer(String username, double rating, String review) {
+  Widget _reviewContainer(String userName, String pfp_url, double rating, String review) {
     final _w = MediaQuery.of(context).size.width;
     return Container(
         decoration: BoxDecoration(
@@ -100,15 +108,16 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: const Text('B'),
+                  foregroundImage: NetworkImage(pfp_url),
+                  backgroundColor: Color(0xff6488E5),
+                  child: Text(userName[0]),
                 ),
                 SizedBox(width: 20,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    textMinorBold(username, Color(0xff22254C)),
+                    textMinorBold(userName, Color(0xff22254C)),
                     RatingBarIndicator(
                       rating: rating,
                       itemBuilder: (context, index) => Icon(
@@ -134,7 +143,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            _reviewContainer(displayNames[index], reviews[index].getUserRating(), reviews[index].getUserReview()),
+            _reviewContainer(displayNames[index], PFPs[index],
+                reviews[index].getUserRating(), reviews[index].getUserReview()),
             SizedBox(height: 20,)
           ],
         );
