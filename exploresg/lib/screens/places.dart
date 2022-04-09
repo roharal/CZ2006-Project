@@ -13,6 +13,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../models/review.dart';
+
 class Places2ScreenArgs {
   final Place place;
 
@@ -63,10 +65,8 @@ class _Places2Screen extends State<Places2Screen> {
   bool _isLoaded = false;
   String _userID = '';
   bool _userReviewExists = false;
-  double _prevRating = 0;
-  String _prevReview = '';
-  double _newRating = 0;
-  String _newReview = '';
+  Review _prevReview = Review('', '', '', 0); //to view previous review data
+  Review _newReview = Review('', '', '', 0); //to store new review data
   String _submittable = "NA";
   double _meanRating = 0;
 
@@ -80,13 +80,12 @@ class _Places2Screen extends State<Places2Screen> {
     _favourites = await _favouritesController.getFavouritesList();
     _userID = _auth.getCurrentUser()!.uid;
     _userReviewExists = await _reviewsController.userReviewExists(widget.place.id, _userID);
-    _prevRating = await _reviewsController.getUserRating(widget.place.id, _userID);
-    _prevReview = await _reviewsController.getUserReview(widget.place.id, _userID);
-    _newReview = _prevReview;
-    _newRating = _prevRating;
+    if (_userReviewExists){
+      _prevReview = (await _reviewsController.getReview(widget.place.id, _userID))!;
+      _newReview = _prevReview;
+    }
     setMyStatus();
-    _meanRating = await _reviewsController.meanRating(widget.place.id);
-    print(_meanRating);
+    _meanRating = await _reviewsController.getAverageRating(widget.place.id);
     setState(() {
       _isLoaded = true;
     });
@@ -142,7 +141,7 @@ class _Places2Screen extends State<Places2Screen> {
         height: 200,
         width: 330,
         decoration: BoxDecoration(
-          color: Colors.grey,
+          color: Color(0xffd1d1d6),
           borderRadius: BorderRadius.circular(20),
         ),
         child: place.images.length > 0
@@ -195,8 +194,17 @@ class _Places2Screen extends State<Places2Screen> {
             itemSize: 20,
             direction: Axis.horizontal,
           ),
-          Image.asset('assets/img/ratingStars.png')
-          //*******change explore ratings**********
+          RatingBarIndicator(
+            rating: _meanRating,
+            itemBuilder: (context, index) =>
+                Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+            itemCount: 5,
+            itemSize: 20,
+            direction: Axis.horizontal,
+          ),
         ]));
   }
 
@@ -434,7 +442,7 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   Widget _explored() {
-    var _textController = TextEditingController(text: _prevReview);
+    var _textController = TextEditingController(text: _prevReview.getUserReview());
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
         child: Column(children: [
@@ -452,7 +460,7 @@ class _Places2Screen extends State<Places2Screen> {
             SizedBox(width: 7),
             RatingBar.builder(
               initialRating: _userReviewExists ?
-              _prevRating : 0,
+              _prevReview.getUserRating() : 0,
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,
@@ -464,7 +472,7 @@ class _Places2Screen extends State<Places2Screen> {
                     color: Colors.amber,
                   ),
               onRatingUpdate: (rating) {
-                _newRating = rating;
+                _newReview.setUserRating(rating);
               },
             ),
           ]),
@@ -533,13 +541,13 @@ class _Places2Screen extends State<Places2Screen> {
 
   void submitReview(var textController) {
     setState(() {
-      _newReview = textController.text;
+      _newReview.setUserReview(textController.text);
       var _data = {
         'userID': _userID,
-        'rating': _newRating,
-        'review_text': _newReview
+        'rating': _newReview.getUserRating(),
+        'review_text': _newReview.getUserReview()
       };
-      if (_newRating == 0 || _newReview == '') { //either field is empty--invalid input
+      if (_newReview.getUserRating() == 0 || _newReview.getUserReview() == '') { //either field is empty--invalid input
         _submittable = 'NO';
         null;
       }
@@ -552,7 +560,7 @@ class _Places2Screen extends State<Places2Screen> {
         _reviewsController.createReview(widget.place.id, _userID, _data);
         _submittable = 'YES';
       }
-      _prevReview = textController.text;
+      _prevReview.setUserReview(textController.text);
     });
   }
 
@@ -616,6 +624,7 @@ class _Places2Screen extends State<Places2Screen> {
                       children: <Widget>[
                         _topVector(),
                         _back(),
+                        SizedBox(height: 7,),
                         Container(
                             margin: EdgeInsets.symmetric(horizontal: 40),
                             child: textMajor(
