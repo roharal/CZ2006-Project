@@ -128,57 +128,6 @@ class _ProfileScreen extends State<ProfileScreen> {
     }
   }
 
-  Widget _showPFPOLD(width) {
-    return FutureBuilder(
-      // check if user.picture attribute is blank (First time user)
-      future: _userModel.picture == ""
-          ? storage.downloadURL("user.png", "adminAssets")
-          : storage.downloadURL(_userModel.picture, "user_pfp"),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        print("Hello" + snapshot.data.toString());
-        print(_userModel.picture);
-        // If image isnt there for some reason
-        if (snapshot.data.toString() == "oops") {
-          return Column(
-            children: [
-              Container(
-                  width: 0.3 * width,
-                  child: Image(
-                      image: AssetImage("assets/img/close.png"),
-                      fit: BoxFit.fitWidth)),
-              Text("Error, image not found",
-                  style: TextStyle(
-                      fontSize: 10,
-                      fontFamily: "AvenirLtStd",
-                      fontWeight: FontWeight.normal)),
-            ],
-          );
-        }
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            width: width * 1 / 3,
-            height: width * 1 / 3,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Image.network(
-                snapshot.data!,
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            !snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-        return Container();
-      },
-    );
-  }
-
   Widget _changeUsername() {
     return ElevatedButton(
         child: Text("Change username"),
