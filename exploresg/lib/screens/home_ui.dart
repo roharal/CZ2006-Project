@@ -7,6 +7,7 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
 
 import 'package:exploresg/helper/favourites_controller.dart';
+import 'package:flutter_svg/svg.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -44,7 +45,7 @@ class _HomeScreen extends State<HomeScreen> {
       enabledBorder: InputBorder.none,
       errorBorder: InputBorder.none,
       disabledBorder: InputBorder.none,
-      labelStyle: TextStyle(color: Colors.black, fontSize: 16));
+      labelStyle: TextStyle(color: Color(0xff22254C), fontSize: 16));
 
   Widget _dropDownList(double width, DropdownButtonFormField DDL) {
     return Container(
@@ -136,6 +137,7 @@ class _HomeScreen extends State<HomeScreen> {
             buildSideLabel('0 km'),
             Expanded(
               child: CupertinoSlider(
+                activeColor: Color(0xff6488E5),
                 value: _distValue,
                 min: 0,
                 max: 15000,
@@ -206,15 +208,16 @@ class _HomeScreen extends State<HomeScreen> {
     return _dropDownList(
         0.49 * width,
         DropdownButtonFormField<String>(
+            icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
             items: [
               DropdownMenuItem(
-                  child: textMinor('filter by', Colors.black), value: 'filter by'),
+                  child: textMinor('filter by', Color(0xffD1D1D6)), value: 'filter by'),
               DropdownMenuItem(
-                  child: textMinor('distance', Colors.black), value: 'distance'),
+                  child: textMinor('distance', Color(0xff22254C)), value: 'distance'),
               DropdownMenuItem(
-                  child: textMinor('ratings', Colors.black), value: 'ratings'),
+                  child: textMinor('ratings', Color(0xff22254C)), value: 'ratings'),
               DropdownMenuItem(
-                  child: textMinor('price', Colors.black), value: 'price')
+                  child: textMinor('price', Color(0xff22254C)), value: 'price')
             ],
             decoration: dropdownDeco,
             isExpanded: true,
@@ -231,9 +234,10 @@ class _HomeScreen extends State<HomeScreen> {
     return _dropDownList(
         width,
         DropdownButtonFormField(
+          icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
           items: placeType
               .map((String e) =>
-                  DropdownMenuItem(value: e, child: textMinor(e.replaceAll("_", " "), Colors.black)))
+                  DropdownMenuItem(value: e, child: textMinor(e.replaceAll("_", " "), Color(0xff22254C))))
               .toList(),
           decoration: dropdownDeco,
           isExpanded: true,
@@ -249,33 +253,34 @@ class _HomeScreen extends State<HomeScreen> {
   Widget _searchBar(double width, double height) {
     return Container(
       width: width,
-      height: height / 5.4,
+      height: height / 4,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20), color: Colors.white),
-      child: Container(
-        child: TextField(
-          controller: _searchController,
-          cursorColor: Colors.grey,
-          cursorHeight: 14.0,
-          style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14),
-          decoration: new InputDecoration(
-            prefixIcon: Icon(
-              Icons.search,
-              color: Colors.grey,
+      child: TextField(
+        textAlignVertical: TextAlignVertical.center,
+        controller: _searchController,
+        cursorColor: Colors.grey,
+        cursorHeight: 14.0,
+        style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xff22254C)),
+        decoration: new InputDecoration(
+          prefixIcon: Icon(
+            Icons.search,
+            color: Color(0xffD1D1D6),
+          ),
+          hintText: 'type a place...',
+          hintStyle: TextStyle(
+              fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xffD1D1D6)
+          ),
+          contentPadding: EdgeInsets.zero,
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            borderSide: const BorderSide(
+              color: Colors.white,
             ),
-            labelText: 'type a place...',
-            labelStyle: TextStyle(
-                fontFamily: 'AvenirLtStd', fontSize: 14, color: Colors.grey),
-            enabledBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              borderSide: const BorderSide(
-                color: Colors.white,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              borderSide: BorderSide(color: Colors.white),
-            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            borderSide: BorderSide(color: Colors.white),
           ),
         ),
       ),
@@ -287,8 +292,8 @@ class _HomeScreen extends State<HomeScreen> {
         transformHitTests: false,
         scale: .7,
         child: CupertinoSwitch(
-          activeColor: Colors.blue,
-          trackColor: Colors.blue, //change to closer colour
+          activeColor: Color(0xff6488E5),
+          trackColor: Color(0xff6488E5), //change to closer colour
           value: _searchByCategory,
           onChanged: (value) {
             setState(() {
@@ -300,13 +305,13 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _goButton() {
     return Align(
-        alignment: Alignment.topRight,
+        alignment: Alignment.centerRight,
         child: TextButton(
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xff6488E5)),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
+                borderRadius: BorderRadius.circular(20.0),
               ))),
           onPressed: () {
             Navigator.pushNamed(context, SearchScreen.routeName,
@@ -321,10 +326,10 @@ class _HomeScreen extends State<HomeScreen> {
                         _placeTypeDropdownValue,
                       ));
           },
-          child: Text('Go!',
+          child: Text('go!',
               style: TextStyle(
                   fontFamily: 'AvenirLtStd',
-                  fontSize: 12,
+                  fontSize: 16,
                   color: Colors.white)),
         ));
   }
@@ -337,9 +342,9 @@ class _HomeScreen extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                textMinor('keyword search', Colors.black),
+                textMinor('keyword search', _searchByCategory ? Color(0xffD1D1D6) : Color(0xff22254C)),
                 _searchSwitch(),
-                textMinor('dropdown list', Colors.black)
+                textMinor('dropdown list', _searchByCategory ?  Color(0xff22254C) : Color(0xffD1D1D6))
               ],
             ),
             _searchByCategory == false
@@ -380,17 +385,17 @@ class _HomeScreen extends State<HomeScreen> {
                     },
                     child: _favourites.contains(place.id)
                         ? Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          )
+                      Icons.favorite,
+                      color: Color(0xffE56372),
+                    )
                         : Icon(
-                            Icons.favorite_border,
-                            color: Colors.grey,
-                          )),
+                      Icons.favorite_border,
+                      color: Color(0xffE56372),
+                    )),
                 SizedBox(
                   width: 10,
                 ),
-                textMinor('add to favourites', Colors.black)
+                textMinor(_favourites.contains(place.id) ? 'added to favourites' : "add to favourites", Color(0xffD1D1D6))
               ])
             ]));
   }
@@ -451,12 +456,17 @@ class _HomeScreen extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            topBar('home', height, width, 'assets/img/homeTop.png'),
-                            SizedBox(height: 10),
-                            textMajor('find places', Colors.black, 26),
+                            topBar('home', height, width, 'assets/img/home-top.svg'),
+                            SizedBox(height: 30),
+                            textMajor('find places', Color(0xff22254C), 26),
+                            SizedBox(height: 7,),
                             _searchTools(0.80 * width, 0.3 * height),
-                            Image.asset('assets/img/stringAccent.png'),
-                            textMajor('explore', Colors.black, 26),
+                            FittedBox(
+                                fit: BoxFit.fill,
+                                child: SvgPicture.asset('assets/img/home-mid.svg',
+                                    width: width, height: width)
+                            ),
+                            textMajor('explore', Color(0xff22254C), 26),
                             recommendedList(_places!, height, width),
                             SizedBox(height: 20)
                           ]

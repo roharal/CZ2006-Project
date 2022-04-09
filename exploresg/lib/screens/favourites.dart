@@ -21,7 +21,9 @@ class _FavouriteScreen extends State<FavouriteScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -45,16 +47,16 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                     child: _favourites.contains(place.id)
                         ? Icon(
                             Icons.favorite,
-                            color: Colors.red,
+                            color: Color(0xffE56372),
                           )
                         : Icon(
                             Icons.favorite_border,
-                            color: Colors.grey,
+                            color: Color(0xffE56372),
                           )),
                 SizedBox(
                   width: 10,
                 ),
-                textMinor("add to favourites", Colors.black)
+                textMinor(_favourites.contains(place.id) ? 'added to favourites' : "add to favourites", Color(0xffD1D1D6))
               ])
             ]));
   }
@@ -66,19 +68,27 @@ class _FavouriteScreen extends State<FavouriteScreen> {
         child: ListView.builder(
           itemCount: places.length,
           itemBuilder: (context, index) {
-            return Column(children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, PlaceScreen.routeName,
-                      arguments: PlaceScreenArguments(places[index],_favourites));
-                },
-                child: placeContainer(places[index], width, 0.3 * height),
-              ),
-              _addFav(places[index], 0.05 * height, width),
-              SizedBox(
-                height: 5,
-              )
-            ]);
+            return Column(
+              children: [
+                Stack(
+                    alignment: Alignment.center,
+                    children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, PlaceScreen.routeName,
+                          arguments: PlaceScreenArguments(places[index],_favourites));
+                    },
+                    child: placeContainer(places[index], width, 0.3 * height),
+                  ),
+                  Positioned(
+                      bottom: 10,
+                      child: _addFav(places[index], 0.05 * height, width)),
+                ]),
+                SizedBox(
+                  height: 10,
+                )
+              ],
+            );
           },
         ));
   }
@@ -159,7 +169,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                       topBar("favourites", height, width,
-                          'assets/img/favouriteTop.png'),
+                          'assets/img/favourites-top.svg'),
                       SizedBox(
                         height: 20,
                       ),

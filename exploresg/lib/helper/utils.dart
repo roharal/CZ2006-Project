@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:exploresg/models/place.dart';
+import 'package:flutter_svg/svg.dart';
 
 Text textMajor(String text, Color color, double size) {
   return Text(
@@ -52,17 +53,14 @@ MaterialColor createMaterialColor(Color color) {
 Widget topBar(String title, double height, double width, String imagePath) {
   return Stack(
     children: [
-      Container(
-        height: height / 3.5,
-        width: width,
-        decoration: new BoxDecoration(
-          image:
-              DecorationImage(image: AssetImage(imagePath), fit: BoxFit.fill),
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(40.0)),
-        ),
+      FittedBox(
+        fit: BoxFit.fill,
+        child: SvgPicture.asset(imagePath,
+          width: width, height: width / 204*490,
+        )
       ),
       Positioned(
-        top: height / 5,
+        top: height / 4.2,
         left: width / 8,
         child: textMajor(title, Colors.white, 36),
       )
@@ -177,17 +175,18 @@ class _SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(20), color: Colors.white),
       child: Container(
         child: TextField(
-          cursorColor: Colors.grey,
+          cursorColor: Color(0xffD1D1D6),
           cursorHeight: 14.0,
           style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14),
           decoration: new InputDecoration(
             prefixIcon: Icon(
               Icons.search,
-              color: Colors.grey,
+              color: Color(0xffD1D1D6),
             ),
-            labelText: 'type a place...',
-            labelStyle: TextStyle(
-                fontFamily: 'AvenirLtStd', fontSize: 14, color: Colors.grey),
+            hintText: 'type a place...',
+            hintStyle: TextStyle(
+                fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xffD1D1D6)),
+            contentPadding: EdgeInsets.zero,
             enabledBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
               borderSide: const BorderSide(
@@ -233,13 +232,14 @@ class _SearchState extends State<Search> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: DropdownButtonFormField<String>(
+                icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
                 focusColor: Colors.white,
                 items: [
                   DropdownMenuItem(
-                      child: textMinor("filter by", Colors.grey),
+                      child: textMinor("filter by", Color(0xffD1D1D6)),
                       value: "filter by"),
                   DropdownMenuItem(
-                      child: textMinor("distance", Colors.grey),
+                      child: textMinor("distance", Color(0xff22254C)),
                       value: "distance")
                 ],
                 decoration: InputDecoration(
@@ -248,7 +248,7 @@ class _SearchState extends State<Search> {
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    labelStyle: TextStyle(color: Colors.black, fontSize: 16)),
+                    labelStyle: TextStyle(color: Color(0xff22254C), fontSize: 16)),
                 isExpanded: true,
                 value: filterbydropdownValue,
                 onChanged: (String? newValue) {
@@ -261,13 +261,14 @@ class _SearchState extends State<Search> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: DropdownButtonFormField<String>(
+                icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
                 focusColor: Colors.white,
                 items: [
                   DropdownMenuItem(
-                      child: textMinor("sort by", Colors.grey),
+                      child: textMinor("sort by", Color(0xffD1D1D6)),
                       value: "sort by"),
                   DropdownMenuItem(
-                      child: textMinor("distance", Colors.grey),
+                      child: textMinor("distance", Color(0xff22254C)),
                       value: "distance")
                 ],
                 decoration: InputDecoration(
@@ -276,7 +277,7 @@ class _SearchState extends State<Search> {
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    labelStyle: TextStyle(color: Colors.black, fontSize: 16)),
+                    labelStyle: TextStyle(color: Color(0xff22254C), fontSize: 16)),
                 isExpanded: true,
                 value: sortbydropdownValue,
                 onChanged: (String? newValue) {
@@ -289,7 +290,7 @@ class _SearchState extends State<Search> {
 
 Widget _printDist(distance) {
   return (distance != null)
-      ? textMinor(distance.toString() + "km", Colors.black)
+      ? textMinor(distance.toString() + "km", Color(0xff22254C))
       : SizedBox();
 }
 
@@ -322,7 +323,14 @@ Widget placeContainer(Place place, double width, double height,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  textMajor(place.placeName, Colors.grey, 20),
+                  Text(place.placeName,
+                    style: TextStyle(
+                        fontFamily: 'AvenirLtStd',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xff22254C)
+                    )
+                  ),
                   RatingBarIndicator(
                     rating: place.ratings,
                     itemBuilder: (context, index) => Icon(
@@ -333,7 +341,7 @@ Widget placeContainer(Place place, double width, double height,
                     itemSize: width / 20,
                     direction: Axis.horizontal,
                   ),
-                  textMinor(place.placeAddress, Colors.black),
+                  textMinor(place.placeAddress, Color(0xff22254C)),
 
                   //include dist for afterseach
                   // textMinor(distance.toString() + "km", Colors.black)
