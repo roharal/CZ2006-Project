@@ -159,7 +159,7 @@ class _InboxScreen extends State<InboxScreen> {
         body: SingleChildScrollView(
             child: Container(
                 child: Column(children: [
-          topBar("my inbox", height, width, 'assets/img/inboxTop.png'),
+          topBar("my inbox", height, width, 'assets/img/inbox-top.svg'),
           Padding(
               padding: EdgeInsets.all(16),
               child: Container(

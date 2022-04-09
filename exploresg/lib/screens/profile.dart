@@ -346,7 +346,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                       child: Column(
                 children: [
                   topBar(
-                      "my account", height, width, 'assets/img/accountTop.png'),
+                      "my account", height, width, 'assets/img/account-top.svg'),
+                  SizedBox(height: 35),
                   _showPFP(width),
                   Text("@" + _userModel.username,
                       style:

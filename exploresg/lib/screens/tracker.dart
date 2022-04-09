@@ -1,5 +1,6 @@
 import 'package:exploresg/helper/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 // import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 // import 'package:exploresg/models/place.dart';
 
@@ -140,7 +141,7 @@ class _TrackerScreen extends State<TrackerScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              topBar("my tracker", height, width, 'assets/img/trackerTop.png'),
+              topBar("my tracker", height, width, 'assets/img/tracker-top.svg'),
               SizedBox(
                 height: 20,
               ),
@@ -149,13 +150,14 @@ class _TrackerScreen extends State<TrackerScreen> {
                 height: 10,
               ),
               Search(width: 0.8 * width, height: 0.3 * height),
-              SizedBox(
-                height: 40,
+              FittedBox(
+                  fit: BoxFit.fill,
+                  child: SvgPicture.asset('assets/img/tracker-mid.svg',
+                      width: width, height: width)
               ),
-              Image.asset('assets/img/myTrackerAccents.png'),
-              textMajor("to explore", Colors.black, 26),
+              textMajor("to explore", Color(0xff22254C), 26),
               SizedBox(
-                height: 10,
+                height: 25,
               ),
               // _trackerContainer(
               //     0.3 * height,
