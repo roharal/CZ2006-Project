@@ -29,9 +29,6 @@ class _FavouriteScreen extends State<FavouriteScreen> {
               Row(children: [
                 InkWell(
                     onTap: () async {
-                      setState(() {
-                        _isLoaded = false;
-                      });
                       await _favouritesController.addOrRemoveFav(place.id);
                       _favourites =
                           await _favouritesController.getFavouritesList();
@@ -43,12 +40,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                           _favourite_places.add(_place!);
                         }
                       }
-                      setState(() {
-                        print(_favourite_places);
-                        place.likes = !place.likes;
-                        _isLoaded = true;
-                      });
-                      print(place.likes);
+                      setState(() {});
                     },
                     child: _favourites.contains(place.id)
                         ? Icon(
