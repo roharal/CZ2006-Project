@@ -1,7 +1,6 @@
-import 'package:exploresg/helper/authController.dart';
+// import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/reviewsController.dart';
 import 'package:exploresg/helper/utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:exploresg/models/place.dart';
@@ -22,7 +21,7 @@ class ReviewsScreen extends StatefulWidget {
 class _ReviewsScreenState extends State<ReviewsScreen> {
   bool _isLoaded = false;
   ReviewsController _reviewsController = ReviewsController();
-  AuthController _auth = AuthController();
+  // AuthController _auth = AuthController();
   List<Review> reviews = [];
   List<String> displayNames = [];
   List<String> PFPs = [];
@@ -134,6 +133,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             ),
           SizedBox(height: 15,),
           textMinor(review, Color(0xff22254C)),
+            SizedBox(height: 15,),
         ]));
   }
 
@@ -156,8 +156,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    // final height = MediaQuery.of(context).size.height;
+    // final width = MediaQuery.of(context).size.width;
     return _isLoaded
     ? Scaffold(
       backgroundColor: Color(0xfffffcec),
