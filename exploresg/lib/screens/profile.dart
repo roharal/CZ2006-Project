@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/utils.dart';
@@ -6,6 +7,9 @@ import 'package:exploresg/screens/login.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/storage_service.dart';
+import 'package:exploresg/screens/changePassword.dart';
+import 'package:exploresg/helper/profileController.dart';
+import 'package:exploresg/screens/interests.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -17,11 +21,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreen extends State<ProfileScreen> {
   var value = "";
   final Storage storage = Storage();
-  var displayName = "<Display Name>";
-  var emailAddress = "<EmailAddress@email.com>";
   bool _isLoaded = false;
   FirebaseApi _firebaseApi = FirebaseApi();
   AuthController _auth = AuthController();
+  ProfileController _profileController = ProfileController();
   late UserModel _userModel;
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
@@ -37,6 +40,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       _userModel = UserModel.fromSnapshot(value);
       setState(() {
         _isLoaded = true;
+        print("User id is " + _userModel.id);
       });
     }).onError((error, stackTrace) {
       showAlert(context, "Retrieve User Profile", error.toString());
@@ -68,7 +72,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           actions: [
             TextButton(
               child: Text("Cancel"),
-              onPressed:(){
+              onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
@@ -78,18 +82,19 @@ class _ProfileScreen extends State<ProfileScreen> {
                 if (_formkey.currentState!.validate()) {
                   _firebaseApi.updateDocumentByIdFromCollection("users",
                       _userModel.id, {attr: _textEditingController.text});
-                  Future.delayed(Duration(milliseconds: 100), () {
+                  Future.delayed(Duration(milliseconds: 1000), () {
                     setState(() {
-                      switch(attr){
-                        case "username": {
-                          _userModel.username = _textEditingController.text;
-                        }
-                        break;
-                        case "email":{
-                          _userModel.email = _textEditingController.text;
-                        }
+                      switch (attr) {
+                        case "username":
+                          {
+                            _userModel.username = _textEditingController.text;
+                          }
+                          break;
+                        case "email":
+                          {
+                            _userModel.email = _textEditingController.text;
+                          }
                       }
-
                     });
                   });
                   Navigator.of(context).pop();
@@ -100,6 +105,283 @@ class _ProfileScreen extends State<ProfileScreen> {
         );
       },
     );
+  }
+
+  Widget _showPFP(width) {
+    if (_userModel.picture == "") {
+      // If user does not have pfp
+      return Container(child: Image.asset("assets/img/Profile picture.png"));
+    } else {
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 5),
+        width: width * 1 / 3,
+        height: width * 1 / 3,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: FittedBox(
+              child: Image(
+                image: NetworkImage(_userModel.picture),
+              ),
+              fit: BoxFit.cover),
+        ),
+      );
+    }
+  }
+
+  Widget _showPFPOLD(width) {
+    return FutureBuilder(
+      // check if user.picture attribute is blank (First time user)
+      future: _userModel.picture == ""
+          ? storage.downloadURL("user.png", "adminAssets")
+          : storage.downloadURL(_userModel.picture, "user_pfp"),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        print("Hello" + snapshot.data.toString());
+        print(_userModel.picture);
+        // If image isnt there for some reason
+        if (snapshot.data.toString() == "oops") {
+          return Column(
+            children: [
+              Container(
+                  width: 0.3 * width,
+                  child: Image(
+                      image: AssetImage("assets/img/close.png"),
+                      fit: BoxFit.fitWidth)),
+              Text("Error, image not found",
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontFamily: "AvenirLtStd",
+                      fontWeight: FontWeight.normal)),
+            ],
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            width: width * 1 / 3,
+            height: width * 1 / 3,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.network(
+                snapshot.data!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            !snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _changeUsername() {
+    return ElevatedButton(
+        child: Text("Change username"),
+        onPressed: () async {
+          await showInformationDialog(context, "username");
+        },
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.grey),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ))));
+  }
+
+  Widget _changePFP() {
+    return ElevatedButton(
+      onPressed: () async {
+        _changePFPFunc();
+      },
+      child: Text("Change profile picture"),
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.grey),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          ))),
+    );
+  }
+
+  Widget _changePassword(width) {
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("password",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: "AvenirLtStd",
+                  fontWeight: FontWeight.bold,
+                )),
+            Text("must be between 8-20 characters",
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: "AvenirLtStd",
+                ))
+          ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChangePasswordScreen(),
+                ));
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  )))))
+    ]);
+  }
+
+  Widget _manageInterests(width) {
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("manage interest",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: "AvenirLtStd",
+                  fontWeight: FontWeight.bold,
+                ))
+          ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () async {
+                DocumentSnapshot snapShot = await _firebaseApi
+                    .getDocumentByIdFromCollection("users", _userModel.id);
+                _userModel = UserModel.fromSnapshot(snapShot);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      InterestScreen(_userModel.id, _userModel.interest),
+                ));
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  )))))
+    ]);
+  }
+
+  Widget _signOut(width) {
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("Sign out from account",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: "AvenirLtStd",
+                  fontWeight: FontWeight.bold,
+                ))
+          ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("signout",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () {
+                _auth.logOut();
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamedAndRemoveUntil(
+                        LoginScreen.routeName, (Route<dynamic> route) => false);
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  )))))
+    ]);
+  }
+
+  void _changePFPFunc() async {
+    // Selecting file from phone using file picker
+    final results = await _profileController.getFile();
+    // final results = await FilePicker.platform.pickFiles(
+    //     allowMultiple: false,
+    //     type: FileType.custom,
+    //     allowedExtensions: ['png', 'jpg']);
+    print(results.runtimeType);
+    if (results == null) {
+      // If user did not pick a file (Pressed back)
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Container(
+          child: Text('No file selected'),
+          height: 30,
+          alignment: Alignment.topCenter,
+        ),
+        duration: Duration(seconds: 1),
+      ));
+      return null;
+    }
+    // Upload file and Update the User picture attribute
+    _profileController.uploadFileAndUpdateUser(results, _userModel);
+    // // Setting file name and details etc
+    // final path = results.files.single.path!;
+    // final fileName = _userModel.id + "_pfp";
+    //
+    // print(path);
+    // print(fileName);
+    // // Uploading the file to firebase here
+    // storage
+    //     .uploadFile(path, fileName, "user_pfp")
+    //     .then((value) => print('Done'));
+    //
+    // //Obtain the URL of the uploaded picture
+    // String fileURL = await storage.downloadURL(fileName, "user_pfp");
+    // final updateUserMap = {'picture': fileURL};
+    //
+    // // Update the users picture attribute to be the url of the chosen picture
+    // _firebaseApi.updateDocumentByIdFromCollection(
+    //     "users", _userModel.id, updateUserMap);
+
+    //Setting the state to update profile picture displayed
+
+    Future.delayed(Duration(milliseconds: 1000), () async {
+      DocumentSnapshot snapShot = await _firebaseApi
+          .getDocumentByIdFromCollection("users", _userModel.id);
+      setState(() {
+        _userModel = UserModel.fromSnapshot(snapShot);
+      });
+    });
   }
 
   @override
@@ -116,92 +398,15 @@ class _ProfileScreen extends State<ProfileScreen> {
                 children: [
                   topBar(
                       "my account", height, width, 'assets/img/accountTop.png'),
-                          FutureBuilder(
-                            future: storage.downloadURL(_userModel.picture, "user_pfp"),
-                            builder:
-                                (BuildContext context, AsyncSnapshot<String> snapshot) {
-                              if (snapshot.connectionState == ConnectionState.done &&
-                                  snapshot.hasData) {
-                                return Container(
-                                  padding: EdgeInsets.symmetric(vertical: 5),
-                                  width: width * 1 / 3,
-                                  height: width * 1 / 3,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.network(
-                                      snapshot.data!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (snapshot.connectionState == ConnectionState.waiting ||
-                                  !snapshot.hasData) {
-                                return CircularProgressIndicator();
-                              }
-                              return Container();
-                            },
-                          ),
+                  _showPFP(width),
                   Text("@" + _userModel.username,
                       style:
                           TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                          child: Text("Change username"),
-                          onPressed: () async {
-                            await showInformationDialog(context, "username");
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.grey),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              )))),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final results = await FilePicker.platform.pickFiles(
-                              allowMultiple: false,
-                              type: FileType.custom,
-                              allowedExtensions: ['png', 'jpg']);
-                          if (results == null) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('No file selected'),
-                            ));
-                            return null;
-                          }
-                          final path = results.files.single.path!;
-                          final fileName = _userModel.username + "_pfp";
-                          final updateUserMap = {'picture': fileName};
-
-                          print(path);
-                          print(fileName);
-
-                          storage
-                              .uploadFile(path, fileName, "user_pfp")
-                              .then((value) => print('Done'));
-                          _firebaseApi.updateDocumentByIdFromCollection(
-                              "users", _userModel.id, updateUserMap);
-                          Future.delayed(Duration(milliseconds: 100), () {
-                            setState(() {
-                              _userModel.picture = fileName;
-                            });
-                          });
-                        },
-                        child: Text("Change profile picture"),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.grey),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                            ))),
-                      ),
+                      _changeUsername(),
+                      _changePFP(),
                     ],
                   ),
 
@@ -217,119 +422,9 @@ class _ProfileScreen extends State<ProfileScreen> {
                               fontSize: 25,
                               fontFamily: "AvenirLtStd",
                               fontWeight: FontWeight.bold))),
-                  Row(children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("email address",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              textMinor(_userModel.email, Colors.black)
-                            ])),
-                    Container(
-                        child: ElevatedButton(
-                            child: Text("change",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: () async {
-                              await showInformationDialog(context, "email");
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
-                  Row(children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("password",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              Text("must be between 8-20 characters",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontFamily: "AvenirLtStd",
-                                  ))
-                            ])),
-                    Container(
-                        child: ElevatedButton(
-                            child: Text("change",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: null,
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
-                  Row(children: [
-                    Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        width: width * (3 / 4),
-                        // color: Colors.red,
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("manage interest",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                            ])),
-                    Container(
-                        child: ElevatedButton(
-                            child: Text("change",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "AvenirLtStd",
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            onPressed: () {
-                              _auth.logOut();
-                              Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (Route<dynamic> route) => false);
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                )))))
-                  ]),
+                  _changePassword(width),
+                  _manageInterests(width),
+                  _signOut(width),
                   Container(height: 20), //Space for the nav bar to scroll
                 ],
               ))),

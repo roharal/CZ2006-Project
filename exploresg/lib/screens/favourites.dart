@@ -29,9 +29,6 @@ class _FavouriteScreen extends State<FavouriteScreen> {
               Row(children: [
                 InkWell(
                     onTap: () async {
-                      setState(() {
-                        _isLoaded = false;
-                      });
                       await _favouritesController.addOrRemoveFav(place.id);
                       _favourites =
                           await _favouritesController.getFavouritesList();
@@ -43,12 +40,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                           _favourite_places.add(_place!);
                         }
                       }
-                      setState(() {
-                        print(_favourite_places);
-                        place.likes = !place.likes;
-                        _isLoaded = true;
-                      });
-                      print(place.likes);
+                      setState(() {});
                     },
                     child: _favourites.contains(place.id)
                         ? Icon(
@@ -98,6 +90,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
   }
 
   Future<void> _loadFavourites() async {
+    _favourite_places = [];
     _favourites = await _favouritesController.getFavouritesList();
     if (_favourites != []) {
       for (var fav in _favourites) {
@@ -150,30 +143,37 @@ class _FavouriteScreen extends State<FavouriteScreen> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
-        ? Scaffold(
-            backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
-            body: Container(
-                child: SingleChildScrollView(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                  topBar("favourites", height, width,
-                      'assets/img/favouriteTop.png'),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SearchBar(width: 0.8 * width, height: 0.3 * height),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Search(width: 0.8 * width, height: 0.3 * height),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  recommendedList(_favourite_places, height, width),
-                  SizedBox(height: 20)
-                ]))))
+        ? RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _isLoaded = false;
+              });
+              _loadFavourites();
+            },
+            child: Scaffold(
+                backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
+                body: Container(
+                    child: SingleChildScrollView(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                      topBar("favourites", height, width,
+                          'assets/img/favouriteTop.png'),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SearchBar(width: 0.8 * width, height: 0.3 * height),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Search(width: 0.8 * width, height: 0.3 * height),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      recommendedList(_favourite_places, height, width),
+                      SizedBox(height: 20)
+                    ])))))
         : Container(
             child: Center(
               child: CircularProgressIndicator(),

@@ -515,7 +515,9 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         width: width,
         height: height,
         child: Row(
@@ -552,13 +554,14 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
-    return Container(
-        height: 0.8 * height,
-        width: 0.8 * width,
-        child: ListView.builder(
-          itemCount: places.length,
-          itemBuilder: (context, index) {
-            return Column(children: [
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: places.length,
+      itemBuilder: (context, index) {
+        return Column(children: [
+          Stack(
+            children: [
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, Places2Screen.routeName,
@@ -566,13 +569,17 @@ class _HomeScreen extends State<HomeScreen> {
                 },
                 child: placeContainer(places[index], 0.8 * width, 0.3 * height),
               ),
-              _addFav(places[index], 0.05 * height, width),
-              SizedBox(
-                height: 5,
-              )
-            ]);
-          },
-        ));
+              Positioned(
+                bottom: 0,
+                child: _addFav(places[index], 0.05 * height, 0.8 * width)),
+          ]
+          ),
+          SizedBox(
+            height: 15,
+          )
+        ]);
+      },
+    );
   }
 
   // void _loadRecommendations() async {

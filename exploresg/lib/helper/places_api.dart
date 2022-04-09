@@ -107,42 +107,41 @@ class PlacesApi {
             photos.add(
                 "$placesPhotoURL?maxwidth=$imageWidth&photo_reference=$imageRef&key=$API_KEY");
           }
-
-          var opening = n["opening_hours"];
-          bool on = false;
-          var opening_hours;
-          if (opening != null) {
-            on = opening["open_now"];
-            opening_hours = opening["weekday_text"];
-          }
-          print(n["name"]);
-          place = Place(
-              n["place_id"],
-              n["name"],
-              "",
-              n["vicinity"],
-              n["rating"] == null ? 0.0 : double.parse(n["rating"].toString()),
-              false,
-              coor,
-              n["types"],
-              n["user_ratings_total"] == null ? 0 : n["user_ratings_total"],
-              photos,
-              on,
-              n["price_level"]);
-
-          if (opening_hours != null) {
-            place.setOpeningHours(opening_hours.cast<String>());
-          }
-
-          return place;
-        } else {
-          print(result["status"]);
-          return place;
         }
+
+        var opening = n["opening_hours"];
+        bool on = false;
+        var opening_hours;
+        if (opening != null) {
+          on = opening["open_now"];
+          opening_hours = opening["weekday_text"];
+        }
+        print(n["name"]);
+        place = Place(
+            n["place_id"],
+            n["name"],
+            "",
+            n["vicinity"],
+            n["rating"] == null ? 0.0 : double.parse(n["rating"].toString()),
+            false,
+            coor,
+            n["types"],
+            n["user_ratings_total"] == null ? 0 : n["user_ratings_total"],
+            photos,
+            on,
+            n["price_level"] == null ? 0 : n["price_level"]);
+
+        if (opening_hours != null) {
+          place.setOpeningHours(opening_hours.cast<String>());
+        }
+        return place;
       } else {
-        print(response.statusCode);
+        print(result["status"]);
         return place;
       }
+    } else {
+      print(response.statusCode);
+      return place;
     }
   }
 }

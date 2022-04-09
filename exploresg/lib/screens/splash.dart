@@ -30,7 +30,6 @@ class _SplashScreen extends State<SplashScreen> {
   }
 
   void _homePage() {
-    //Navigator.pushReplacementNamed(context, LoginScreen.routeName);
     var user = _auth.getCurrentUser();
     if (user != null) {
       Navigator.pushReplacementNamed(context, BaseScreen.routeName);

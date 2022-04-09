@@ -1,22 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/reviewsController.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
+import 'package:exploresg/screens/exploreReviews.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:exploresg/helper/favourites_controller.dart';
+import 'package:flutter_svg/svg.dart';
+
+import '../models/review.dart';
 
 class Places2ScreenArgs {
   final Place place;
+
   Places2ScreenArgs(this.place);
 }
 
 class Places2Screen extends StatefulWidget {
   static const routeName = "/places2Screen";
   final Place place;
+
   Places2Screen({required this.place});
 
   @override
@@ -47,13 +55,22 @@ class _Places2Screen extends State<Places2Screen> {
   // rety
 
   //String _curExpStatus;
-  String dropdownValue = 'explored';
+  String dropDownValue = 'unexplored';
   FavouritesController _favouritesController = FavouritesController();
+  ReviewsController _reviewsController = ReviewsController();
   FirebaseApi _firebaseApi = FirebaseApi();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   AuthController _auth = AuthController();
   List<String> _favourites = [];
   bool _isLoaded = false;
+  String _userID = '';
+  bool _userReviewExists = false;
+  Review _prevReview = Review('', '', '', 0); //to view previous review data
+  Review _newReview = Review('', '', '', 0); //to store new review data
+  String _submittable = "NA";
+  double _meanRating = 0;
+
+  TextEditingController _textController = new TextEditingController();
 
   @override
   void initState() {
@@ -63,41 +80,70 @@ class _Places2Screen extends State<Places2Screen> {
 
   void _init() async {
     _favourites = await _favouritesController.getFavouritesList();
+    _userID = _auth.getCurrentUser()!.uid;
+    _userReviewExists =
+        await _reviewsController.userReviewExists(widget.place.id, _userID);
+    if (_userReviewExists) {
+      _prevReview =
+          (await _reviewsController.getReview(widget.place.id, _userID))!;
+      _newReview = _prevReview;
+    }
+    setMyStatus();
+    _meanRating = await _reviewsController.getAverageRating(widget.place.id);
+    _textController.text = _prevReview.getUserReview();
     setState(() {
       _isLoaded = true;
     });
   }
 
-  Widget _upVec() {
-    return Container(
-        width: double.infinity,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[Image.asset('assets/img/placesUpVec.png')]));
+  void setMyStatus() {
+    if (_userReviewExists)
+      dropDownValue = 'explored';
+    else
+      dropDownValue = 'unexplored';
+  }
+
+  Widget _topVector() {
+    double _width = MediaQuery.of(context).size.width;
+    return SafeArea(
+      top: true,
+      child: FittedBox(
+          fit: BoxFit.fill,
+          child: SvgPicture.asset(
+            'assets/img/place-top.svg',
+            width: _width,
+            height: _width * 116 / 375,
+          )),
+    );
   }
 
   Widget _back() {
     return Container(
         alignment: Alignment.topLeft,
-        padding: const EdgeInsets.fromLTRB(_hPad, 10, _hPad, 10),
-        child: Row(
-          children: [
-            Icon(Icons.arrow_back_ios),
-            Text("back",
-                style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 14,
-                ))
-          ],
+        padding: const EdgeInsets.only(left: 16),
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Row(
+            children: [
+              Icon(Icons.arrow_back_ios, color: Color(0xff22254C)),
+              Text("back",
+                  style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 14,
+                      color: Color(0xff22254C)))
+            ],
+          ),
         ));
   }
 
   Widget _placeImg(Place place) {
     return Container(
-        height: 178,
-        width: 304,
+        height: 200,
+        width: 330,
         decoration: BoxDecoration(
-          color: Colors.grey,
+          color: Color(0xffd1d1d6),
           borderRadius: BorderRadius.circular(20),
         ),
         child: place.images.length > 0
@@ -105,22 +151,29 @@ class _Places2Screen extends State<Places2Screen> {
             : Image.asset('assets/img/catsafari.png'));
   }
 
-  Widget _ratings() {
+  Widget _ratingsLabel() {
     return Container(
         padding: const EdgeInsets.fromLTRB(40, 10, 40, 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Google ratings: ",
+            Text("Google ratings:",
                 style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 14,
-                )),
-            Text("Explore ratings: ",
-                style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 14,
-                ))
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    color: Color(0xff22254C))),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ReviewsScreen(place: widget.place),
+                ));
+              },
+              child: Text("exploreSG ratings:",
+                  style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 14,
+                      color: Color(0xff22254C))),
+            )
           ],
         ));
   }
@@ -140,23 +193,76 @@ class _Places2Screen extends State<Places2Screen> {
             itemSize: 20,
             direction: Axis.horizontal,
           ),
-          Image.asset('assets/img/ratingStars.png')
+          RatingBarIndicator(
+            rating: _meanRating,
+            itemBuilder: (context, index) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            itemCount: 5,
+            itemSize: 20,
+            direction: Axis.horizontal,
+          ),
         ]));
   }
 
-  Widget _address(Place place) {
+  Widget _placeDetails(Place place) {
     return Container(
-        padding: const EdgeInsets.fromLTRB(25, 5, 40, 0),
+        padding: const EdgeInsets.fromLTRB(40, 5, 40, 0),
         child: Column(children: [
-          Text(place.placeAddress,
-              style: TextStyle(
-                fontFamily: 'AvenirLtStd',
-                fontSize: 14,
-              ))
+          Row(children: [
+            Text('address: ',
+                style: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    color: Color(0xff22254C))),
+            Flexible(
+              child: Text(place.placeAddress,
+                  style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 14,
+                      color: Color(0xff22254C))),
+            ),
+          ]),
+          Row(
+            children: [
+              Text('operating status: ',
+                  style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 14,
+                      color: Color(0xff22254C))),
+              Text(place.openNow ? 'Open' : 'Closed',
+                  style: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    color:
+                        place.openNow ? Color(0xff6488E5) : Color(0xffE56372),
+                  )),
+            ],
+          ),
+          SizedBox(height: 15),
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ReviewsScreen(place: widget.place),
+                  ));
+                },
+                child: Text("see exploreSG reviews",
+                    style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 14,
+                      color: Color(0xff6488E5),
+                      decoration: TextDecoration.underline,
+                    )),
+              ),
+            ],
+          )
         ]));
   }
 
-  Widget _addFav(Place place, double height, double width) {
+  Widget _addFav(Place place) {
     return Container(
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -176,16 +282,16 @@ class _Places2Screen extends State<Places2Screen> {
                 child: _favourites.contains(place.id)
                     ? Icon(
                         Icons.favorite,
-                        color: Colors.red,
+                        color: Color(0xffE56372),
                       )
                     : Icon(
                         Icons.favorite_border,
-                        color: Colors.grey,
+                        color: Color(0xffE56372),
                       )),
             SizedBox(
               width: 10,
             ),
-            textMinor("add to favourites", Colors.black)
+            textMinor("add to favourites", Color(0xffd1d1d6))
           ])
         ]));
   }
@@ -202,7 +308,7 @@ class _Places2Screen extends State<Places2Screen> {
                 onTap: () {},
                 child: placeContainer(places[index], width, 0.3 * height),
               ),
-              _addFav(places[index], 0.05 * height, width),
+              _addFav(places[index]),
               SizedBox(
                 height: 5,
               )
@@ -211,12 +317,15 @@ class _Places2Screen extends State<Places2Screen> {
         ));
   }
 
-  Widget _lowVec() {
-    return Column(children: [
-      Image.asset(
-        'assets/img/placesLowVec.png',
-      )
-    ]);
+  Widget _midVector() {
+    double _width = MediaQuery.of(context).size.width;
+    return FittedBox(
+        fit: BoxFit.fill,
+        child: SvgPicture.asset(
+          'assets/img/place-mid.svg',
+          width: _width,
+          height: _width * 215 / 375,
+        ));
   }
 
   Widget _dropDown() {
@@ -227,7 +336,7 @@ class _Places2Screen extends State<Places2Screen> {
             borderRadius: BorderRadius.circular(20), color: Colors.white),
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-                value: dropdownValue,
+                value: dropDownValue,
                 icon: const Icon(Icons.keyboard_arrow_down),
                 style: const TextStyle(
                   color: Colors.orange,
@@ -236,7 +345,7 @@ class _Places2Screen extends State<Places2Screen> {
                 ),
                 onChanged: (String? newValue) {
                   setState(() {
-                    dropdownValue = newValue!;
+                    dropDownValue = newValue!;
                   });
                 },
                 items: <String>['unexplored', 'to explore', 'explored']
@@ -253,7 +362,7 @@ class _Places2Screen extends State<Places2Screen> {
 
   Widget _toExplore() {
     return Container(
-        padding: EdgeInsets.fromLTRB(25, 5, 5, 20),
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
         child: Column(children: [
           Row(children: [
             Align(
@@ -268,7 +377,7 @@ class _Places2Screen extends State<Places2Screen> {
             SizedBox(width: 20),
             Image.asset('assets/img/placesCalendar.png', height: 25, width: 25),
           ]),
-          SizedBox(height: 20),
+          SizedBox(height: 25),
           Row(children: [
             Text("select time: ",
                 style: TextStyle(
@@ -289,15 +398,15 @@ class _Places2Screen extends State<Places2Screen> {
                     fontSize: 16,
                   )),
               style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   primary: Color(0xffD1D1D6),
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20))),
               onPressed: () {},
             ),
             SizedBox(width: 8),
             Container(
-              margin: EdgeInsets.only(right: 25),
               alignment: Alignment.centerRight,
               child: ElevatedButton(
                 child: Text('add-to-explore',
@@ -307,8 +416,9 @@ class _Places2Screen extends State<Places2Screen> {
                       fontSize: 16,
                     )),
                 style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     primary: Color(0xffD1D1D6),
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20))),
                 onPressed: () {},
@@ -320,7 +430,7 @@ class _Places2Screen extends State<Places2Screen> {
 
   Widget _explored() {
     return Container(
-        padding: EdgeInsets.fromLTRB(25, 5, 5, 20),
+        margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
         child: Column(children: [
           Row(children: [
             Align(
@@ -328,81 +438,145 @@ class _Places2Screen extends State<Places2Screen> {
             ),
             Text("my rating: ",
                 style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                )),
-            SizedBox(width: 10),
-            RatingBarIndicator(
-              rating: 4.0,
-              itemBuilder: (context, index) => Icon(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff22254C))),
+            SizedBox(width: 7),
+            RatingBar.builder(
+              initialRating:
+                  _userReviewExists ? _prevReview.getUserRating() : 0,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 22,
+              itemBuilder: (context, _) => Icon(
                 Icons.star,
                 color: Colors.amber,
               ),
-              itemCount: 5,
-              itemSize: 20,
-              direction: Axis.horizontal,
+              onRatingUpdate: (rating) {
+                _newReview.setUserRating(rating);
+              },
             ),
           ]),
-          SizedBox(height: 20),
+          SizedBox(height: 25),
           Row(children: [
             Text("my review: ",
                 style: TextStyle(
                   fontFamily: 'AvenirLtStd',
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  color: Color(0xff22254C),
                 )),
           ]),
-          SizedBox(height: 5),
+          SizedBox(height: 7),
           Container(
               height: 200,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20), color: Colors.white),
               child: Container(
-                  child: TextField(
-                      decoration: new InputDecoration(
-                labelText:
-                    'describe your experience or record some\n nice memories...',
-                labelStyle: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 16,
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: const BorderSide(
-                    color: Colors.white,
+                  child: TextFormField(
+                controller: _textController,
+                decoration: new InputDecoration(
+                  hintText:
+                      'describe your experience or record some nice memories...',
+                  hintMaxLines: 3,
+                  hintStyle: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    color: Color(0xffD1D1D6),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              )))),
+              ))),
+          SizedBox(
+            height: 5,
+          ),
+          _submitReviewText(),
           SizedBox(height: 8),
-          ElevatedButton(
-            child: Text('recommend to someone',
-                style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  color: Colors.white,
-                  fontSize: 16,
-                )),
-            style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                primary: Color(0xffE56372),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20))),
-            onPressed: () {},
+          Container(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+                child: Text('submit review',
+                    style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      color: Colors.white,
+                      fontSize: 16,
+                    )),
+                style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    primary: Color(0xff6488E5),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    elevation: 0),
+                onPressed: () {
+                  submitReview(_textController);
+                }),
           ),
         ]));
   }
 
+  void submitReview(var textController) {
+    setState(() {
+      _newReview.setUserReview(textController.text);
+      var _data = {
+        'userID': _userID,
+        'rating': _newReview.getUserRating(),
+        'review_text': _newReview.getUserReview()
+      };
+      if (_newReview.getUserRating() == 0 || _newReview.getUserReview() == '') {
+        //either field is empty--invalid input
+        _submittable = 'NO';
+        null;
+      } else if (_userReviewExists) {
+        //if user's review already exists, just update review
+        _reviewsController.updateReview(widget.place.id, _userID, _data);
+        _submittable = 'YES';
+      } else {
+        //user's review does not exist, create new one
+        _reviewsController.createReview(widget.place.id, _userID, _data);
+        _submittable = 'YES';
+      }
+      _prevReview.setUserReview(textController.text);
+    });
+  }
+
   Widget _statusText() {
-    if (dropdownValue == 'explored') {
+    if (dropDownValue == 'explored') {
       return _explored();
-    } else if (dropdownValue == 'to explore') {
+    } else if (dropDownValue == 'to explore') {
       return _toExplore();
     } else {
       return SizedBox.shrink();
     }
   }
 
-  static const double _hPad = 16.0;
+  Widget _submitReviewText() {
+    switch (_submittable) {
+      case 'NA':
+        return Container();
+      case 'NO':
+        return Container(
+          alignment: Alignment.centerLeft,
+          child: textMinor(
+              'please fill up rating & review field', Color(0xffE56372)),
+        );
+      case 'YES':
+        return Container(
+          alignment: Alignment.centerLeft,
+          child: textMinor('review submitted!', Color(0xff6488E5)),
+        );
+      default:
+        return Container();
+    }
+    ;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -427,27 +601,34 @@ class _Places2Screen extends State<Places2Screen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                    _upVec(),
+                    _topVector(),
                     _back(),
+                    SizedBox(
+                      height: 7,
+                    ),
                     Container(
+                        margin: EdgeInsets.symmetric(horizontal: 40),
                         child: textMajor(
-                            widget.place.placeName, Colors.black, 36)),
+                            widget.place.placeName, Color(0xff22254C), 36)),
+                    SizedBox(height: 20),
                     _placeImg(widget.place),
-                    _ratings(),
+                    _ratingsLabel(),
                     _starRatings(widget.place),
-                    _address(widget.place),
-                    _addFav(widget.place, 0.05 * height, width),
-                    _lowVec(),
+                    _placeDetails(widget.place),
+                    SizedBox(height: 20),
+                    _addFav(widget.place),
+                    _midVector(),
                     Container(
                         //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
                         child: Text("my details",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: 'MadeSunflower',
-                              fontSize: 26,
-                            ))),
+                                fontFamily: 'MadeSunflower',
+                                fontSize: 26,
+                                color: Color(0xff22254C)))),
+                    SizedBox(height: 7),
                     Container(
-                      padding: EdgeInsets.fromLTRB(25, 5, 5, 5),
+                      padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
                       child: Column(children: [
                         Align(
                             alignment: Alignment.centerLeft,
@@ -455,10 +636,10 @@ class _Places2Screen extends State<Places2Screen> {
                               children: [
                                 Text("my status: ",
                                     style: TextStyle(
-                                      fontFamily: 'AvenirLtStd',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    )),
+                                        fontFamily: 'AvenirLtStd',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff22254C))),
                                 SizedBox(width: 5),
                                 _dropDown(),
                                 //_renderDropdown();
@@ -466,7 +647,10 @@ class _Places2Screen extends State<Places2Screen> {
                             ))
                       ]),
                     ),
-                    _statusText()
+                    _statusText(),
+                    SizedBox(
+                      height: 20,
+                    )
                   ])))
             ]))
         : Container(

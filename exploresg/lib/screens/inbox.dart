@@ -16,7 +16,7 @@ class _InboxScreen extends State<InboxScreen> {
   var valueChoose;
   List<Invitation> invitationList = [
     Invitation(DateTime.now(), "Oshwad", "Cat Safari", 4.5, "56 Nanyang Ave",
-        "Dog day center in Singapore", "assets/img/catSafari.png"),
+        "Dog day center in Singapore", "assets/img/catsafari.png"),
     Invitation(DateTime.now(), "Albers", "Dog Safari", 1.7, "56 Doggo street",
         "Cat day center in Singapore", "assets/img/dog.jpg")
   ];
