@@ -62,16 +62,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  // _moveToAnotherPageWithinNavBar() {
-  //   pushNewScreenWithRouteSettings(
-  //       context,
-  //       screen: PlaceScreen(), // class you're moving into
-  //       settings: RouteSettings(name: PlaceScreen.routeName), // remember to include routeName at the base class
-  //       pageTransitionAnimation: PageTransitionAnimation.cupertino
-  //   );
-  // }
+  String _placetypedropdownValue = "airport";
   bool _searchByCategory = false;
-  String _placetypedropdownValue = 'place type';
   String _sortbydropdownValue = 'sort by';
   TextEditingController _searchController = new TextEditingController();
 
@@ -90,8 +82,8 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Future<void> _loadPage() async {
-    _places = await _recommendationsController.getRecommendationsList();
-    _favourites = await _favouritesController.getFavouritesList();
+    //_places = await _recommendationsController.getRecommendationsList();
+    //_favourites = await _favouritesController.getFavouritesList();
     setState(() {
       _isLoaded = true;
     });
@@ -115,7 +107,6 @@ class _HomeScreen extends State<HomeScreen> {
         child: DDL);
   }
 
-  double _distvalue = 15000;
   RangeValues _pricevalues = RangeValues(0, 4);
   RangeValues _ratingvalues = RangeValues(1, 5);
 
@@ -195,6 +186,8 @@ class _HomeScreen extends State<HomeScreen> {
           ],
         ));
   }
+
+  double _distvalue = 15000;
 
   Widget _distancefilter(double width) {
     final double min = 0;
@@ -281,22 +274,125 @@ class _HomeScreen extends State<HomeScreen> {
             }));
   }
 
+  List<String> placeType = [
+    "accounting",
+    "airport",
+    "amusement park",
+    "aquarium",
+    "art gallery",
+    "atm",
+    "bakery",
+    "bank",
+    "bar",
+    "beauty salon",
+    "bicycle store",
+    "book store",
+    "bowling alley",
+    "bus station",
+    "cafe",
+    "campground",
+    "car dealer",
+    "car rental",
+    "car repair",
+    "car wash",
+    "casino",
+    "cemetery",
+    "church",
+    "city hall",
+    "clothing store",
+    "convenience store",
+    "courthouse",
+    "dentist",
+    "department store",
+    "doctor",
+    "drugstore",
+    "electrician",
+    "electronics store",
+    "embassy",
+    "fire station",
+    "florist",
+    "funeral home",
+    "furniture store",
+    "gas station",
+    "gym",
+    "hair care",
+    "hardware store",
+    "hindu temple",
+    "home goods store",
+    "hospital",
+    "insurance agency",
+    "jewelry store",
+    "laundry",
+    "lawyer",
+    "library",
+    "light rail station",
+    "liquor store",
+    "local government office",
+    "locksmith",
+    "meal delivery",
+    "meal takeaway",
+    "mosque",
+    "movie theater",
+    "moving company",
+    "museum",
+    "night club",
+    "park",
+    "parking",
+    "pet store",
+    "pharmacy",
+    "physiotherapist",
+    "plumber",
+    "police",
+    "post office",
+    "primary school",
+    "real estate agency",
+    "restaurant",
+    "roofing contractor",
+    "school",
+    "secondary school",
+    "shoe store",
+    "shopping mall",
+    "spa",
+    "stadium",
+    "subway station",
+    "supermarket",
+    "taxi stand",
+    "tourist attraction",
+    "train station",
+    "transit station",
+    "travel agency",
+    "university",
+    "veterinary care",
+    "zoo"
+  ];
+
   Container _placeTypeDropDown(double width) {
+    //String _placetypedropdownValue = "airport";
+
     return _dropDownList(
         width,
-        DropdownButtonFormField<String>(
-            items: [
-              DropdownMenuItem(
-                  child: textMinor("place type", Colors.black),
-                  value: "place type"),
-              DropdownMenuItem(child: textMinor("a", Colors.black), value: "a")
-            ],
-            decoration: dropdownDeco,
-            isExpanded: true,
-            value: _placetypedropdownValue,
-            onChanged: (String? newValue) {
+        DropdownButtonFormField(
+          items: placeType
+              .map((String e) =>
+                  DropdownMenuItem(value: e, child: textMinor(e, Colors.black)))
+              .toList(),
+          decoration: dropdownDeco,
+          isExpanded: true,
+          value: _placetypedropdownValue,
+          // validator: (value) {
+          //   if (value!.isEmpty) {
+          //     return "can't empty";
+          //   } else {
+          //     return null;
+          //   }
+          // },
+          onChanged: (newValue) {
+            setState(() {
+              print(newValue);
               _placetypedropdownValue = newValue!;
-            }));
+            });
+          },
+        ));
   }
 
   Container _searchBar(double width, double height) {
@@ -308,8 +404,8 @@ class _HomeScreen extends State<HomeScreen> {
       child: Container(
         child: TextField(
           onSubmitted: (value) {
-            print(_placetypedropdownValue);
-            print(_sortbydropdownValue);
+            // print(_placetypedropdownValue);
+            // print(_sortbydropdownValue);
             print(_searchController.text);
           },
           controller: _searchController,
@@ -368,31 +464,20 @@ class _HomeScreen extends State<HomeScreen> {
               ))),
           onPressed: () {
             Navigator.pushNamed(context, AfterSearchScreen.routeName,
-                arguments: ScreenArguments(_placetypedropdownValue, _maxfilter,
-                    _minfilter, _sortbydropdownValue, _searchController.text));
+                arguments: _searchByCategory == false //using input searchbar
+                    ? ScreenArguments(_maxfilter, _minfilter,
+                        _sortbydropdownValue, _searchController.text)
+                    : ScreenArguments(
+                        //using place type dropdown
+                        _maxfilter,
+                        _minfilter,
+                        _sortbydropdownValue,
+                        _placetypedropdownValue,
+                      ));
             // print(_maxfilter);
             // print(_minfilter);
             // print(_sortbydropdownValue);
             // print(_searchController.text);
-
-            // pushNewScreenWithRouteSettings(context,
-            //     screen: AfterSearchScreen(ScreenArguments(
-            //         _placetypedropdownValue,
-            //         _maxfilter,
-            //         _minfilter,
-            //         _sortbydropdownValue,
-            //         _searchController.text)), // class you're moving into
-            //     //settings: RouteSettings(name: AfterSearchScreen.), // remember to include routeName at the base class
-            //     settings: RouteSettings(
-            //       name: '/aftersearch',
-            //       arguments: ScreenArguments(
-            //           _placetypedropdownValue,
-            //           _maxfilter,
-            //           _minfilter,
-            //           _sortbydropdownValue,
-            //           _searchController.text),
-            //     ),
-            //     pageTransitionAnimation: PageTransitionAnimation.cupertino);
           },
           child: Text("Go!",
               style: TextStyle(

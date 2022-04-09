@@ -22,13 +22,15 @@ class PlacesApi {
   String placeDetailsSearchURL =
       "https://maps.googleapis.com/maps/api/place/details/json";
 
-  Future<List<Place>?> nearbySearchFromText(
-      String lat, String long, int radius, String type, String input,
-      [int? maxP, int? minP]) async {
+  // Future<List<Place>?> nearbySearchFromText(String lat, String long, int radius,
+  //     [String? type, String? input, int? maxP, int? minP]) async {
+  Future<List<Place>?> nearbySearchFromText(String lat, String long, int radius,
+      [String? text, int? maxP, int? minP]) async {
     List<Place> places = [];
+
     final request = Uri.parse(
         //"$nearbySearchURL?location=$lat%2C$long&radius=$radius&type=$type$input&key=$API_KEY");
-        "$nearbySearchURL?location=$lat%2C$long&radius=$radius&type=$type$input&maxprice=$maxP&minprice=$minP&key=$API_KEY");
+        "$nearbySearchURL?location=$lat%2C$long&radius=$radius$text&maxprice=$maxP&minprice=$minP&key=$API_KEY");
     final response = await _client.get(request);
     if (response.statusCode == 200) {
       final result = json.decode(response.body);

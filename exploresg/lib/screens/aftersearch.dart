@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'dart:collection';
-
-import 'package:exploresg/screens/home.dart';
-
-import 'package:exploresg/screens/places.dart';
 import 'package:flutter/material.dart';
+import 'package:exploresg/screens/home.dart';
+import 'package:exploresg/screens/places.dart';
+
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/helper/places_api.dart';
 
@@ -17,26 +16,23 @@ import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/favourites_controller.dart';
 
 class ScreenArguments {
-  final String placeType;
   final int max;
   final int min;
   final String sort;
-  final String text;
+  final String text; //either type chosen from dropdown OR search from searchbar
 
-  ScreenArguments(this.placeType, this.max, this.min, this.sort, this.text);
+  ScreenArguments(this.max, this.min, this.sort, this.text);
 }
 
 class AfterSearchScreen extends StatefulWidget {
   static const routeName = "/afterSearch";
-  final String placeType;
   final int max;
   final int min;
   final String sort;
   final String text;
-  AfterSearchScreen(this.placeType, this.max, this.min, this.sort, this.text);
+  AfterSearchScreen(this.max, this.min, this.sort, this.text);
 
   @override
-  //const _placetypedropdownValue = screenArguments.sort
   State<AfterSearchScreen> createState() => _AfterSearchState();
 }
 
@@ -62,10 +58,10 @@ class _AfterSearchState extends State<AfterSearchScreen> {
   }
 
   Future<void> _loadPage() async {
-    _loadSearch(ScreenArguments(
-        widget.placeType, widget.max, widget.min, widget.sort, widget.text));
-    _favourites = await _favouritesController
-        .getFavouritesList(); // i think this function can be defined in a controller class instead
+    _loadSearch(
+        ScreenArguments(widget.max, widget.min, widget.sort, widget.text));
+    // _favourites = await _favouritesController
+    //     .getFavouritesList(); // i think this function can be defined in a controller class instead
     setState(() {
       _isLoaded = true;
     });
@@ -464,6 +460,98 @@ class _AfterSearchState extends State<AfterSearchScreen> {
     return 12742 * asin(sqrt(a));
   }
 
+  List<String> placeType = [
+    "accounting",
+    "airport",
+    "amusement park",
+    "aquarium",
+    "art gallery",
+    "atm",
+    "bakery",
+    "bank",
+    "bar",
+    "beauty salon",
+    "bicycle store",
+    "book store",
+    "bowling alley",
+    "bus station",
+    "cafe",
+    "campground",
+    "car dealer",
+    "car rental",
+    "car repair",
+    "car wash",
+    "casino",
+    "cemetery",
+    "church",
+    "city hall",
+    "clothing store",
+    "convenience store",
+    "courthouse",
+    "dentist",
+    "department store",
+    "doctor",
+    "drugstore",
+    "electrician",
+    "electronics store",
+    "embassy",
+    "fire station",
+    "florist",
+    "funeral home",
+    "furniture store",
+    "gas station",
+    "gym",
+    "hair care",
+    "hardware store",
+    "hindu temple",
+    "home goods store",
+    "hospital",
+    "insurance agency",
+    "jewelry store",
+    "laundry",
+    "lawyer",
+    "library",
+    "light rail station",
+    "liquor store",
+    "local government office",
+    "locksmith",
+    "meal delivery",
+    "meal takeaway",
+    "mosque",
+    "movie theater",
+    "moving company",
+    "museum",
+    "night club",
+    "park",
+    "parking",
+    "pet store",
+    "pharmacy",
+    "physiotherapist",
+    "plumber",
+    "police",
+    "post office",
+    "primary school",
+    "real estate agency",
+    "restaurant",
+    "roofing contractor",
+    "school",
+    "secondary school",
+    "shoe store",
+    "shopping mall",
+    "spa",
+    "stadium",
+    "subway station",
+    "supermarket",
+    "taxi stand",
+    "tourist attraction",
+    "train station",
+    "transit station",
+    "travel agency",
+    "university",
+    "veterinary care",
+    "zoo"
+  ];
+
   void _loadSearch(ScreenArguments screenArguments) async {
     // String uid = _auth.getCurrentUser()!.uid;
     // String interest = "";
@@ -479,8 +567,19 @@ class _AfterSearchState extends State<AfterSearchScreen> {
       if (screenArguments.sort == 'distance') {
         //_sortdistance(result, lat, long);
         //List<PlaceDistance> list = [];
-        var result = await _placesApi.nearbySearchFromText(
-            lat, long, screenArguments.max, screenArguments.text, "");
+        var result = placeType.contains(screenArguments.text)
+            ? await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                screenArguments.max,
+                "&type=" + screenArguments.text,
+              )
+            : await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                screenArguments.max,
+                "&input=" + screenArguments.text,
+              );
 
         print(result);
         var distmap = {};
@@ -503,16 +602,31 @@ class _AfterSearchState extends State<AfterSearchScreen> {
           _distance.add(double.parse(i.toStringAsFixed(2)));
         }
 
+        print(_distance);
+
         for (var i in sortedKeys) {
           _mixPlaces.add(i);
         }
       } else if (screenArguments.sort == "ratings") {
-        var result = await _placesApi.nearbySearchFromText(
-            lat, long, 15000, screenArguments.text, "");
+        var result = placeType.contains(screenArguments.text)
+            ? await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                20000,
+                "&type=" + screenArguments.text,
+              )
+            : await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                20000,
+                "&input=" + screenArguments.text,
+              );
 
         print(result);
 
         var ratingsmap = {};
+        // print(widget.min);
+        // print(widget.max);
 
         for (var i in result!) {
           if (widget.min <= i.ratings && i.ratings <= widget.max) {
@@ -529,8 +643,19 @@ class _AfterSearchState extends State<AfterSearchScreen> {
           _mixPlaces.add(i);
         }
       } else if (screenArguments.sort == "price") {
-        var result = await _placesApi.nearbySearchFromText(
-            lat, long, 15000, screenArguments.text, "", widget.max, widget.min);
+        var result = placeType.contains(screenArguments.text)
+            ? await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                20000,
+                "&type=" + screenArguments.text,
+              )
+            : await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                20000,
+                "&input=" + screenArguments.text,
+              );
 
         print(result);
 
@@ -539,15 +664,37 @@ class _AfterSearchState extends State<AfterSearchScreen> {
         for (var i in result!) {
           if (widget.min <= i.price && i.price <= widget.max)
             pricemap[i] = i.price;
-
-          print(i);
         }
+
         var sortedKeys = pricemap.keys.toList(growable: false)
           ..sort((a, b) => pricemap[a].compareTo(pricemap[b]));
+
         LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
             key: (k) => k, value: (k) => pricemap[k]);
+        print(sortedMap.values);
 
         for (var i in sortedKeys) {
+          _mixPlaces.add(i);
+        }
+      } else if (screenArguments.sort == "sort by") {
+        print(widget.text);
+
+        var result = placeType.contains(screenArguments.text)
+            ? await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                20000,
+                "&type=" + widget.text,
+              )
+            : await _placesApi.nearbySearchFromText(
+                lat,
+                long,
+                20000,
+                "&input=" + widget.text,
+              );
+
+        for (var i in result!) {
+          print(i.types);
           _mixPlaces.add(i);
         }
       }
