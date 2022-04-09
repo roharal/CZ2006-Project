@@ -467,27 +467,26 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
-    return Container(
-        height: 0.8 * height,
-        width: 0.8 * width,
-        child: ListView.builder(
-          itemCount: places.length,
-          itemBuilder: (context, index) {
-            return Column(children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, Places2Screen.routeName,
-                      arguments: Places2ScreenArgs(_places[index]));
-                },
-                child: placeContainer(places[index], 0.8 * width, 0.3 * height),
-              ),
-              _addFav(places[index], 0.05 * height, width),
-              SizedBox(
-                height: 5,
-              )
-            ]);
-          },
-        ));
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: places.length,
+      itemBuilder: (context, index) {
+        return Column(children: [
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Places2Screen.routeName,
+                  arguments: Places2ScreenArgs(_places[index]));
+            },
+            child: placeContainer(places[index], 0.8 * width, 0.3 * height),
+          ),
+          _addFav(places[index], 0.05 * height, width),
+          SizedBox(
+            height: 5,
+          )
+        ]);
+      },
+    );
   }
 
   // void _loadRecommendations() async {
@@ -538,7 +537,7 @@ class _HomeScreen extends State<HomeScreen> {
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
         ? Scaffold(
-            backgroundColor: createMaterialColor(Color(0xfffffcec)),
+            //backgroundColor: createMaterialColor(Color(0xfffffcec)),
             body: Container(
                 child: SingleChildScrollView(
                     child: Column(
