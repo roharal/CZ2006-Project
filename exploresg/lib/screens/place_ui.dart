@@ -615,8 +615,15 @@ class _PlaceScreen extends State<PlaceScreen> {
                         ),
                         Container(
                             margin: EdgeInsets.symmetric(horizontal: 40),
-                            child: textMajor(
-                                widget.place.placeName, Color(0xff22254C), 36)),
+                            child: Text(widget.place.placeName,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'MadeSunflower',
+                                  fontSize: 36,
+                                  color: Color(0xff22254C)
+                              ),
+                            ),
+                        ),
                         SizedBox(height: 20),
                         _placeImg(widget.place),
                         _ratingsLabel(),

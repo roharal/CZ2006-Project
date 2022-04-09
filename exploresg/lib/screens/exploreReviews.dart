@@ -141,12 +141,15 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     return ListView.builder(
       itemCount: reviews.length,
       itemBuilder: (context, index) {
-        return Column(
-          children: [
-            _reviewContainer(displayNames[index], PFPs[index],
-                reviews[index].getUserRating(), reviews[index].getUserReview()),
-            SizedBox(height: 20,)
-          ],
+        return SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              _reviewContainer(displayNames[index], PFPs[index],
+                  reviews[index].getUserRating(), reviews[index].getUserReview()),
+              SizedBox(height: 20,)
+            ],
+          ),
         );
       },
       shrinkWrap: true,
@@ -161,32 +164,41 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     return _isLoaded
     ? Scaffold(
       backgroundColor: Color(0xfffffcec),
-      body: Column(
-        children: [
-          _topVector(),
-          _back(),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 40),
-            child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 7,),
-                    textMajor(widget.place.placeName, Color(0xff22254C), 36),
-                    textMajor('reviews', Color(0xff22254C), 36),
-                    SizedBox(height: 20),
-                    reviews.isEmpty
-                        ? textMinor('no reviews to show', Color(0xffd1d1d6))
-                        : _review(reviews),
-                    reviews.isEmpty
-                        ? Container()
-                        : textMinor('no more to show...', Color(0xffd1d1d6)),
-                  ],
-                )
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _topVector(),
+            _back(),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 7,),
+                  Text(widget.place.placeName,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'MadeSunflower',
+                      fontSize: 36,
+                      color: Color(0xff22254C)
+                    ),
+                  ),
+                  textMajor('explore reviews', Color(0xff22254C), 36),
+                  SizedBox(height: 10,),
+                  reviews.isEmpty
+                      ? textMinor('no reviews to show', Color(0xffd1d1d6))
+                  //Actual review list comes from here
+                      : _review(reviews),
+                  reviews.isEmpty
+                      ? Container()
+                      : textMinor('no more to show...', Color(0xffd1d1d6)),
+                  SizedBox(height: 25,)
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     )
     : Container(
