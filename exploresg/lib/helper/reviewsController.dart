@@ -108,11 +108,22 @@ class ReviewsController {
 
     List<Review> reviewsList = [];
     await _firestore.collection("place/$placeID/reviews").get().then((querySnapshot){
-      querySnapshot.docs.forEach((user) {
+      querySnapshot.docs.forEach((user) async {
         Review temp = Review(placeID, user['userID'], user['review_text'], user['rating']);
         reviewsList.add(temp);
       });
     });
     return reviewsList;
+  }
+
+  Future<String> getUserName(String userID) async {
+    var user = await _firestore.collection("users").doc(userID).get();
+    if (user.exists) {
+      Map<String, dynamic> data = user.data()!;
+      String displayName = data['firstName'] + ' ' + data['lastName'];
+      //print(displayName);
+      return displayName;
+    }
+    return '';
   }
 }
