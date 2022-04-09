@@ -70,6 +70,8 @@ class _Places2Screen extends State<Places2Screen> {
   String _submittable = "NA";
   double _meanRating = 0;
 
+  TextEditingController _textController = new TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -79,13 +81,16 @@ class _Places2Screen extends State<Places2Screen> {
   void _init() async {
     _favourites = await _favouritesController.getFavouritesList();
     _userID = _auth.getCurrentUser()!.uid;
-    _userReviewExists = await _reviewsController.userReviewExists(widget.place.id, _userID);
-    if (_userReviewExists){
-      _prevReview = (await _reviewsController.getReview(widget.place.id, _userID))!;
+    _userReviewExists =
+        await _reviewsController.userReviewExists(widget.place.id, _userID);
+    if (_userReviewExists) {
+      _prevReview =
+          (await _reviewsController.getReview(widget.place.id, _userID))!;
       _newReview = _prevReview;
     }
     setMyStatus();
     _meanRating = await _reviewsController.getAverageRating(widget.place.id);
+    _textController.text = _prevReview.getUserReview();
     setState(() {
       _isLoaded = true;
     });
@@ -99,10 +104,7 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   Widget _topVector() {
-    double _width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    double _width = MediaQuery.of(context).size.width;
     return SafeArea(
       top: true,
       child: FittedBox(
@@ -111,8 +113,7 @@ class _Places2Screen extends State<Places2Screen> {
             'assets/img/place-top.svg',
             width: _width,
             height: _width * 116 / 375,
-          )
-      ),
+          )),
     );
   }
 
@@ -121,7 +122,9 @@ class _Places2Screen extends State<Places2Screen> {
         alignment: Alignment.topLeft,
         padding: const EdgeInsets.only(left: 16),
         child: InkWell(
-          onTap: () {Navigator.of(context).pop();},
+          onTap: () {
+            Navigator.of(context).pop();
+          },
           child: Row(
             children: [
               Icon(Icons.arrow_back_ios, color: Color(0xff22254C)),
@@ -129,8 +132,7 @@ class _Places2Screen extends State<Places2Screen> {
                   style: TextStyle(
                       fontFamily: 'AvenirLtStd',
                       fontSize: 14,
-                      color: Color(0xff22254C)
-                  ))
+                      color: Color(0xff22254C)))
             ],
           ),
         ));
@@ -159,8 +161,7 @@ class _Places2Screen extends State<Places2Screen> {
                 style: TextStyle(
                     fontFamily: 'AvenirLtStd',
                     fontSize: 14,
-                    color: Color(0xff22254C)
-                )),
+                    color: Color(0xff22254C))),
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -171,8 +172,7 @@ class _Places2Screen extends State<Places2Screen> {
                   style: TextStyle(
                       fontFamily: 'AvenirLtStd',
                       fontSize: 14,
-                      color: Color(0xff22254C)
-                  )),
+                      color: Color(0xff22254C))),
             )
           ],
         ));
@@ -182,25 +182,23 @@ class _Places2Screen extends State<Places2Screen> {
     return Container(
         padding: const EdgeInsets.fromLTRB(40, 0, 40, 10),
         child:
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           RatingBarIndicator(
             rating: place.ratings,
-            itemBuilder: (context, index) =>
-                Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
+            itemBuilder: (context, index) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
             itemCount: 5,
             itemSize: 20,
             direction: Axis.horizontal,
           ),
           RatingBarIndicator(
             rating: _meanRating,
-            itemBuilder: (context, index) =>
-                Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
+            itemBuilder: (context, index) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
             itemCount: 5,
             itemSize: 20,
             direction: Axis.horizontal,
@@ -212,39 +210,33 @@ class _Places2Screen extends State<Places2Screen> {
     return Container(
         padding: const EdgeInsets.fromLTRB(40, 5, 40, 0),
         child: Column(children: [
-          Row(
-              children: [
-                Text('address: ',
-                    style: TextStyle(
-                        fontFamily: 'AvenirLtStd',
-                        fontSize: 14,
-                        color: Color(0xff22254C)
-                    )),
-                Flexible(
-                  child: Text(place.placeAddress,
-                      style: TextStyle(
-                          fontFamily: 'AvenirLtStd',
-                          fontSize: 14,
-                          color: Color(0xff22254C)
-                      )),
-                ),
-              ]
-          ),
+          Row(children: [
+            Text('address: ',
+                style: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    color: Color(0xff22254C))),
+            Flexible(
+              child: Text(place.placeAddress,
+                  style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 14,
+                      color: Color(0xff22254C))),
+            ),
+          ]),
           Row(
             children: [
               Text('operating status: ',
                   style: TextStyle(
                       fontFamily: 'AvenirLtStd',
                       fontSize: 14,
-                      color: Color(0xff22254C)
-                  )),
-              Text(
-                  place.openNow ? 'Open' : 'Closed',
+                      color: Color(0xff22254C))),
+              Text(place.openNow ? 'Open' : 'Closed',
                   style: TextStyle(
                     fontFamily: 'AvenirLtStd',
                     fontSize: 14,
-                    color: place.openNow ? Color(0xff6488E5) : Color(
-                        0xffE56372),
+                    color:
+                        place.openNow ? Color(0xff6488E5) : Color(0xffE56372),
                   )),
             ],
           ),
@@ -276,33 +268,32 @@ class _Places2Screen extends State<Places2Screen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(children: [
-                InkWell(
-                    onTap: () async {
-                      await _favouritesController.addOrRemoveFav(place.id);
-                      _favourites =
-                      await _favouritesController.getFavouritesList();
-                      setState(() {
-                        place.likes = !place.likes;
-                        print(_favourites);
-                      });
-                      print(place.likes);
-                    },
-                    child: _favourites.contains(place.id)
-                        ? Icon(
-                      Icons.favorite,
-                      color: Color(0xffE56372),
-                    )
-                        : Icon(
-                      Icons.favorite_border,
-                      color: Color(0xffE56372),
-                    )),
-                SizedBox(
-                  width: 10,
-                ),
-                textMinor("add to favourites", Color(0xffd1d1d6))
-              ])
-            ]));
+          Row(children: [
+            InkWell(
+                onTap: () async {
+                  await _favouritesController.addOrRemoveFav(place.id);
+                  _favourites = await _favouritesController.getFavouritesList();
+                  setState(() {
+                    place.likes = !place.likes;
+                    print(_favourites);
+                  });
+                  print(place.likes);
+                },
+                child: _favourites.contains(place.id)
+                    ? Icon(
+                        Icons.favorite,
+                        color: Color(0xffE56372),
+                      )
+                    : Icon(
+                        Icons.favorite_border,
+                        color: Color(0xffE56372),
+                      )),
+            SizedBox(
+              width: 10,
+            ),
+            textMinor("add to favourites", Color(0xffd1d1d6))
+          ])
+        ]));
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
@@ -327,18 +318,14 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   Widget _midVector() {
-    double _width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    double _width = MediaQuery.of(context).size.width;
     return FittedBox(
         fit: BoxFit.fill,
         child: SvgPicture.asset(
           'assets/img/place-mid.svg',
           width: _width,
           height: _width * 215 / 375,
-        )
-    );
+        ));
   }
 
   Widget _dropDown() {
@@ -442,7 +429,6 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   Widget _explored() {
-    var _textController = TextEditingController(text: _prevReview.getUserReview());
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
         child: Column(children: [
@@ -455,22 +441,20 @@ class _Places2Screen extends State<Places2Screen> {
                     fontFamily: 'AvenirLtStd',
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xff22254C)
-                )),
+                    color: Color(0xff22254C))),
             SizedBox(width: 7),
             RatingBar.builder(
-              initialRating: _userReviewExists ?
-              _prevReview.getUserRating() : 0,
+              initialRating:
+                  _userReviewExists ? _prevReview.getUserRating() : 0,
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,
               itemCount: 5,
               itemSize: 22,
-              itemBuilder: (context, _) =>
-                  Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
               onRatingUpdate: (rating) {
                 _newReview.setUserRating(rating);
               },
@@ -493,26 +477,27 @@ class _Places2Screen extends State<Places2Screen> {
                   borderRadius: BorderRadius.circular(20), color: Colors.white),
               child: Container(
                   child: TextFormField(
-                    controller: _textController,
-                    decoration: new InputDecoration(
-                      hintText: 'describe your experience or record some nice memories...',
-                      hintMaxLines: 3,
-                      hintStyle: TextStyle(
-                        fontFamily: 'AvenirLtStd',
-                        fontSize: 14,
-                        color: Color(0xffD1D1D6),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                        borderSide: const BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
+                controller: _textController,
+                decoration: new InputDecoration(
+                  hintText:
+                      'describe your experience or record some nice memories...',
+                  hintMaxLines: 3,
+                  hintStyle: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    fontSize: 14,
+                    color: Color(0xffD1D1D6),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
                     ),
-                  )
-              )
+                  ),
+                ),
+              ))),
+          SizedBox(
+            height: 5,
           ),
-          SizedBox(height: 5,),
           _submitReviewText(),
           SizedBox(height: 8),
           Container(
@@ -529,12 +514,10 @@ class _Places2Screen extends State<Places2Screen> {
                     primary: Color(0xff6488E5),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30)),
-                    elevation: 0
-                ),
+                    elevation: 0),
                 onPressed: () {
                   submitReview(_textController);
-                }
-            ),
+                }),
           ),
         ]));
   }
@@ -547,16 +530,16 @@ class _Places2Screen extends State<Places2Screen> {
         'rating': _newReview.getUserRating(),
         'review_text': _newReview.getUserReview()
       };
-      if (_newReview.getUserRating() == 0 || _newReview.getUserReview() == '') { //either field is empty--invalid input
+      if (_newReview.getUserRating() == 0 || _newReview.getUserReview() == '') {
+        //either field is empty--invalid input
         _submittable = 'NO';
         null;
-      }
-      else
-      if (_userReviewExists) { //if user's review already exists, just update review
+      } else if (_userReviewExists) {
+        //if user's review already exists, just update review
         _reviewsController.updateReview(widget.place.id, _userID, _data);
         _submittable = 'YES';
-      }
-      else { //user's review does not exist, create new one
+      } else {
+        //user's review does not exist, create new one
         _reviewsController.createReview(widget.place.id, _userID, _data);
         _submittable = 'YES';
       }
@@ -575,13 +558,14 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   Widget _submitReviewText() {
-    switch(_submittable){
+    switch (_submittable) {
       case 'NA':
         return Container();
       case 'NO':
         return Container(
           alignment: Alignment.centerLeft,
-          child: textMinor('please fill up rating & review field', Color(0xffE56372)),
+          child: textMinor(
+              'please fill up rating & review field', Color(0xffE56372)),
         );
       case 'YES':
         return Container(
@@ -590,19 +574,14 @@ class _Places2Screen extends State<Places2Screen> {
         );
       default:
         return Container();
-    };
+    }
+    ;
   }
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     // List<DropdownMenuItem<String>> get dropdownItems {
     //   List<DropdownMenuItem<String>> statusItems = [
     //     DropdownMenuItem(child: Text("Unexplored"), value: "USA"),
@@ -614,68 +593,70 @@ class _Places2Screen extends State<Places2Screen> {
 
     return _isLoaded
         ? Scaffold(
-        backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
-        body: Column(children: [
-          Expanded(
-              child: SingleChildScrollView(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        _topVector(),
-                        _back(),
-                        SizedBox(height: 7,),
-                        Container(
-                            margin: EdgeInsets.symmetric(horizontal: 40),
-                            child: textMajor(
-                                widget.place.placeName, Color(0xff22254C), 36)),
-                        SizedBox(height: 20),
-                        _placeImg(widget.place),
-                        _ratingsLabel(),
-                        _starRatings(widget.place),
-                        _placeDetails(widget.place),
-                        SizedBox(height: 20),
-                        _addFav(widget.place),
-                        _midVector(),
-                        Container(
-                          //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
-                            child: Text("my details",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontFamily: 'MadeSunflower',
-                                    fontSize: 26,
-                                    color: Color(0xff22254C)
-                                ))),
-                        SizedBox(height: 7),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
-                          child: Column(children: [
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Text("my status: ",
-                                        style: TextStyle(
-                                            fontFamily: 'AvenirLtStd',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xff22254C)
-                                        )),
-                                    SizedBox(width: 5),
-                                    _dropDown(),
-                                    //_renderDropdown();
-                                  ],
-                                ))
-                          ]),
-                        ),
-                        _statusText(),
-                        SizedBox(height: 20,)
-                      ])))
-        ]))
+            backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
+            body: Column(children: [
+              Expanded(
+                  child: SingleChildScrollView(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                    _topVector(),
+                    _back(),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                        margin: EdgeInsets.symmetric(horizontal: 40),
+                        child: textMajor(
+                            widget.place.placeName, Color(0xff22254C), 36)),
+                    SizedBox(height: 20),
+                    _placeImg(widget.place),
+                    _ratingsLabel(),
+                    _starRatings(widget.place),
+                    _placeDetails(widget.place),
+                    SizedBox(height: 20),
+                    _addFav(widget.place),
+                    _midVector(),
+                    Container(
+                        //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
+                        child: Text("my details",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontFamily: 'MadeSunflower',
+                                fontSize: 26,
+                                color: Color(0xff22254C)))),
+                    SizedBox(height: 7),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
+                      child: Column(children: [
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: [
+                                Text("my status: ",
+                                    style: TextStyle(
+                                        fontFamily: 'AvenirLtStd',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff22254C))),
+                                SizedBox(width: 5),
+                                _dropDown(),
+                                //_renderDropdown();
+                              ],
+                            ))
+                      ]),
+                    ),
+                    _statusText(),
+                    SizedBox(
+                      height: 20,
+                    )
+                  ])))
+            ]))
         : Container(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }
