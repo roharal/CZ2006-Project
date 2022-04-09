@@ -430,7 +430,9 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         width: width,
         height: height,
         child: Row(
@@ -473,16 +475,22 @@ class _HomeScreen extends State<HomeScreen> {
       itemCount: places.length,
       itemBuilder: (context, index) {
         return Column(children: [
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, Places2Screen.routeName,
-                  arguments: Places2ScreenArgs(_places[index]));
-            },
-            child: placeContainer(places[index], 0.8 * width, 0.3 * height),
+          Stack(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, Places2Screen.routeName,
+                      arguments: Places2ScreenArgs(_places[index]));
+                },
+                child: placeContainer(places[index], 0.8 * width, 0.3 * height),
+              ),
+              Positioned(
+                bottom: 0,
+                child: _addFav(places[index], 0.05 * height, 0.8 * width)),
+          ]
           ),
-          _addFav(places[index], 0.05 * height, width),
           SizedBox(
-            height: 5,
+            height: 15,
           )
         ]);
       },
@@ -537,7 +545,7 @@ class _HomeScreen extends State<HomeScreen> {
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
         ? Scaffold(
-            //backgroundColor: createMaterialColor(Color(0xfffffcec)),
+            backgroundColor: createMaterialColor(Color(0xfffffcec)),
             body: Container(
                 child: SingleChildScrollView(
                     child: Column(
