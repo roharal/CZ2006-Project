@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:exploresg/helper/storage_service.dart';
 import 'package:exploresg/screens/changePassword.dart';
 import 'package:exploresg/helper/profileController.dart';
-import 'package:exploresg/screens/interests.dart';
+import 'package:exploresg/screens/interests_ui.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override

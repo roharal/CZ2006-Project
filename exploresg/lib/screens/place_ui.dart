@@ -16,37 +16,26 @@ import 'package:flutter_svg/svg.dart';
 
 import '../models/review.dart';
 
-class Places2ScreenArgs {
+class PlaceScreenArguments {
   final Place place;
+  final List<String> favourites;
 
-  Places2ScreenArgs(this.place);
+  PlaceScreenArguments(this.place, this.favourites);
 }
 
-class Places2Screen extends StatefulWidget {
-  static const routeName = "/places2Screen";
+class PlaceScreen extends StatefulWidget {
+  static const routeName = "/placeScreen";
   final Place place;
-
-  Places2Screen({required this.place});
+  final List<String> favourites;
+  PlaceScreen(this.place, this.favourites);
 
   @override
   State<StatefulWidget> createState() {
-    return _Places2Screen();
+    return _PlaceScreen();
   }
 }
 
-// Widget _renderDropdown(){
-//   String status;
-
-//    if(status == 'to explore') {
-//     return Text('Widget A'); // this could be any Widget
-//   } else if(status == 'explored') {
-//     return Text('Widget B');
-//   } else {
-//     return Text('Widget C');
-//   }
-// }
-
-class _Places2Screen extends State<Places2Screen> {
+class _PlaceScreen extends State<PlaceScreen> {
   // List<DropdownMenuItem<String>> get dropdownItems{
   //   List<DropdownMenuItem<String>> exploreStatus = [
   //   DropdownMenuItem(child: Text("unexplored"),value: "unexplored"),
@@ -81,7 +70,6 @@ class _Places2Screen extends State<Places2Screen> {
   }
 
   void _init() async {
-    _favourites = await _favouritesController.getFavouritesList();
     _userID = _auth.getCurrentUser()!.uid;
     _userReviewExists =
         await _reviewsController.userReviewExists(widget.place.id, _userID);
@@ -673,7 +661,8 @@ class _Places2Screen extends State<Places2Screen> {
                   ])))
             ]))
         : Container(
-            child: Center(
+      color: Color(0xfffffcec),
+      child: Center(
               child: CircularProgressIndicator(),
             ),
           );

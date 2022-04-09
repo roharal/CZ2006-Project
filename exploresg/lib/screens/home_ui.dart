@@ -1,6 +1,6 @@
 import 'package:exploresg/helper/home_controller.dart';
-import 'package:exploresg/screens/aftersearch.dart';
-import 'package:exploresg/screens/places.dart';
+import 'package:exploresg/screens/search_ui.dart';
+import 'package:exploresg/screens/place_ui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
@@ -16,45 +16,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  String _placeTypeDropdownValue = 'airport', _filterByDropdownValue = 'filter by';
+  String _placeTypeDropdownValue = 'airport', _filterByDropdownValue = 'filter by', _prevFilter = '';
   bool _searchByCategory = false,_isLoaded = false;
   TextEditingController _searchController = new TextEditingController();
   HomeController _homeController = HomeController();
   FavouritesController _favouritesController = FavouritesController();
   List<Place>? _places = [];
   List<String> _favourites = [];
-  List<String> _placeType = [
-    'airport',
-    'amusement_park',
-    'aquarium',
-    'art_gallery',
-    'bakery',
-    'bar',
-    'beauty_salon',
-    'book_store',
-    'bowling_alley',
-    'cafe',
-    'casino',
-    'cemetery',
-    'clothing_store',
-    'department_store',
-    'florist',
-    'gym',
-    'hair_care',
-    'library',
-    'lodging',
-    'movie_theater',
-    'museum',
-    'night_club',
-    'park',
-    'restaurant',
-    'shopping_mall',
-    'spa',
-    'stadium',
-    'tourist_attraction',
-    'university',
-    'zoo',
-  ];
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +32,7 @@ class _HomeScreen extends State<HomeScreen> {
 
   Future<void> _loadPage() async {
     _places = await _homeController.loadRecommendations(context);
-    // _favourites = await _favouritesController.getFavouritesList();
+    _favourites = await _favouritesController.getFavouritesList();
     setState(() {
       _isLoaded = true;
     });
@@ -92,6 +61,7 @@ class _HomeScreen extends State<HomeScreen> {
 
   int _minFilter = 0;
   int _maxFilter = 4;
+  double _distValue = 15000;
 
   Widget _ratingFilter(double width) {
     return Container(
@@ -158,7 +128,6 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Widget _distanceFilter(double width) {
-    double _distValue = 15000;
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: Row(
@@ -169,7 +138,7 @@ class _HomeScreen extends State<HomeScreen> {
               child: CupertinoSlider(
                 value: _distValue,
                 min: 0,
-                max: _distValue,
+                max: 15000,
                 divisions: 1500,
                 onChanged: (value) {
                   setState(() {
@@ -198,25 +167,37 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _displayFiltered(double width) {
     if (_filterByDropdownValue == 'distance') {
-      setState(() {
+      if (_prevFilter != _filterByDropdownValue) {
+        setState(() {
         _minFilter = 0;
         _maxFilter = 15000;
-      });
+        _distValue = 15000;
+        }); 
+      }
+      _prevFilter = _filterByDropdownValue;
       return _distanceFilter(width);
     } else if (_filterByDropdownValue == 'ratings') {
-      setState(() {
-        _minFilter = 1;
-        _maxFilter = 5;
-      });
+      if (_prevFilter != _filterByDropdownValue) {
+        setState(() {
+          _minFilter = 1;
+          _maxFilter = 5;
+          _priceValues = RangeValues(0, 4);
+        }); 
+      }
+      _prevFilter = _filterByDropdownValue;
       return _ratingFilter(width);
     } else if (_filterByDropdownValue == 'price') {
-      setState(() {
-        _minFilter = 0;
-        _maxFilter = 4;
-      });
+      if (_prevFilter != _filterByDropdownValue) {
+        setState(() {
+          _minFilter = 0;
+          _maxFilter = 4;
+          _ratingValues = RangeValues(1, 5);
+        });
+      }
+      _prevFilter = _filterByDropdownValue;
       return _priceFilter(width);
     } else {
-      setState(() {});
+      // setState(() {});
       return SizedBox.shrink();
     }
   }
@@ -250,7 +231,7 @@ class _HomeScreen extends State<HomeScreen> {
     return _dropDownList(
         width,
         DropdownButtonFormField(
-          items: _placeType
+          items: placeType
               .map((String e) =>
                   DropdownMenuItem(value: e, child: textMinor(e.replaceAll("_", " "), Colors.black)))
               .toList(),
@@ -328,11 +309,11 @@ class _HomeScreen extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(18.0),
               ))),
           onPressed: () {
-            Navigator.pushNamed(context, AfterSearchScreen.routeName,
+            Navigator.pushNamed(context, SearchScreen.routeName,
                 arguments: _searchByCategory == false //using input searchbar
-                    ? ScreenArguments(_maxFilter, _minFilter,
+                    ? SearchScreenArguments(_maxFilter, _minFilter,
                         _filterByDropdownValue, _searchController.text)
-                    : ScreenArguments(
+                    : SearchScreenArguments(
                         //using place type dropdown
                         _maxFilter,
                         _minFilter,
@@ -425,8 +406,9 @@ class _HomeScreen extends State<HomeScreen> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, Places2Screen.routeName,
-                      arguments: Places2ScreenArgs(_places![index]));
+                  print(_places![index].id);
+                  Navigator.pushNamed(context, PlaceScreen.routeName,
+                      arguments: PlaceScreenArguments(_places![index], _favourites));
                 },
                 child: placeContainer(places[index], 0.8 * width, 0.3 * height),
               ),

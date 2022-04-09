@@ -6,7 +6,7 @@ import 'package:exploresg/screens/splash.dart';
 import 'package:exploresg/screens/verify.dart';
 import 'package:exploresg/theme/theme_constants.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:exploresg/screens/interests.dart';
+import 'package:exploresg/screens/interests_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/screens/changePassword.dart';
 

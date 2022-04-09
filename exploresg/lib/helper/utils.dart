@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,49 @@ Widget topBar(String title, double height, double width, String imagePath) {
     ],
   );
 }
+
+//returns distance in km
+double calculateDistance(lat1, lon1, lat2, lon2) {
+  var p = 0.017453292519943295;
+  var c = cos;
+  var a = 0.5 -
+      c((lat2 - lat1) * p) / 2 +
+      c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+  return 12742 * asin(sqrt(a));
+}
+
+List<String> placeType = [
+  'airport',
+  'amusement_park',
+  'aquarium',
+  'art_gallery',
+  'bakery',
+  'bar',
+  'beauty_salon',
+  'book_store',
+  'bowling_alley',
+  'cafe',
+  'casino',
+  'cemetery',
+  'clothing_store',
+  'department_store',
+  'florist',
+  'gym',
+  'hair_care',
+  'library',
+  'lodging',
+  'movie_theater',
+  'museum',
+  'night_club',
+  'park',
+  'restaurant',
+  'shopping_mall',
+  'spa',
+  'stadium',
+  'tourist_attraction',
+  'university',
+  'zoo',
+];
 
 void showAlert(BuildContext context, String title, String content) async {
   Platform.isIOS

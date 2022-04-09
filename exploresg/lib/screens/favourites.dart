@@ -1,7 +1,7 @@
 import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/utils.dart';
-import 'package:exploresg/screens/places.dart';
+import 'package:exploresg/screens/place_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/models/place.dart';
 
@@ -69,8 +69,8 @@ class _FavouriteScreen extends State<FavouriteScreen> {
             return Column(children: [
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, Places2Screen.routeName,
-                      arguments: Places2ScreenArgs(places[index]));
+                  Navigator.pushNamed(context, PlaceScreen.routeName,
+                      arguments: PlaceScreenArguments(places[index],_favourites));
                 },
                 child: placeContainer(places[index], width, 0.3 * height),
               ),
