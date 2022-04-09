@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
 import 'package:exploresg/helper/utils.dart';
@@ -7,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/storage_service.dart';
 import 'package:exploresg/screens/changePassword.dart';
+import 'package:exploresg/helper/profileController.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -18,11 +20,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreen extends State<ProfileScreen> {
   var value = "";
   final Storage storage = Storage();
-  var displayName = "<Display Name>";
-  var emailAddress = "<EmailAddress@email.com>";
   bool _isLoaded = false;
   FirebaseApi _firebaseApi = FirebaseApi();
   AuthController _auth = AuthController();
+  ProfileController _profileController = ProfileController();
   late UserModel _userModel;
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
@@ -105,6 +106,78 @@ class _ProfileScreen extends State<ProfileScreen> {
     );
   }
 
+  Widget _showPFP(width) {
+    if (_userModel.picture == "") {
+      // If user does not have pfp
+      return Container(child: Image.asset("assets/img/Profile picture.png"));
+    } else {
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 5),
+        width: width * 1 / 3,
+        height: width * 1 / 3,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: FittedBox(
+              child: Image(
+                image: NetworkImage(_userModel.picture),
+              ),
+              fit: BoxFit.cover),
+        ),
+      );
+    }
+  }
+
+  Widget _showPFPOLD(width) {
+    return FutureBuilder(
+      // check if user.picture attribute is blank (First time user)
+      future: _userModel.picture == ""
+          ? storage.downloadURL("user.png", "adminAssets")
+          : storage.downloadURL(_userModel.picture, "user_pfp"),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        print("Hello" + snapshot.data.toString());
+        print(_userModel.picture);
+        // If image isnt there for some reason
+        if (snapshot.data.toString() == "oops") {
+          return Column(
+            children: [
+              Container(
+                  width: 0.3 * width,
+                  child: Image(
+                      image: AssetImage("assets/img/close.png"),
+                      fit: BoxFit.fitWidth)),
+              Text("Error, image not found",
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontFamily: "AvenirLtStd",
+                      fontWeight: FontWeight.normal)),
+            ],
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            width: width * 1 / 3,
+            height: width * 1 / 3,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.network(
+                snapshot.data!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            !snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+        return Container();
+      },
+    );
+  }
+
   Widget _changeUsername() {
     return ElevatedButton(
         child: Text("Change username"),
@@ -122,33 +195,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   Widget _changePFP() {
     return ElevatedButton(
       onPressed: () async {
-        final results = await FilePicker.platform.pickFiles(
-            allowMultiple: false,
-            type: FileType.custom,
-            allowedExtensions: ['png', 'jpg']);
-        if (results == null) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('No file selected'),
-          ));
-          return null;
-        }
-        final path = results.files.single.path!;
-        final fileName = _userModel.id + "_pfp";
-        final updateUserMap = {'picture': fileName};
-
-        print(path);
-        print(fileName);
-
-        storage
-            .uploadFile(path, fileName, "user_pfp")
-            .then((value) => print('Done'));
-        _firebaseApi.updateDocumentByIdFromCollection(
-            "users", _userModel.id, updateUserMap);
-        Future.delayed(Duration(milliseconds: 1000), () {
-          setState(() {
-            _userModel.picture = fileName;
-          });
-        });
+        _changePFPFunc();
       },
       child: Text("Change profile picture"),
       style: ButtonStyle(
@@ -158,43 +205,6 @@ class _ProfileScreen extends State<ProfileScreen> {
             borderRadius: BorderRadius.circular(18.0),
           ))),
     );
-  }
-
-  Widget _changeEmail(width) {
-    return Row(children: [
-      Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-          width: width * (3 / 4),
-          // color: Colors.red,
-          alignment: Alignment.centerLeft,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("email address",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: "AvenirLtStd",
-                  fontWeight: FontWeight.bold,
-                )),
-            textMinor(_userModel.email, Colors.black)
-          ])),
-      Container(
-          child: ElevatedButton(
-              child: Text("change",
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontFamily: "AvenirLtStd",
-                    fontWeight: FontWeight.bold,
-                  )),
-              onPressed: () async {
-                await showInformationDialog(context, "email");
-              },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  )))))
-    ]);
   }
 
   Widget _changePassword(width) {
@@ -313,6 +323,55 @@ class _ProfileScreen extends State<ProfileScreen> {
     ]);
   }
 
+  void _changePFPFunc() async {
+    // Selecting file from phone using file picker
+    final results = await _profileController.getFile();
+    // final results = await FilePicker.platform.pickFiles(
+    //     allowMultiple: false,
+    //     type: FileType.custom,
+    //     allowedExtensions: ['png', 'jpg']);
+    print(results.runtimeType);
+    if (results == null) { // If user did not pick a file (Pressed back)
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Container(
+          child: Text('No file selected'),
+          height: 30,
+          alignment: Alignment.topCenter,
+        ),
+        duration: Duration(seconds: 1),
+      ));
+      return null;
+    }
+    // Upload file and Update the User picture attribute
+    _profileController.uploadFileAndUpdateUser(results, _userModel);
+    // // Setting file name and details etc
+    // final path = results.files.single.path!;
+    // final fileName = _userModel.id + "_pfp";
+    //
+    // print(path);
+    // print(fileName);
+    // // Uploading the file to firebase here
+    // storage
+    //     .uploadFile(path, fileName, "user_pfp")
+    //     .then((value) => print('Done'));
+    //
+    // //Obtain the URL of the uploaded picture
+    // String fileURL = await storage.downloadURL(fileName, "user_pfp");
+    // final updateUserMap = {'picture': fileURL};
+    //
+    // // Update the users picture attribute to be the url of the chosen picture
+    // _firebaseApi.updateDocumentByIdFromCollection(
+    //     "users", _userModel.id, updateUserMap);
+
+    //Setting the state to update profile picture displayed
+    DocumentSnapshot snapShot = await _firebaseApi.getDocumentByIdFromCollection("users", _userModel.id);
+    Future.delayed(Duration(milliseconds: 1000), () {
+      setState(() {
+        _userModel = UserModel.fromSnapshot(snapShot);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -327,55 +386,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 children: [
                   topBar(
                       "my account", height, width, 'assets/img/accountTop.png'),
-                  FutureBuilder(
-                    // check if user.picture attribute is blank (First time user)
-                    future: _userModel.picture == ""
-                        ? storage.downloadURL("user.png", "adminAssets")
-                        : storage.downloadURL(_userModel.picture, "user_pfp"),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      print("Hello" + snapshot.data.toString());
-                      print(_userModel.picture);
-                      // If image isnt there for some reason
-                      if (snapshot.data.toString() == "oops") {
-                        return Column(
-                          children: [
-                            Container(
-                                width: 0.3 * width,
-                                child: Image(
-                                    image: AssetImage("assets/img/close.png"),
-                                    fit: BoxFit.fitWidth)),
-                            Text("Error, image not found",
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    fontFamily: "AvenirLtStd",
-                                    fontWeight: FontWeight.normal)),
-                          ],
-                        );
-                      }
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          width: width * 1 / 3,
-                          height: width * 1 / 3,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting ||
-                          !snapshot.hasData) {
-                        return CircularProgressIndicator();
-                      }
-                      return Container();
-                    },
-                  ),
+                  _showPFP(width),
                   Text("@" + _userModel.username,
                       style:
                           TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
