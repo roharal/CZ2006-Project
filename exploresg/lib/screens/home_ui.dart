@@ -1,0 +1,478 @@
+import 'package:exploresg/helper/home_controller.dart';
+import 'package:exploresg/screens/aftersearch.dart';
+import 'package:exploresg/screens/places.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:exploresg/helper/utils.dart';
+import 'package:exploresg/models/place.dart';
+
+import 'package:exploresg/helper/favourites_controller.dart';
+
+class HomeScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _HomeScreen();
+  }
+}
+
+class _HomeScreen extends State<HomeScreen> {
+  String _placeTypeDropdownValue = 'airport', _filterByDropdownValue = 'filter by';
+  bool _searchByCategory = false,_isLoaded = false;
+  TextEditingController _searchController = new TextEditingController();
+  HomeController _homeController = HomeController();
+  FavouritesController _favouritesController = FavouritesController();
+  List<Place>? _places = [];
+  List<String> _favourites = [];
+  List<String> _placeType = [
+    'airport',
+    'amusement_park',
+    'aquarium',
+    'art_gallery',
+    'bakery',
+    'bar',
+    'beauty_salon',
+    'book_store',
+    'bowling_alley',
+    'cafe',
+    'casino',
+    'cemetery',
+    'clothing_store',
+    'department_store',
+    'florist',
+    'gym',
+    'hair_care',
+    'library',
+    'lodging',
+    'movie_theater',
+    'museum',
+    'night_club',
+    'park',
+    'restaurant',
+    'shopping_mall',
+    'spa',
+    'stadium',
+    'tourist_attraction',
+    'university',
+    'zoo',
+  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  Future<void> _loadPage() async {
+    _places = await _homeController.loadRecommendations(context);
+    // _favourites = await _favouritesController.getFavouritesList();
+    setState(() {
+      _isLoaded = true;
+    });
+  }
+
+  InputDecoration dropdownDeco = InputDecoration(
+      border: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      disabledBorder: InputBorder.none,
+      labelStyle: TextStyle(color: Colors.black, fontSize: 16));
+
+  Widget _dropDownList(double width, DropdownButtonFormField DDL) {
+    return Container(
+        width: width,
+        padding: EdgeInsets.symmetric(horizontal: 0.1 * width),
+        margin: EdgeInsets.symmetric(vertical: 5),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20), color: Colors.white),
+        child: DDL);
+  }
+
+  RangeValues _priceValues = RangeValues(0, 4);
+  RangeValues _ratingValues = RangeValues(1, 5);
+
+  int _minFilter = 0;
+  int _maxFilter = 4;
+
+  Widget _ratingFilter(double width) {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(
+              _minFilter.toString(),
+            ),
+            Expanded(
+              child: RangeSlider(
+                values: _ratingValues,
+                min: 1,
+                max: 5,
+                divisions: 5,
+                labels: RangeLabels(
+                  _ratingValues.start.round().toString(),
+                  _ratingValues.end.round().toString(),
+                ),
+                onChanged: (values) {
+                  setState(() {
+                    _ratingValues = values;
+                    _minFilter = values.start.round();
+                    _maxFilter = values.end.round();
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(_maxFilter.toString()),
+          ],
+        ));
+  }
+
+  Widget _priceFilter(double width) {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel(_minFilter.toString()),
+            Expanded(
+              child: RangeSlider(
+                values: _priceValues,
+                min: 0,
+                max: 4,
+                divisions: 4,
+                labels: RangeLabels(
+                  _priceValues.start.round().toString(),
+                  _priceValues.end.round().toString(),
+                ),
+                onChanged: (values) {
+                  setState(() {
+                    _priceValues = values;
+                    _minFilter = values.start.round();
+                    _maxFilter = values.end.round();
+                  });
+                },
+              ),
+            ),
+            buildSideLabel(_maxFilter.toString()),
+          ],
+        ));
+  }
+
+  Widget _distanceFilter(double width) {
+    double _distValue = 15000;
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildSideLabel('0 km'),
+            Expanded(
+              child: CupertinoSlider(
+                value: _distValue,
+                min: 0,
+                max: _distValue,
+                divisions: 1500,
+                onChanged: (value) {
+                  setState(() {
+                    _distValue = value;
+                    _maxFilter = value.round();
+                    _minFilter = 0;
+                  });
+                },
+              ),
+            ),
+            buildSideLabel((_maxFilter / 1000).toString() + 'km'),
+          ],
+        ));
+  }
+
+  Widget buildSideLabel(String value) {
+    return Container(
+      width: 60,
+      child: Text(
+        value,
+        style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _displayFiltered(double width) {
+    if (_filterByDropdownValue == 'distance') {
+      setState(() {
+        _minFilter = 0;
+        _maxFilter = 15000;
+      });
+      return _distanceFilter(width);
+    } else if (_filterByDropdownValue == 'ratings') {
+      setState(() {
+        _minFilter = 1;
+        _maxFilter = 5;
+      });
+      return _ratingFilter(width);
+    } else if (_filterByDropdownValue == 'price') {
+      setState(() {
+        _minFilter = 0;
+        _maxFilter = 4;
+      });
+      return _priceFilter(width);
+    } else {
+      setState(() {});
+      return SizedBox.shrink();
+    }
+  }
+
+  Widget _filterDropDown(double width) {
+    return _dropDownList(
+        0.49 * width,
+        DropdownButtonFormField<String>(
+            items: [
+              DropdownMenuItem(
+                  child: textMinor('filter by', Colors.black), value: 'filter by'),
+              DropdownMenuItem(
+                  child: textMinor('distance', Colors.black), value: 'distance'),
+              DropdownMenuItem(
+                  child: textMinor('ratings', Colors.black), value: 'ratings'),
+              DropdownMenuItem(
+                  child: textMinor('price', Colors.black), value: 'price')
+            ],
+            decoration: dropdownDeco,
+            isExpanded: true,
+            value: _filterByDropdownValue,
+            onChanged: (String? newValue) {
+              setState(() {
+                _filterByDropdownValue = newValue!;
+                _displayFiltered(width);
+              });
+            }));
+  }
+
+  Widget _placeTypeDropDown(double width) {
+    return _dropDownList(
+        width,
+        DropdownButtonFormField(
+          items: _placeType
+              .map((String e) =>
+                  DropdownMenuItem(value: e, child: textMinor(e.replaceAll("_", " "), Colors.black)))
+              .toList(),
+          decoration: dropdownDeco,
+          isExpanded: true,
+          value: _placeTypeDropdownValue,
+          onChanged: (newValue) {
+            setState(() {
+              _placeTypeDropdownValue = newValue!;
+            });
+          },
+        ));
+  }
+
+  Widget _searchBar(double width, double height) {
+    return Container(
+      width: width,
+      height: height / 5.4,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20), color: Colors.white),
+      child: Container(
+        child: TextField(
+          controller: _searchController,
+          cursorColor: Colors.grey,
+          cursorHeight: 14.0,
+          style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14),
+          decoration: new InputDecoration(
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.grey,
+            ),
+            labelText: 'type a place...',
+            labelStyle: TextStyle(
+                fontFamily: 'AvenirLtStd', fontSize: 14, color: Colors.grey),
+            enabledBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              borderSide: const BorderSide(
+                color: Colors.white,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              borderSide: BorderSide(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _searchSwitch() {
+    return Transform.scale(
+        transformHitTests: false,
+        scale: .7,
+        child: CupertinoSwitch(
+          activeColor: Colors.blue,
+          trackColor: Colors.blue, //change to closer colour
+          value: _searchByCategory,
+          onChanged: (value) {
+            setState(() {
+              _searchByCategory = !_searchByCategory;
+            });
+          },
+        ));
+  }
+
+  Widget _goButton() {
+    return Align(
+        alignment: Alignment.topRight,
+        child: TextButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+              ))),
+          onPressed: () {
+            Navigator.pushNamed(context, AfterSearchScreen.routeName,
+                arguments: _searchByCategory == false //using input searchbar
+                    ? ScreenArguments(_maxFilter, _minFilter,
+                        _filterByDropdownValue, _searchController.text)
+                    : ScreenArguments(
+                        //using place type dropdown
+                        _maxFilter,
+                        _minFilter,
+                        _filterByDropdownValue,
+                        _placeTypeDropdownValue,
+                      ));
+          },
+          child: Text('Go!',
+              style: TextStyle(
+                  fontFamily: 'AvenirLtStd',
+                  fontSize: 12,
+                  color: Colors.white)),
+        ));
+  }
+
+  Widget _searchTools(double width, double height) {
+    return Container(
+        width: width,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                textMinor('keyword search', Colors.black),
+                _searchSwitch(),
+                textMinor('dropdown list', Colors.black)
+              ],
+            ),
+            _searchByCategory == false
+                ? _searchBar(width, height)
+                : _placeTypeDropDown(width),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              SizedBox(width: 0.02 * width),
+              _filterDropDown(width)
+            ]),
+            _displayFiltered(width),
+            _goButton()
+          ],
+        ));
+  }
+
+  Widget _addFav(Place place, double height, double width) {
+    return Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20))),
+        width: width,
+        height: height,
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(children: [
+                InkWell(
+                    onTap: () async {
+                      await _favouritesController.addOrRemoveFav(place.id);
+                      _favourites =
+                          await _favouritesController.getFavouritesList();
+                      print('<3 pressed');
+                      setState(() {
+                        place.likes = !place.likes;
+                      });
+                      print(place.likes);
+                    },
+                    child: _favourites.contains(place.id)
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            color: Colors.grey,
+                          )),
+                SizedBox(
+                  width: 10,
+                ),
+                textMinor('add to favourites', Colors.black)
+              ])
+            ]));
+  }
+
+  Widget recommendedList(List<Place> places, double height, double width) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: places.length,
+      itemBuilder: (context, index) {
+        return Column(children: [
+          Stack(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, Places2Screen.routeName,
+                      arguments: Places2ScreenArgs(_places![index]));
+                },
+                child: placeContainer(places[index], 0.8 * width, 0.3 * height),
+              ),
+              Positioned(
+                bottom: 0,
+                child: _addFav(places[index], 0.05 * height, 0.8 * width)),
+          ]
+          ),
+          SizedBox(
+            height: 15,
+          )
+        ]);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    return _isLoaded
+        ? Scaffold(
+            backgroundColor: createMaterialColor(Color(0xfffffcec)),
+            body: Container(
+                child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          topBar('home', height, width, 'assets/img/homeTop.png'),
+                          SizedBox(height: 10),
+                          textMajor('find places', Colors.black, 26),
+                          _searchTools(0.80 * width, 0.3 * height),
+                          Image.asset('assets/img/stringAccent.png'),
+                          textMajor('explore', Colors.black, 26),
+                          recommendedList(_places!, height, width),
+                          SizedBox(height: 20)
+                        ]
+                    )
+                )
+            )
+    )
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+  }
+}
