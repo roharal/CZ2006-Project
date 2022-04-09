@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
         BaseScreen.routeName: (context) => BaseScreen(),
         LoginScreen.routeName: (context) => LoginScreen(),
         SignUpScreen.routeName: (context) => SignUpScreen(),
-        InterestScreen.routeName: (context) => InterestScreen(),
         VerifyScreen.routeName: (context) => VerifyScreen(),
         ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
         ChangePasswordScreen.routeName: (context) => ChangePasswordScreen()

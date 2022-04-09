@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:exploresg/helper/storage_service.dart';
 import 'package:exploresg/screens/changePassword.dart';
 import 'package:exploresg/helper/profileController.dart';
+import 'package:exploresg/screens/interests.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -274,7 +275,15 @@ class _ProfileScreen extends State<ProfileScreen> {
                     fontFamily: "AvenirLtStd",
                     fontWeight: FontWeight.bold,
                   )),
-              onPressed: null,
+              onPressed: () async {
+                DocumentSnapshot snapShot = await _firebaseApi
+                    .getDocumentByIdFromCollection("users", _userModel.id);
+                _userModel = UserModel.fromSnapshot(snapShot);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      InterestScreen(_userModel.id, _userModel.interest),
+                ));
+              },
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.grey),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -331,7 +340,8 @@ class _ProfileScreen extends State<ProfileScreen> {
     //     type: FileType.custom,
     //     allowedExtensions: ['png', 'jpg']);
     print(results.runtimeType);
-    if (results == null) { // If user did not pick a file (Pressed back)
+    if (results == null) {
+      // If user did not pick a file (Pressed back)
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Container(
           child: Text('No file selected'),
@@ -364,8 +374,10 @@ class _ProfileScreen extends State<ProfileScreen> {
     //     "users", _userModel.id, updateUserMap);
 
     //Setting the state to update profile picture displayed
-    DocumentSnapshot snapShot = await _firebaseApi.getDocumentByIdFromCollection("users", _userModel.id);
-    Future.delayed(Duration(milliseconds: 1000), () {
+
+    Future.delayed(Duration(milliseconds: 1000), () async {
+      DocumentSnapshot snapShot = await _firebaseApi
+          .getDocumentByIdFromCollection("users", _userModel.id);
       setState(() {
         _userModel = UserModel.fromSnapshot(snapShot);
       });
