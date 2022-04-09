@@ -19,7 +19,7 @@ class RecommendationsController {
       var split = interest.split(",");
       for (String s in split) {
         var result = await _placesApi.nearbySearchFromText(
-            "1.4430557283012149", "103.80793159927359", 10000, s, "");
+            "1.4430557283012149", "103.80793159927359", 10000, s);
         for (var i in result!) {
           _mixPlaces.add(i);
         }

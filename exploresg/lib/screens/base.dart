@@ -57,8 +57,8 @@ class _BaseScreen extends State<BaseScreen> {
                       final ScreenArguments args =
                           settings.arguments as ScreenArguments;
                       return MaterialPageRoute(builder: (context) {
-                        return AfterSearchScreen(args.placeType, args.max,
-                            args.min, args.sort, args.text);
+                        return AfterSearchScreen(
+                            args.max, args.min, args.sort, args.text);
                       });
                     }
                 }
