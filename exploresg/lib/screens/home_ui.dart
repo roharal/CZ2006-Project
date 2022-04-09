@@ -425,32 +425,46 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+  Future<void> _reloadRecommendations() async {
+    _places = await _homeController.loadRecommendations(context);
+    setState(() {
+      _isLoaded = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
-        ? Scaffold(
-            backgroundColor: createMaterialColor(Color(0xfffffcec)),
-            body: Container(
-                child: SingleChildScrollView(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          topBar('home', height, width, 'assets/img/homeTop.png'),
-                          SizedBox(height: 10),
-                          textMajor('find places', Colors.black, 26),
-                          _searchTools(0.80 * width, 0.3 * height),
-                          Image.asset('assets/img/stringAccent.png'),
-                          textMajor('explore', Colors.black, 26),
-                          recommendedList(_places!, height, width),
-                          SizedBox(height: 20)
-                        ]
-                    )
-                )
-            )
-    )
+        ? RefreshIndicator(onRefresh: () async {
+      setState(() {
+        _isLoaded = false;
+      });
+      _reloadRecommendations();
+    },
+          child: Scaffold(
+              backgroundColor: createMaterialColor(Color(0xfffffcec)),
+              body: Container(
+                  child: SingleChildScrollView(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            topBar('home', height, width, 'assets/img/homeTop.png'),
+                            SizedBox(height: 10),
+                            textMajor('find places', Colors.black, 26),
+                            _searchTools(0.80 * width, 0.3 * height),
+                            Image.asset('assets/img/stringAccent.png'),
+                            textMajor('explore', Colors.black, 26),
+                            recommendedList(_places!, height, width),
+                            SizedBox(height: 20)
+                          ]
+                      )
+                  )
+              )
+    ),
+        )
         : Container(
             child: Center(
               child: CircularProgressIndicator(),
