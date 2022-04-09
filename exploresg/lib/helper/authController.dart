@@ -85,7 +85,9 @@ class AuthController {
           last,
           user.email!,
           token,
-          user.photoURL == null ? "" : user.photoURL!,
+          user.photoURL == null
+              ? ""
+              : user.photoURL!,
           user.phoneNumber == null
               ? ""
               : user.phoneNumber! == null
