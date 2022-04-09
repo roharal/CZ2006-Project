@@ -12,7 +12,11 @@ class InterestController{
         finalString = finalString + key + ",";
       }
     });
-    finalString = finalString.substring(0,finalString.length-1);
+    print("The final string is here " + finalString);
+    if(finalString != "") {// String is not empty
+      finalString = finalString.substring(0, finalString.length - 1);
+      print("Interests are not empty");
+    }
     await _firestore.collection("users").doc(userID).update({"interest":finalString});
 
     var userInterests = await _firestore.collection("users").doc(userID).get();
