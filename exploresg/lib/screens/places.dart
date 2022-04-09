@@ -6,6 +6,7 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:exploresg/screens/exploreReviews.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter/widgets.dart';
@@ -69,6 +70,7 @@ class _Places2Screen extends State<Places2Screen> {
   Review _newReview = Review('', '', '', 0); //to store new review data
   String _submittable = "NA";
   double _meanRating = 0;
+  int _numRatings = 0;
 
   TextEditingController _textController = new TextEditingController();
 
@@ -90,6 +92,7 @@ class _Places2Screen extends State<Places2Screen> {
     }
     setMyStatus();
     _meanRating = await _reviewsController.getAverageRating(widget.place.id);
+    _numRatings = await _reviewsController.getNumRatings(widget.place.id);
     _textController.text = _prevReview.getUserReview();
     setState(() {
       _isLoaded = true;
@@ -183,26 +186,35 @@ class _Places2Screen extends State<Places2Screen> {
         padding: const EdgeInsets.fromLTRB(40, 0, 40, 10),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          RatingBarIndicator(
-            rating: place.ratings,
-            itemBuilder: (context, index) => Icon(
-              Icons.star,
-              color: Colors.amber,
-            ),
-            itemCount: 5,
-            itemSize: 20,
-            direction: Axis.horizontal,
-          ),
-          RatingBarIndicator(
-            rating: _meanRating,
-            itemBuilder: (context, index) => Icon(
-              Icons.star,
-              color: Colors.amber,
-            ),
-            itemCount: 5,
-            itemSize: 20,
-            direction: Axis.horizontal,
-          ),
+              RatingBarIndicator(
+                rating: place.ratings,
+                itemBuilder: (context, index) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                itemCount: 5,
+                itemSize: 20,
+                direction: Axis.horizontal,
+              ),
+              Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    textMinor('('+ _numRatings.toString() + ')', Color(0xff6488E5)),
+                    SizedBox(width: 2,),
+                    RatingBarIndicator(
+                      rating: _meanRating,
+                      itemBuilder: (context, index) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      itemCount: 5,
+                      itemSize: 20,
+                      direction: Axis.horizontal,
+                    ),
+                  ],
+                ),
+              ),
         ]));
   }
 
@@ -477,23 +489,29 @@ class _Places2Screen extends State<Places2Screen> {
                   borderRadius: BorderRadius.circular(20), color: Colors.white),
               child: Container(
                   child: TextFormField(
-                controller: _textController,
-                decoration: new InputDecoration(
-                  hintText:
-                      'describe your experience or record some nice memories...',
-                  hintMaxLines: 3,
-                  hintStyle: TextStyle(
-                    fontFamily: 'AvenirLtStd',
-                    fontSize: 14,
-                    color: Color(0xffD1D1D6),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                    borderSide: const BorderSide(
-                      color: Colors.white,
+                    controller: _textController,
+                    decoration: new InputDecoration(
+                      hintText:
+                          'describe your experience or record some nice memories...',
+                      hintMaxLines: 3,
+                      hintStyle: TextStyle(
+                        fontFamily: 'AvenirLtStd',
+                        fontSize: 14,
+                        color: Color(0xffD1D1D6),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                        borderSide: const BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                    style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      color: Color(0xff22254C),
+                      fontSize: 14,
+                    ),
+                    maxLines: null,
               ))),
           SizedBox(
             height: 5,
@@ -597,60 +615,61 @@ class _Places2Screen extends State<Places2Screen> {
             body: Column(children: [
               Expanded(
                   child: SingleChildScrollView(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                    _topVector(),
-                    _back(),
-                    SizedBox(
-                      height: 7,
-                    ),
-                    Container(
-                        margin: EdgeInsets.symmetric(horizontal: 40),
-                        child: textMajor(
-                            widget.place.placeName, Color(0xff22254C), 36)),
-                    SizedBox(height: 20),
-                    _placeImg(widget.place),
-                    _ratingsLabel(),
-                    _starRatings(widget.place),
-                    _placeDetails(widget.place),
-                    SizedBox(height: 20),
-                    _addFav(widget.place),
-                    _midVector(),
-                    Container(
-                        //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
-                        child: Text("my details",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: 'MadeSunflower',
-                                fontSize: 26,
-                                color: Color(0xff22254C)))),
-                    SizedBox(height: 7),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
-                      child: Column(children: [
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              children: [
-                                Text("my status: ",
-                                    style: TextStyle(
-                                        fontFamily: 'AvenirLtStd',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff22254C))),
-                                SizedBox(width: 5),
-                                _dropDown(),
-                                //_renderDropdown();
-                              ],
-                            ))
-                      ]),
-                    ),
-                    _statusText(),
-                    SizedBox(
-                      height: 20,
-                    )
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _topVector(),
+                        _back(),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                            margin: EdgeInsets.symmetric(horizontal: 40),
+                            child: textMajor(
+                                widget.place.placeName, Color(0xff22254C), 36)),
+                        SizedBox(height: 20),
+                        _placeImg(widget.place),
+                        _ratingsLabel(),
+                        _starRatings(widget.place),
+                        _placeDetails(widget.place),
+                        SizedBox(height: 20),
+                        _addFav(widget.place),
+                        _midVector(),
+                        Container(
+                            //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),
+                            child: Text("my details",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: 'MadeSunflower',
+                                    fontSize: 26,
+                                    color: Color(0xff22254C)))),
+                        SizedBox(height: 7),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
+                          child: Column(children: [
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    Text("my status: ",
+                                        style: TextStyle(
+                                            fontFamily: 'AvenirLtStd',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff22254C))),
+                                    SizedBox(width: 5),
+                                    _dropDown(),
+                                    //_renderDropdown();
+                                  ],
+                                ))
+                          ]),
+                        ),
+                        _statusText(),
+                        SizedBox(
+                          height: 20,
+                        )
                   ])))
             ]))
         : Container(

@@ -79,6 +79,16 @@ class ReviewsController {
     return 0;
   }
 
+  Future<int> getNumRatings(String placeID) async{
+    var placeData = await _firestore.collection("place").doc(placeID).get();
+    if (placeData.exists) {
+      Map<String, dynamic> data = placeData.data()!;
+      var num = data['total_num_ratings'];
+      return num;
+    }
+    return 0;
+  }
+
   Future<bool> placeExists(String placeID) async {
     var result = await _firestore.collection("place").doc(placeID).get();
     return result.exists;
