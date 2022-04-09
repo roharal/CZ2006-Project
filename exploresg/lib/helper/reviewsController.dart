@@ -20,7 +20,7 @@ class ReviewsController {
         .set(data);
   }
 
-  //read all reviews
+  //read all reviews (doesnt work)
   Future<DocumentSnapshot> getReviews(String placeID) async {
     var placeReviews;
     // check if a place document exists already
@@ -30,6 +30,7 @@ class ReviewsController {
     } else {
       placeReviews = null;
     }
+    print(placeReviews);
     return placeReviews;
   }
 
@@ -38,7 +39,7 @@ class ReviewsController {
     await _firestore.collection("place/$placeID/reviews").doc(userID).update(data);
   }
 
-  //delete review
+  //delete review -- not used
   Future deleteReview(String placeID, String userID) async {
     await _firestore.collection("place/$placeID/reviews").doc(userID).delete();
   }
@@ -55,7 +56,7 @@ class ReviewsController {
   //   }
   // }
   Future<double> meanRating(String placeID) async {
-    List<double> _ratingsList = [0];
+    List<double> _ratingsList = [];
 
     _firestore.collection("place/$placeID/reviews").get().then((querySnapshot){
       querySnapshot.docs.forEach((user) {
@@ -63,15 +64,13 @@ class ReviewsController {
       });
     });
 
+    if(_ratingsList.isEmpty){
+      return 0;
+    }
     double sum = _ratingsList.sum;
     double mean = sum/(_ratingsList.length);
     print(_ratingsList);
     return mean;
-  }
-
-
-  Future<DocumentSnapshot> getPlaceFromId(String id) async {
-    return await _firestore.collection("place").doc(id).get();
   }
 
   Future<bool> placeExists(String placeID) async {

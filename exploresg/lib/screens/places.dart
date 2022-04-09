@@ -84,7 +84,7 @@ class _Places2Screen extends State<Places2Screen> {
     _prevReview = await _reviewsController.getUserReview(widget.place.id, _userID);
     _newReview = _prevReview;
     _newRating = _prevRating;
-    setExploreStatus();
+    setMyStatus();
     _meanRating = await _reviewsController.meanRating(widget.place.id);
     print(_meanRating);
     setState(() {
@@ -92,7 +92,7 @@ class _Places2Screen extends State<Places2Screen> {
     });
   }
 
-  void setExploreStatus() {
+  void setMyStatus() {
     if (_userReviewExists)
       dropDownValue = 'explored';
     else
