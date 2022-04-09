@@ -1,9 +1,9 @@
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/screens/favourites.dart';
-import 'package:exploresg/screens/home.dart';
+import 'package:exploresg/screens/home_ui.dart';
 import 'package:exploresg/screens/inbox.dart';
-import 'package:exploresg/screens/aftersearch.dart';
-import 'package:exploresg/screens/places.dart';
+import 'package:exploresg/screens/search_ui.dart';
+import 'package:exploresg/screens/place_ui.dart';
 import 'package:exploresg/screens/profile.dart';
 import 'package:exploresg/screens/tracker.dart';
 import 'package:flutter/material.dart';
@@ -42,22 +42,22 @@ class _BaseScreen extends State<BaseScreen> {
               // ignore: body_might_complete_normally_nullable
               onGenerateRoute: (RouteSettings? settings) {
                 switch (settings!.name) {
-                  case Places2Screen.routeName:
+                  case PlaceScreen.routeName:
                     {
-                      final Places2ScreenArgs args =
-                          settings.arguments as Places2ScreenArgs;
+                      final PlaceScreenArguments args =
+                          settings.arguments as PlaceScreenArguments;
                       return MaterialPageRoute(builder: (context) {
-                        return Places2Screen(place: args.place);
+                        return PlaceScreen(args.place, args.favourites);
                       });
                       // ignore: dead_code
                       break;
                     }
-                  case AfterSearchScreen.routeName:
+                  case SearchScreen.routeName:
                     {
-                      final ScreenArguments args =
-                          settings.arguments as ScreenArguments;
+                      final SearchScreenArguments args =
+                          settings.arguments as SearchScreenArguments;
                       return MaterialPageRoute(builder: (context) {
-                        return AfterSearchScreen(
+                        return SearchScreen(
                             args.max, args.min, args.sort, args.text);
                       });
                     }
@@ -73,17 +73,18 @@ class _BaseScreen extends State<BaseScreen> {
               initialRoute: '/favourites',
               onGenerateRoute: (RouteSettings? settings) {
                 switch (settings!.name) {
-                  case Places2Screen.routeName:
+                  case PlaceScreen.routeName:
                     {
-                      final Places2ScreenArgs args =
-                          settings.arguments as Places2ScreenArgs;
+                      final PlaceScreenArguments args =
+                          settings.arguments as PlaceScreenArguments;
                       return MaterialPageRoute(builder: (context) {
-                        return Places2Screen(place: args.place);
+                        return PlaceScreen(args.place, args.favourites);
                       });
                       // ignore: dead_code
                       break;
                     }
                 }
+                return null;
               })),
       PersistentBottomNavBarItem(
           icon: Icon(Icons.list_alt_outlined),
