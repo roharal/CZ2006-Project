@@ -1,21 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exploresg/models/place.dart';
 import 'package:exploresg/models/user.dart';
 
 class Invitation {
-  Place place;
-  DateTime dateTime;
+  String place, date, time;
   List<UserModel> users;
 
 
-  Invitation(this.place,this.dateTime,this.users);
+  Invitation(this.place,this.date, this.time ,this.users);
 
-  Place getPlace() {
+  String getPlace() {
     return this.place;
   }
 
-  DateTime getDateTime() {
-    return this.dateTime;
+  String getDate() {
+    return this.date;
+  }
+
+  String getTime() {
+    return this.time;
   }
 
   List<UserModel> getUsers() {
@@ -27,14 +29,16 @@ class Invitation {
     List<UserModel> userModels = users.map((i) => UserModel.fromSnapshot(i)).toList();
     return Invitation(
       snapshot["place"],
-      snapshot["dateTime"],
+      snapshot["date"],
+      snapshot["time"],
       userModels
     );
   }
 
   Map<String, dynamic> toJson() => {
     "place": place,
-    "datetime": dateTime,
+    "date": date,
+    "time": time,
     "users": users.map((i) => i.toJson()).toList()
   };
 }

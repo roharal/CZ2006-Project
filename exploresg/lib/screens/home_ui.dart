@@ -411,16 +411,12 @@ class _HomeScreen extends State<HomeScreen> {
             children: [
               InkWell(
                 onTap: () {
-                  print(_places![index].id);
                   Navigator.pushNamed(context, PlaceScreen.routeName,
                       arguments: PlaceScreenArguments(_places![index], _favourites));
                 },
-                child: placeContainer(places[index], 0.8 * width, 0.3 * height),
+                child: placeContainer(places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
               ),
-              Positioned(
-                bottom: 0,
-                child: _addFav(places[index], 0.05 * height, 0.8 * width)),
-          ]
+            ]
           ),
           SizedBox(
             height: 15,

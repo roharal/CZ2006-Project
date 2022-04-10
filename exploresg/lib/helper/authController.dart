@@ -59,8 +59,7 @@ class AuthController {
       var token = await _fcm.getToken();
       userModel.setToken(token);
       userModel.setEmailVerified(user.emailVerified);
-      batch.set(_firestore.collection("users").doc(userModel.getId()),
-          userModel.toJson());
+      batch.set(_firestore.collection("users").doc(userModel.getId()), userModel.toJson());
       batch.set(_firestore.collection("usernames").doc(userModel.getId()),
           {"username": userModel.getUsername()});
       batch.commit();

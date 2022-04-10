@@ -60,7 +60,7 @@ Widget topBar(String title, double height, double width, String imagePath) {
         )
       ),
       Positioned(
-        top: height / 4.2,
+        bottom: width / 30,
         left: width / 8,
         child: textMajor(title, Colors.white, 36),
       )
@@ -111,14 +111,14 @@ List<String> placeType = [
   'zoo',
 ];
 
-void showAlert(BuildContext context, String title, String content) async {
+Future showAlert(BuildContext context, String title, String content) async {
   Platform.isIOS
       ? await showCupertinoDialog(
           context: context,
           builder: (context) {
             return CupertinoAlertDialog(
-              title: new Text(title),
-              content: new Text(content),
+              title: Text(title),
+              content: Text(content),
               actions: <Widget>[
                 CupertinoDialogAction(
                   isDefaultAction: true,
@@ -294,7 +294,7 @@ Widget _printDist(distance) {
       : SizedBox();
 }
 
-Widget placeContainer(Place place, double width, double height,
+Widget placeContainer(Place place, double width, double height, Widget extra, Widget top,
     [double? distance]) {
   return Container(
       decoration: BoxDecoration(
@@ -305,6 +305,7 @@ Widget placeContainer(Place place, double width, double height,
       width: width,
       height: height,
       child: Column(children: [
+        top,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -345,35 +346,14 @@ Widget placeContainer(Place place, double width, double height,
 
                   //include dist for afterseach
                   // textMinor(distance.toString() + "km", Colors.black)
-                  _printDist(distance)
+                  _printDist(distance),
+
                 ]))
           ],
         ),
         SizedBox(
           height: 20,
         ),
+        extra,
       ]));
-}
-
-class Tracker {
-  late String placename;
-  late String placedesc;
-  late String placeaddress;
-  late double ratings;
-  late String status;
-  late String date;
-  late String time;
-  late Array people;
-
-  Tracker(String placename, String placedesc, String placeaddress,
-      double ratings, String date, String time, Array people) {
-    this.placename;
-    this.placedesc;
-    this.placeaddress;
-    this.ratings;
-    this.status = status;
-    this.date = date;
-    this.time = time;
-    this.people = people;
-  }
 }

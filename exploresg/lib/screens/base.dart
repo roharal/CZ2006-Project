@@ -1,12 +1,12 @@
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/screens/changePassword.dart';
-import 'package:exploresg/screens/favourites.dart';
+import 'package:exploresg/screens/favourites_ui.dart';
 import 'package:exploresg/screens/home_ui.dart';
-import 'package:exploresg/screens/inbox.dart';
+import 'package:exploresg/screens/inbox_ui.dart';
 import 'package:exploresg/screens/search_ui.dart';
 import 'package:exploresg/screens/place_ui.dart';
 import 'package:exploresg/screens/profile.dart';
-import 'package:exploresg/screens/tracker.dart';
+import 'package:exploresg/screens/tracker_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 

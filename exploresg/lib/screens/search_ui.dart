@@ -113,22 +113,22 @@ class _SearchScreen extends State<SearchScreen> {
             //shrinkWrap: true,
             itemCount: places.length,
             itemBuilder: (context, index) {
-              return Container(
-                  height: 0.3 * height,
-                  child: Column(children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, PlaceScreen.routeName,
-                            arguments: PlaceScreenArguments(_places![index],_favourites));
-                      },
-                      child: placeContainer(
-                        places[index],
-                        width,
-                        0.2 * height,
-                      ),
-                    ),
-                    _addFav(places[index], 0.05 * height, width),
-                  ]));
+              return Column(children: [
+                Stack(children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, PlaceScreen.routeName,
+                          arguments: PlaceScreenArguments(
+                              _places![index], _favourites));
+                    },
+                    child: placeContainer(
+                        places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
+                  ),
+                ]),
+                SizedBox(
+                  height: 15,
+                )
+              ]);
             }));
   }
 

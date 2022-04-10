@@ -17,10 +17,6 @@ class SearchController {
 
     Locator location = new Locator();
     var userLoc = await location.getCurrentLocation();
-    print(arguments.max);
-    print(arguments.min);
-    print(arguments.sort);
-    print(arguments.text);
     if (userLoc != null) {
       String lat = userLoc.latitude.toString();
       String long = userLoc.longitude.toString();
@@ -35,7 +31,7 @@ class SearchController {
         lat,
         long,
         arguments.max,
-        "&input=" + arguments.text,
+        "&keyword=" + arguments.text,
       );
       places = result!;
       switch (arguments.sort) {
@@ -98,6 +94,7 @@ class SearchController {
           break;
         }
         default: {
+          filteredPlace = places;
           break;
         }
       }

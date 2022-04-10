@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/helper/authController.dart';
 import 'package:exploresg/helper/firebase_api.dart';
+import 'package:exploresg/helper/invitation_controller.dart';
 import 'package:exploresg/helper/reviewsController.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:exploresg/screens/exploreReviews.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
@@ -36,31 +38,21 @@ class PlaceScreen extends StatefulWidget {
 }
 
 class _PlaceScreen extends State<PlaceScreen> {
-  // List<DropdownMenuItem<String>> get dropdownItems{
-  //   List<DropdownMenuItem<String>> exploreStatus = [
-  //   DropdownMenuItem(child: Text("unexplored"),value: "unexplored"),
-  //   DropdownMenuItem(child: Text("to explore"),value: "to explore"),
-  //   DropdownMenuItem(child: Text("explored"),value: "explored"),
-  // ];
-  // rety
-
-  //String _curExpStatus;
   String dropDownValue = 'unexplored';
+  AuthController _authController = AuthController();
+  InvitationController _invitationController = InvitationController();
   FavouritesController _favouritesController = FavouritesController();
   ReviewsController _reviewsController = ReviewsController();
-  FirebaseApi _firebaseApi = FirebaseApi();
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   AuthController _auth = AuthController();
-  List<String> _favourites = [];
-  bool _isLoaded = false;
-  String _userID = '';
-  bool _userReviewExists = false;
+  final _usernameKey = GlobalKey<FormState>();
+  List<String> _favourites = [], _usernames = [];
+  bool _isLoaded = false, _userReviewExists= false, _isDate = false, _isTime = false, _isSending = false;
+  String _userID = '', _submittable = "NA", _selectedTime = "", _username = "";
   Review _prevReview = Review('', '', '', 0); //to view previous review data
   Review _newReview = Review('', '', '', 0); //to store new review data
-  String _submittable = "NA";
   double _meanRating = 0;
   int _numRatings = 0;
-
+  DateTime _selectedDate = DateTime.now();
   TextEditingController _textController = new TextEditingController();
 
   @override
@@ -262,59 +254,70 @@ class _PlaceScreen extends State<PlaceScreen> {
         ]));
   }
 
-  Widget _addFav(Place place) {
+  Widget _addFav(Place place, double height, double width) {
     return Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20))),
+        width: width,
+        height: height,
         child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-          Row(children: [
-            InkWell(
-                onTap: () async {
-                  await _favouritesController.addOrRemoveFav(place.id);
-                  _favourites = await _favouritesController.getFavouritesList();
-                  setState(() {
-                    place.likes = !place.likes;
-                    print(_favourites);
-                  });
-                  print(place.likes);
-                },
-                child: _favourites.contains(place.id)
-                    ? Icon(
-                        Icons.favorite,
-                        color: Color(0xffE56372),
-                      )
-                    : Icon(
-                        Icons.favorite_border,
-                        color: Color(0xffE56372),
-                      )),
-            SizedBox(
-              width: 10,
-            ),
-            textMinor("add to favourites", Color(0xffd1d1d6))
-          ])
-        ]));
+              Row(children: [
+                InkWell(
+                    onTap: () async {
+                      await _favouritesController.addOrRemoveFav(place.id);
+                      _favourites =
+                      await _favouritesController.getFavouritesList();
+                      print('<3 pressed');
+                      setState(() {
+                        place.likes = !place.likes;
+                      });
+                      print(place.likes);
+                    },
+                    child: _favourites.contains(place.id)
+                        ? Icon(
+                      Icons.favorite,
+                      color: Color(0xffE56372),
+                    )
+                        : Icon(
+                      Icons.favorite_border,
+                      color: Color(0xffE56372),
+                    )),
+                SizedBox(
+                  width: 10,
+                ),
+                textMinor(_favourites.contains(place.id) ? 'added to favourites' : "add to favourites", Color(0xffD1D1D6))
+              ])
+            ]));
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
-    return Container(
-        height: 0.8 * height,
-        width: 0.8 * width,
-        child: ListView.builder(
-          itemCount: places.length,
-          itemBuilder: (context, index) {
-            return Column(children: [
-              InkWell(
-                onTap: () {},
-                child: placeContainer(places[index], width, 0.3 * height),
-              ),
-              _addFav(places[index]),
-              SizedBox(
-                height: 5,
-              )
-            ]);
-          },
-        ));
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: places.length,
+      itemBuilder: (context, index) {
+        return Column(children: [
+          Stack(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, PlaceScreen.routeName,
+                        arguments: PlaceScreenArguments(places[index], _favourites));
+                  },
+                  child: placeContainer(places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
+                ),
+              ]
+          ),
+          SizedBox(
+            height: 15,
+          )
+        ]);
+      },
+    );
   }
 
   Widget _midVector() {
@@ -375,7 +378,12 @@ class _PlaceScreen extends State<PlaceScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             SizedBox(width: 20),
-            Image.asset('assets/img/placesCalendar.png', height: 25, width: 25),
+            InkWell(
+              onTap: () {
+                _showDatePicker(context);
+              },
+              child: _isDate ? textMinor(_selectedDate.toString().split(" ")[0], Colors.black) : Image.asset('assets/img/placesCalendar.png', height: 25, width: 25),
+            ),
           ]),
           SizedBox(height: 25),
           Row(children: [
@@ -386,12 +394,70 @@ class _PlaceScreen extends State<PlaceScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             SizedBox(width: 20),
-            Image.asset('assets/img/placesClock.png', height: 25, width: 25),
+            InkWell(
+              onTap: () {
+                _showTimePicker(context);
+              },
+              child: _isTime ? textMinor(_selectedTime, Colors.black) : Image.asset('assets/img/placesClock.png', height: 25, width: 25),
+            ),
           ]),
+          SizedBox(height: 20),
+          Container(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    textMinorBold("friends:", Colors.black),
+                    SizedBox(width: 20),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      height: 30,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _usernames.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _usernameContainer(index);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _usernameForm(),
+                    ElevatedButton(
+                      child: Text('add',
+                          style: TextStyle(
+                            fontFamily: 'AvenirLtStd',
+                            color: Colors.white,
+                            fontSize: 16,
+                          )),
+                      style: ElevatedButton.styleFrom(
+                          primary: Color(0xffD1D1D6),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      onPressed: () {
+                        _validateLogin();
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
           SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             ElevatedButton(
-              child: Text('invite someone',
+              child: _isSending ? Text('Sending invite...',
+                  style: TextStyle(
+                    fontFamily: 'AvenirLtStd',
+                    color: Colors.white,
+                    fontSize: 16,
+                  )) :
+              Text('invite',
                   style: TextStyle(
                     fontFamily: 'AvenirLtStd',
                     color: Colors.white,
@@ -403,7 +469,19 @@ class _PlaceScreen extends State<PlaceScreen> {
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20))),
-              onPressed: () {},
+              onPressed: () {
+                if (_isTime && _isDate && !_isSending) {
+                  if (_usernames.length == 0) {
+                    showAlert(context, "no usernames", "add usernames to invite");
+                  } else {
+                    _isSending = true;
+                    _sendInvitation(_usernames, widget.place.id, _selectedDate.toString().split(" ")[0], _selectedTime);
+                    setState(() {});
+                  }
+                } else {
+                  showAlert(context, "invalid date and time", "Please select a date and time");
+                }
+              },
             ),
             SizedBox(width: 8),
             Container(
@@ -426,6 +504,111 @@ class _PlaceScreen extends State<PlaceScreen> {
             )
           ])
         ]));
+  }
+
+  Widget _usernameContainer(int index) {
+    return Container(
+      child: Row(
+        children: [
+          textMinor(_usernames[index], Colors.black),
+          InkWell(
+            onTap: () {
+              _removeUsername(index);
+            },
+            child: Icon(Icons.clear, color: Color(0xffD1D1D6),),
+          ),
+          SizedBox(width: 5,)
+        ],
+      ),
+    );
+  }
+
+  Widget _usernameTextField() {
+    return Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        padding: EdgeInsets.symmetric(vertical: 10.0),
+        child: TextFormField(
+          obscureText: false,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "enter username",
+            hintStyle: TextStyle(
+              color: Color(0xffD1D1D6),
+            ),
+            icon: Icon(
+              Icons.alternate_email,
+              color: Color(0xffD1D1D6),
+            ),
+          ),
+          style: TextStyle(
+            fontFamily: 'AvenirLtStd',
+            color: Color(0xff22254C),
+            fontSize: 14,
+          ),
+          keyboardType: TextInputType.text,
+          validator: _validateUsername,
+          onSaved: (saved) {
+            _username = saved!.trim().toLowerCase();
+          },
+        ));
+  }
+
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Username cannot be empty";
+    }
+    return null;
+  }
+
+  void _validateLogin() async {
+    if (_usernameKey.currentState!.validate()) {
+      _usernameKey.currentState!.save();
+      if (_usernames.contains(_username)) {
+        showAlert(context, "illegal move", "username already entered");
+      } else {
+        var uid = await _authController.getUidfromUsername(_username);
+        print(uid);
+        if (uid == _authController.getCurrentUser()!.uid) {
+          showAlert(context, "illegal move", "you cannot invite yourself");
+        }
+        if (uid != "notFound") {
+          _usernames.add(_username);
+        } else {
+          showAlert(context, "invalid username", "enter a valid username");
+        }
+      }
+      setState(()  {});
+    }
+  }
+
+  void _removeUsername(int index) {
+    setState(() {
+      _usernames.removeAt(index);
+    });
+  }
+
+  Widget _usernameForm() {
+    return Form(
+      key: _usernameKey,
+      child: Column(
+        children: <Widget>[
+          _usernameTextField()
+        ],
+      ),
+    );
+  }
+
+  void _sendInvitation(List<String> usernames, String place, String date, String time) async {
+    var currentUser = _authController.getCurrentUser();
+    var result = await _invitationController.sendInvitationToUser(usernames, currentUser!.uid, place, date, time);
+    if (result != null) {
+      showAlert(context, "unable to send invite", result);
+    } else {
+      showAlert(context, "invitation sent!", "");
+    }
+    setState(() {
+      _isSending = false;
+    });
   }
 
   Widget _explored() {
@@ -553,6 +736,25 @@ class _PlaceScreen extends State<PlaceScreen> {
     });
   }
 
+  Future _showDatePicker(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(context: context, initialDate: _selectedDate, firstDate: DateTime(2022),lastDate: DateTime(2025),);
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        _isDate = true;
+        _selectedDate = picked;
+      });
+  }
+
+  Future _showTimePicker(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (picked != null) {
+      setState(() {
+        _isTime = true;
+        _selectedTime = picked.format(context);
+      });
+    }
+  }
+
   Widget _statusText() {
     if (dropDownValue == 'explored') {
       return _explored();
@@ -630,7 +832,6 @@ class _PlaceScreen extends State<PlaceScreen> {
                         _starRatings(widget.place),
                         _placeDetails(widget.place),
                         SizedBox(height: 20),
-                        _addFav(widget.place),
                         _midVector(),
                         Container(
                             //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),

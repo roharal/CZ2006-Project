@@ -62,35 +62,29 @@ class _FavouriteScreen extends State<FavouriteScreen> {
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
-    return Container(
-        height: 0.8 * height,
-        width: 0.8 * width,
-        child: ListView.builder(
-          itemCount: places.length,
-          itemBuilder: (context, index) {
-            return Column(
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: places.length,
+      itemBuilder: (context, index) {
+        return Column(children: [
+          Stack(
               children: [
-                Stack(
-                    alignment: Alignment.center,
-                    children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, PlaceScreen.routeName,
-                          arguments: PlaceScreenArguments(places[index],_favourites));
-                    },
-                    child: placeContainer(places[index], width, 0.3 * height),
-                  ),
-                  Positioned(
-                      bottom: 10,
-                      child: _addFav(places[index], 0.05 * height, width)),
-                ]),
-                SizedBox(
-                  height: 10,
-                )
-              ],
-            );
-          },
-        ));
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, PlaceScreen.routeName,
+                        arguments: PlaceScreenArguments(places[index], _favourites));
+                  },
+                  child: placeContainer(places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
+                ),
+              ]
+          ),
+          SizedBox(
+            height: 15,
+          )
+        ]);
+      },
+    );
   }
 
   @override

@@ -51,7 +51,7 @@ class UserModel {
     return this.email;
   }
 
-  UserModel.fromSnapshot(DocumentSnapshot snapshot)
+  UserModel.fromSnapshot(dynamic snapshot)
       : id = snapshot["id"],
         username = snapshot["username"],
         firstName = snapshot["firstName"],
