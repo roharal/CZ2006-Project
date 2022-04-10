@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         SignUpScreen.routeName: (context) => SignUpScreen(),
         VerifyScreen.routeName: (context) => VerifyScreen(),
         ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
-        ChangePasswordScreen.routeName: (context) => ChangePasswordScreen()
       },
       onGenerateRoute: (RouteSettings settings) {
         assert(false, 'Need to implement ${settings.name}');

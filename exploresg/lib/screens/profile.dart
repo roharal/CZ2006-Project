@@ -187,9 +187,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                     fontWeight: FontWeight.bold,
                   )),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ChangePasswordScreen(),
-                ));
+                Navigator.pushNamed(context, ChangePasswordScreen.routeName, arguments: ChangePasswordArguments(_userModel.email));
               },
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.grey),

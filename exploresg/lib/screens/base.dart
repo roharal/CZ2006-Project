@@ -1,4 +1,5 @@
 import 'package:exploresg/helper/utils.dart';
+import 'package:exploresg/screens/changePassword.dart';
 import 'package:exploresg/screens/favourites.dart';
 import 'package:exploresg/screens/home_ui.dart';
 import 'package:exploresg/screens/inbox.dart';
@@ -102,8 +103,23 @@ class _BaseScreen extends State<BaseScreen> {
           icon: Icon(Icons.person_sharp),
           activeColorPrimary: createMaterialColor(Color(0xFF6488E5)),
           inactiveColorPrimary: Colors.grey,
-          routeAndNavigatorSettings:
-              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/profile',
+              onGenerateRoute: (RouteSettings? settings) {
+                switch (settings!.name) {
+                  case ChangePasswordScreen.routeName:
+                    {
+                      final ChangePasswordArguments args =
+                      settings.arguments as ChangePasswordArguments;
+                      return MaterialPageRoute(builder: (context) {
+                        return ChangePasswordScreen(args.email);
+                      });
+                      // ignore: dead_code
+                      break;
+                    }
+                }
+                return null;
+              })),
     ];
   }
 
