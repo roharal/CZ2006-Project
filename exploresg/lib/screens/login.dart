@@ -314,6 +314,9 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       });
     }).onError((error, stackTrace) {
+      setState(() {
+        _isLoading = false;
+      });
       showAlert(context, "Login Error (2)", error.toString());
     });
   }
@@ -325,8 +328,13 @@ class _LoginScreenState extends State<LoginScreen> {
         _emailLogin(value["email"], _password);
       }).onError((error, stackTrace) {
         print(stackTrace);
-        showAlert(context, "User error", error.toString());
+        showAlert(context, "User error (1)", error.toString());
       });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      showAlert(context,"User error (2)", "Username or password incorrect");
     }
   }
 

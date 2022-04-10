@@ -13,6 +13,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
   final auth = FirebaseAuth.instance;
   late String _email;
+  final _emailKey = GlobalKey<FormState>();
 
   Widget _topBar(double width) {
     return FittedBox(
@@ -42,7 +43,7 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         textMajor("reset password", Color(0xff22254C), 30),
         SizedBox(height: 30),
-        _emailTextField(),
+        _emailForm(),
         _sendRequest()
       ]),
     );
@@ -77,6 +78,15 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
         ));
   }
 
+  Widget _emailForm() {
+    return Form(
+      key: _emailKey,
+      child: Container(
+        child: _emailTextField(),
+      )
+    );
+  }
+
   Widget _sendRequest() {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       ElevatedButton(
@@ -86,8 +96,7 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20))),
           onPressed: () {
-            auth.sendPasswordResetEmail(email: _email);
-            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            _validate();
           },
           child: textMinor(
             'send request',
@@ -106,6 +115,16 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
       return 'Enter a valid email';
     else
       return null;
+  }
+
+  void _validate() {
+    if (_emailKey.currentState!.validate()) {
+      _emailKey.currentState!.save();
+      setState(() {
+        auth.sendPasswordResetEmail(email: _email);
+        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+      });
+    }
   }
 
   Widget build(BuildContext context) {

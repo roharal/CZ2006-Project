@@ -36,7 +36,7 @@ class AuthController {
       return user;
     } catch (error) {
       print(error.toString());
-      return null;
+      return error.toString();
     }
   }
 
@@ -123,9 +123,9 @@ class AuthController {
   Future<String?> loginUsingEmail(String email, String password) async {
     var token;
     try {
-      User user = await this.signInEmail(email, password);
+      var user = await this.signInEmail(email, password);
       token = await _fcm.getToken();
-      this.updateUserById(user.uid, {"token": token});
+      this.updateUserById(user!.uid, {"token": token});
       return null;
     } on FirebaseAuthException catch (e) {
       return e.toString();

@@ -3,8 +3,18 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+class ChangePasswordArguments {
+  final String email;
+
+  ChangePasswordArguments(this.email);
+}
+
 class ChangePasswordScreen extends StatefulWidget {
   static const routeName = "/changePW";
+  final String email;
+
+  ChangePasswordScreen(this.email);
+
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
@@ -39,42 +49,42 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textMajor("change password", Color(0xff22254C), 30),
+        textMajor("reset password", Color(0xff22254C), 30),
         SizedBox(height: 30),
-        _emailTextField(),
+        // _emailTextField(),
         _sendRequest()
       ]),
     );
   }
 
-  Widget _emailTextField() {
-    return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "email",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.email,
-              color: Color(0xffD1D1D6),
-            ),
-          ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
-          ),
-          keyboardType: TextInputType.emailAddress,
-          validator: _validateEmail,
-          onChanged: (String? saved) {
-            _email = saved!.trim();
-          },
-        ));
-  }
+  // Widget _emailTextField() {
+  //   return Container(
+  //       padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+  //       child: TextFormField(
+  //         obscureText: false,
+  //         decoration: InputDecoration(
+  //           border: InputBorder.none,
+  //           hintText: "email",
+  //           hintStyle: TextStyle(
+  //             color: Color(0xffD1D1D6),
+  //           ),
+  //           icon: Icon(
+  //             Icons.email,
+  //             color: Color(0xffD1D1D6),
+  //           ),
+  //         ),
+  //         style: TextStyle(
+  //           fontFamily: 'AvenirLtStd',
+  //           color: Color(0xff22254C),
+  //           fontSize: 14,
+  //         ),
+  //         keyboardType: TextInputType.emailAddress,
+  //         validator: _validateEmail,
+  //         onChanged: (String? saved) {
+  //           _email = saved!.trim();
+  //         },
+  //       ));
+  // }
 
   Widget _sendRequest() {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
@@ -85,11 +95,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20))),
           onPressed: () {
-            auth.sendPasswordResetEmail(email: _email);
-            Navigator.pop(context);
+            print(widget.email);
+            // auth.sendPasswordResetEmail(email: widget.email);
+            // Navigator.pop(context);
           },
           child: textMinor(
-            'send request',
+            'reset my password',
             Color(0xff6488E5),
           ))
     ]);
