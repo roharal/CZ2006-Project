@@ -149,8 +149,11 @@ Future showAlert(BuildContext context, String title, String content) async {
 }
 
 Widget progressionIndicator() {
-  return Center(
-    child: CircularProgressIndicator(),
+  return Container(
+    color: Color(0XffFFF9ED),
+    child: Center(
+      child: CircularProgressIndicator(),
+    ),
   );
 }
 

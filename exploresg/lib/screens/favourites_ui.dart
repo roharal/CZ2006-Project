@@ -179,6 +179,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                       SizedBox(height: 20)
                     ])))))
         : Container(
+            color: Color(0XffFFF9ED),
             child: Center(
               child: CircularProgressIndicator(),
             ),

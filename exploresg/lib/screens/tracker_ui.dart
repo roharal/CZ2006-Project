@@ -270,6 +270,7 @@ class _TrackerScreen extends State<TrackerScreen> {
         ),
       ),
     ) : Container(
+      color: Color(0XffFFF9ED),
       child: Center(
         child: CircularProgressIndicator(),
       ),

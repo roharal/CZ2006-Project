@@ -167,7 +167,7 @@ class _SearchScreen extends State<SearchScreen> {
             )
     )
         : Container(
-            color: Color(0xfffffcec),
+            color: Color(0XffFFF9ED),
             child: Center(
               child: CircularProgressIndicator(),
             ),

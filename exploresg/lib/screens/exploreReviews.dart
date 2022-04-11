@@ -202,6 +202,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       ),
     )
     : Container(
+      color: Color(0XffFFF9ED),
       child: Center(
         child: CircularProgressIndicator(),
       ),

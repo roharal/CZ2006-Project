@@ -472,6 +472,7 @@ class _HomeScreen extends State<HomeScreen> {
     ),
         )
         : Container(
+            color: Color(0XffFFF9ED),
             child: Center(
               child: CircularProgressIndicator(),
             ),

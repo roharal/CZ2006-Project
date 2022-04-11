@@ -869,7 +869,7 @@ class _PlaceScreen extends State<PlaceScreen> {
                   ])))
             ]))
         : Container(
-      color: Color(0xfffffcec),
+      color: Color(0XffFFF9ED),
       child: Center(
               child: CircularProgressIndicator(),
             ),

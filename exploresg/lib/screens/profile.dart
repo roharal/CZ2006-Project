@@ -379,9 +379,10 @@ class _ProfileScreen extends State<ProfileScreen> {
             ),
           )
         : Container(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+      color: Color(0XffFFF9ED),
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
