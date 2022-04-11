@@ -10,6 +10,7 @@ import 'package:exploresg/helper/storage_service.dart';
 import 'package:exploresg/screens/changePassword.dart';
 import 'package:exploresg/helper/profileController.dart';
 import 'package:exploresg/screens/interests_ui.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -27,6 +28,9 @@ class _ProfileScreen extends State<ProfileScreen> {
   ProfileController _profileController = ProfileController();
   late UserModel _userModel;
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  GlobalKey<FormState> _formkey2 = GlobalKey<FormState>();
+  TextEditingController _textControllerFirst = new TextEditingController();
+  TextEditingController _textControllerLast = new TextEditingController();
 
   @override
   void initState() {
@@ -108,53 +112,228 @@ class _ProfileScreen extends State<ProfileScreen> {
   }
 
   Widget _showPFP(width) {
-    if (_userModel.picture == "") {
-      // If user does not have pfp
-      return Container(child: Image.asset("assets/img/Profile picture.png"));
-    } else {
-      return Container(
-        padding: EdgeInsets.symmetric(vertical: 5),
-        width: width * 1 / 3,
-        height: width * 1 / 3,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(100),
-          child: FittedBox(
-              child: Image(
-                image: NetworkImage(_userModel.picture),
-              ),
-              fit: BoxFit.cover),
-        ),
-      );
-    }
-  }
-
-  Widget _changeUsername() {
-    return ElevatedButton(
-        child: Text("Change username"),
-        onPressed: () async {
-          await showInformationDialog(context, "username");
-        },
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.grey),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-            ))));
-  }
-
-  Widget _changePFP() {
-    return ElevatedButton(
-      onPressed: () async {
-        _changePFPFunc();
-      },
-      child: Text("Change profile picture"),
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.grey),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-          ))),
+    return CircleAvatar(
+      radius: 45,
+      foregroundImage: NetworkImage(_userModel.picture),
+      backgroundColor: Color(0xff6488E5),
+      child: textMajor(_userModel.username[0], Colors.white, 35),
     );
+  }
+
+  Widget _displayName(width) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding:
+              EdgeInsets.symmetric(horizontal: width * (1 / 9), vertical: 5),
+          width: width,
+          child: Text(_userModel.firstName + " " + _userModel.lastName,
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: "AvenirLtStd",
+                fontWeight: FontWeight.bold,
+              )),
+        ),
+        Form(
+          key: _formkey2,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: width * (1 / 80)),
+                    width: width * (4 / 10),
+                    child: TextFormField(
+                      controller: _textControllerFirst,
+                      decoration: new InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        hintText: 'first name',
+                        hintMaxLines: 3,
+                        hintStyle: TextStyle(
+                          fontFamily: 'AvenirLtStd',
+                          fontSize: 14,
+                          color: Color(0xffD1D1D6),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'AvenirLtStd',
+                        color: Color(0xff22254C),
+                        fontSize: 14,
+                      ),
+                      maxLines: null,
+                      validator: (value){
+                        if(value!.isEmpty){
+                          return "Field is empty";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: width * (1 / 80)),
+                    width: width * (4 / 10),
+                    child: TextFormField(
+                      controller: _textControllerLast,
+                      decoration: new InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        hintText: 'last name',
+                        hintMaxLines: 3,
+                        hintStyle: TextStyle(
+                          fontFamily: 'AvenirLtStd',
+                          fontSize: 14,
+                          color: Color(0xffD1D1D6),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'AvenirLtStd',
+                        color: Color(0xff22254C),
+                        fontSize: 14,
+                      ),
+                      maxLines: null,
+                      validator: (value){
+                        if(value!.isEmpty){
+                          return "Field is empty";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                  child: Text("change",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: "AvenirLtStd",
+                        fontWeight: FontWeight.bold,
+                      )),
+                  onPressed: ()  {
+                    print("Button pressed");
+                    final isValid = _formkey2.currentState!.validate();
+                    if(isValid){
+                    }
+                    if (_formkey2.currentState!.validate()) {
+                      print("Form is valid!");
+                      _firebaseApi.updateDocumentByIdFromCollection("users",
+                          _userModel.id, {"firstName": _textControllerFirst.text,"lastName":_textControllerLast.text});
+                      String _firstName = _textControllerFirst.text;
+                      String _lastName = _textControllerLast.text;
+                      setState(() {
+                                _userModel.firstName = _firstName;
+                                _userModel.lastName = _lastName;
+                        });
+                    }else{
+                      print("Form not valid!");
+                    }
+
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xffF9BE7D)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      )))),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _changePFP(width) {
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("profile picture",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: "AvenirLtStd",
+                  fontWeight: FontWeight.bold,
+                )),
+          ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () async {
+                _changePFPFunc();
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  )))))
+    ]);
+  }
+
+  Widget _changeUsername(width) {
+    return Row(children: [
+      Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          width: width * (3 / 4),
+          // color: Colors.red,
+          alignment: Alignment.centerLeft,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("username",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: "AvenirLtStd",
+                  fontWeight: FontWeight.bold,
+                )),
+            Text("@" + _userModel.username,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: "AvenirLtStd",
+                ))
+          ])),
+      Container(
+          child: ElevatedButton(
+              child: Text("change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: "AvenirLtStd",
+                    fontWeight: FontWeight.bold,
+                  )),
+              onPressed: () async {
+                await showInformationDialog(context, "username");
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  )))))
+    ]);
   }
 
   Widget _changePassword(width) {
@@ -187,10 +366,11 @@ class _ProfileScreen extends State<ProfileScreen> {
                     fontWeight: FontWeight.bold,
                   )),
               onPressed: () {
-                Navigator.pushNamed(context, ChangePasswordScreen.routeName, arguments: ChangePasswordArguments(_userModel.email));
+                Navigator.pushNamed(context, ChangePasswordScreen.routeName,
+                    arguments: ChangePasswordArguments(_userModel.email));
               },
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                  backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
@@ -232,7 +412,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 ));
               },
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                  backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
@@ -249,7 +429,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           alignment: Alignment.centerLeft,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("Sign out from account",
+            Text("sign out from account",
                 style: TextStyle(
                   fontSize: 18,
                   fontFamily: "AvenirLtStd",
@@ -271,7 +451,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                         LoginScreen.routeName, (Route<dynamic> route) => false);
               },
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                  backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
@@ -343,33 +523,22 @@ class _ProfileScreen extends State<ProfileScreen> {
                   child: Container(
                       child: Column(
                 children: [
-                  topBar(
-                      "my account", height, width, 'assets/img/account-top.svg'),
+                  topBar("my account", height, width,
+                      'assets/img/account-top.svg'),
                   SizedBox(height: 35),
                   _showPFP(width),
-                  Text("@" + _userModel.username,
-                      style:
-                          TextStyle(fontSize: 20, fontFamily: "AvenirLtStd")),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _changeUsername(),
-                      _changePFP(),
-                    ],
-                  ),
-
+                  _displayName(width),
                   Container(
                       width: double.infinity,
-                      child: Image(
-                          image: AssetImage("assets/img/stringAccent.png"),
-                          fit: BoxFit.fitWidth)),
+                      child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: SvgPicture.asset('assets/img/account-mid.svg',
+                              width: width, height: width / 375 * 148))),
                   Container(
-                      padding: EdgeInsets.all(5),
-                      child: Text("Account settings",
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontFamily: "AvenirLtStd",
-                              fontWeight: FontWeight.bold))),
+                      padding: EdgeInsets.all(10),
+                      child: textMajor("Account settings", Colors.black, 30)),
+                  _changePFP(width),
+                  _changeUsername(width),
                   _changePassword(width),
                   _manageInterests(width),
                   _signOut(width),
@@ -379,10 +548,10 @@ class _ProfileScreen extends State<ProfileScreen> {
             ),
           )
         : Container(
-      color: Color(0XffFFF9ED),
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+            color: Color(0XffFFF9ED),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }
