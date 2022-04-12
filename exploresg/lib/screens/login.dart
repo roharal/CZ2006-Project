@@ -50,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
           _progressButton(width, height),
           SizedBox(height: 5),
           _useUsernameOrEmail(),
-          _googleRegisterButton(width, height),
         ],
       ),
     );
@@ -265,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
           width: 25,
           height: 25,
         ),
-        label: textMinor('sign in with google', Colors.black));
+        label: textMinor('sign in with google', Color(0xff22254C)));
   }
 
   String? _validatePassword(String? value) {
@@ -357,8 +356,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     _login(_width, _height),
                     SizedBox(height: 10),
+                    _googleRegisterButton(_width, _height),
+                    SizedBox(height: 10),
                     _signupLabel(),
-                    SizedBox(height: 5),
+                    SizedBox(height: 10),
                     _forgotPassword(),
                   ],
                 ),
