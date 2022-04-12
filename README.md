@@ -1,9 +1,11 @@
 # CZ2006-Project
 
-# Project Description
-Our team has created an app that suggests things to do or places to visit in Singapore and help them get to those places.
+# Coursework Group Project
+Our team has created a native mobile application that suggests things to do or places to visit in Singapore and help them get to those places.
 
-# Functions
-- Suggest places/activities they have enjoyed to their friends. 
-- Track places they have visited and wish to visit for their ease of reference. 
-- Allow people to discover unique places/activities that they would otherwise have not known about, and help them decide where to go on their next outing.
+Features include:
+- recommending places to the user based on their LatLng.
+- allowing user to search for places based on different categories such as names, ratings, location, prices etc. by utilizing real-time data retrieval using **google places API .
+- allowing users to track places they have visited and wish to visit for their ease of reference. 
+- allowing users to invite their friends along to the trip.
+- allowing users to review places that they have explored.
