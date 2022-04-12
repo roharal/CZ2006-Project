@@ -474,7 +474,6 @@ class _HomeScreen extends State<HomeScreen> {
               _reloadRecommendations();
             },
             child: Scaffold(
-              backgroundColor: Color(0xfffffcec),
               body: Container(
                 child: SingleChildScrollView(
                   child: Column(
@@ -502,6 +501,7 @@ class _HomeScreen extends State<HomeScreen> {
             ),
           )
         : Container(
+            color: Color(0XffFFF9ED),
             child: Center(
               child: CircularProgressIndicator(),
             ),

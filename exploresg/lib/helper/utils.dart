@@ -34,11 +34,12 @@ Widget topBar(String title, double height, double width, String imagePath) {
   return Stack(
     children: [
       FittedBox(
-        fit: BoxFit.fill,
-        child: SvgPicture.asset(imagePath,
-          width: width, height: width / 204*490,
-        )
-      ),
+          fit: BoxFit.fill,
+          child: SvgPicture.asset(
+            imagePath,
+            width: width,
+            height: width / 204 * 490,
+          )),
       Positioned(
         bottom: width / 30,
         left: width / 8,
@@ -129,14 +130,18 @@ Future showAlert(BuildContext context, String title, String content) async {
 }
 
 Widget progressionIndicator() {
-  return Center(
-    child: CircularProgressIndicator(),
+  return Container(
+    color: Color(0XffFFF9ED),
+    child: Center(
+      child: CircularProgressIndicator(),
+    ),
   );
 }
 
 class SearchBar extends StatefulWidget {
   final double width;
   final double height;
+
   const SearchBar({Key? key, required this.width, required this.height})
       : super(key: key);
 
@@ -146,6 +151,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   bool searching = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -165,7 +171,9 @@ class _SearchBarState extends State<SearchBar> {
             ),
             hintText: 'type a place...',
             hintStyle: TextStyle(
-                fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xffD1D1D6)),
+                fontFamily: 'AvenirLtStd',
+                fontSize: 14,
+                color: Color(0xffD1D1D6)),
             contentPadding: EdgeInsets.zero,
             enabledBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -187,6 +195,7 @@ class _SearchBarState extends State<SearchBar> {
 class Search extends StatefulWidget {
   final double width;
   final double height;
+
   const Search({Key? key, required this.width, required this.height})
       : super(key: key);
 
@@ -200,71 +209,78 @@ class _SearchState extends State<Search> {
   // ignore: override_on_non_overriding_member
   String filterbydropdownValue = 'filter by';
   String sortbydropdownValue = 'sort by';
+
   Widget build(BuildContext context) {
     return Container(
-        child: Row(
-      children: [
-        Padding(
-            padding: EdgeInsets.symmetric(horizontal: 0.0625 * widget.width)),
-        Container(
+      child: Row(
+        children: [
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0.0625 * widget.width)),
+          Container(
             width: widget.width / 2.1,
             padding: EdgeInsets.symmetric(horizontal: 0.1 * widget.width),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: DropdownButtonFormField<String>(
-                icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
-                focusColor: Colors.white,
-                items: [
-                  DropdownMenuItem(
-                      child: textMinor("filter by", Color(0xffD1D1D6)),
-                      value: "filter by"),
-                  DropdownMenuItem(
-                      child: textMinor("distance", Color(0xff22254C)),
-                      value: "distance")
-                ],
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    labelStyle: TextStyle(color: Color(0xff22254C), fontSize: 16)),
-                isExpanded: true,
-                value: filterbydropdownValue,
-                onChanged: (String? newValue) {
-                  print(newValue);
-                })),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 0.02 * widget.width)),
-        Container(
+              icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
+              focusColor: Colors.white,
+              items: [
+                DropdownMenuItem(
+                    child: textMinor("filter by", Color(0xffD1D1D6)),
+                    value: "filter by"),
+                DropdownMenuItem(
+                    child: textMinor("distance", Color(0xff22254C)),
+                    value: "distance")
+              ],
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  labelStyle:
+                      TextStyle(color: Color(0xff22254C), fontSize: 16)),
+              isExpanded: true,
+              value: filterbydropdownValue,
+              onChanged: (String? newValue) {
+                print(newValue);
+              },
+            ),
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0.02 * widget.width)),
+          Container(
             width: widget.width / 2.1,
             padding: EdgeInsets.symmetric(horizontal: 0.1 * widget.width),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: DropdownButtonFormField<String>(
-                icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
-                focusColor: Colors.white,
-                items: [
-                  DropdownMenuItem(
-                      child: textMinor("sort by", Color(0xffD1D1D6)),
-                      value: "sort by"),
-                  DropdownMenuItem(
-                      child: textMinor("distance", Color(0xff22254C)),
-                      value: "distance")
-                ],
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    labelStyle: TextStyle(color: Color(0xff22254C), fontSize: 16)),
-                isExpanded: true,
-                value: sortbydropdownValue,
-                onChanged: (String? newValue) {
-                  print(newValue);
-                }))
-      ],
-    ));
+              icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
+              focusColor: Colors.white,
+              items: [
+                DropdownMenuItem(
+                    child: textMinor("sort by", Color(0xffD1D1D6)),
+                    value: "sort by"),
+                DropdownMenuItem(
+                    child: textMinor("distance", Color(0xff22254C)),
+                    value: "distance")
+              ],
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  labelStyle:
+                      TextStyle(color: Color(0xff22254C), fontSize: 16)),
+              isExpanded: true,
+              value: sortbydropdownValue,
+              onChanged: (String? newValue) {},
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -274,43 +290,46 @@ Widget _printDist(distance) {
       : SizedBox();
 }
 
-Widget placeContainer(Place place, double width, double height, Widget extra, Widget top,
+Widget placeContainer(
+    Place place, double width, double height, Widget extra, Widget top,
     [double? distance]) {
   return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      padding: EdgeInsets.symmetric(
-          vertical: 0.05 * height, horizontal: 0.05 * width),
-      width: width,
-      height: height,
-      child: Column(children: [
+    decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(20))),
+    padding:
+        EdgeInsets.symmetric(vertical: 0.05 * height, horizontal: 0.05 * width),
+    width: width,
+    height: height,
+    child: Column(
+      children: [
         top,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-                borderRadius: BorderRadius.circular(16.0),
-                child: Image.network(
-                  place.images.length != 0
-                      ? place.images[0]
-                      : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
-                  fit: BoxFit.fill,
-                  height: 100,
-                  width: 100,
-                )),
+              borderRadius: BorderRadius.circular(16.0),
+              child: Image.network(
+                place.images.length != 0
+                    ? place.images[0]
+                    : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
+                fit: BoxFit.fill,
+                height: 100,
+                width: 100,
+              ),
+            ),
             SizedBox(width: 20),
             Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text(place.placeName,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    place.placeName,
                     style: TextStyle(
                         fontFamily: 'AvenirLtStd',
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Color(0xff22254C)
-                    )
+                        color: Color(0xff22254C)),
                   ),
                   RatingBarIndicator(
                     rating: place.ratings,
@@ -327,13 +346,16 @@ Widget placeContainer(Place place, double width, double height, Widget extra, Wi
                   //include dist for afterseach
                   // textMinor(distance.toString() + "km", Colors.black)
                   _printDist(distance),
-
-                ]))
+                ],
+              ),
+            ),
           ],
         ),
         SizedBox(
           height: 20,
         ),
         extra,
-      ]));
+      ],
+    ),
+  );
 }
