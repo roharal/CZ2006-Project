@@ -1,9 +1,11 @@
 import 'package:exploresg/helper/auth_controller.dart';
+import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/tracker_controller.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/invitation.dart';
 import 'package:exploresg/models/place.dart';
+import 'package:exploresg/screens/place_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -138,10 +140,12 @@ class _TrackerScreen extends State<TrackerScreen> {
   TrackerController _trackerController = TrackerController();
   AuthController _authController = AuthController();
   PlacesApi _placesApi = PlacesApi();
+  FavouritesController _favouritesController = FavouritesController();
   List<Invitation> _invites = [], _toExplore = [], _explored = [];
   Map<String, Place> _places = {};
   bool _isLoaded = false;
   String dropDownValue = 'to explore';
+  List<String> _favourites = [];
 
   @override
   void initState() {
@@ -176,11 +180,15 @@ class _TrackerScreen extends State<TrackerScreen> {
                 scrollDirection: Axis.horizontal,
                 itemCount: invite.users.length,
                 itemBuilder: (BuildContext context, int idx) => ClipOval(
-                  child: Image.network(
-                    invite.users[idx].picture,
-                    height: width / 16,
-                    width: width / 16,
-                    fit: BoxFit.cover,
+                  child: Column(
+                    children: [
+                      Image.network(
+                        invite.users[idx].picture,
+                        height: width / 16,
+                        width: width / 16,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -199,15 +207,30 @@ class _TrackerScreen extends State<TrackerScreen> {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            placeContainer(
-                _places[_toExplore[index].place]!,
-                0.8 * width,
-                0.3 * height,
-                _inviteContainer(_toExplore[index], width),
-                Container()),
+            InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, PlaceScreen.routeName,
+                    arguments:
+                    PlaceScreenArguments(_places[_toExplore[index].place]!, _favourites));
+              },
+              child: placeContainer(
+                  _places[_toExplore[index].place]!,
+                  0.8 * width,
+                  0.3 * height,
+                  _inviteContainer(_toExplore[index], width),
+                  Container()),
+            ),
             SizedBox(
               height: 10,
             ),
+            InkWell(
+              onTap: () {
+
+              },
+              child: Center(
+                child: textMinorBold("Explored", Colors.black),
+              ),
+            )
           ],
         );
       },
@@ -215,6 +238,7 @@ class _TrackerScreen extends State<TrackerScreen> {
   }
 
   void _loadExplores() async {
+    _favourites = await _favouritesController.getFavouritesList();
     var user = _authController.getCurrentUser();
     _invites = await _trackerController.getConfirmedInvitations(user!.uid);
 

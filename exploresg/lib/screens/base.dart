@@ -93,17 +93,51 @@ class _BaseScreen extends State<BaseScreen> {
         ),
       ),
       PersistentBottomNavBarItem(
-          icon: Icon(Icons.list_alt_outlined),
-          activeColorPrimary: Color(0xFF6488E5),
-          inactiveColorPrimary: Colors.grey,
-          routeAndNavigatorSettings:
-              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
+        icon: Icon(Icons.list_alt_outlined),
+        activeColorPrimary: Color(0xFF6488E5),
+        inactiveColorPrimary: Colors.grey,
+        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+          initialRoute: '/tracker',
+          onGenerateRoute: (RouteSettings? settings) {
+            switch (settings!.name) {
+              case PlaceScreen.routeName:
+                {
+                  final PlaceScreenArguments args =
+                      settings.arguments as PlaceScreenArguments;
+                  return MaterialPageRoute(builder: (context) {
+                    return PlaceScreen(args.place, args.favourites);
+                  });
+                  // ignore: dead_code
+                  break;
+                }
+            }
+            return null;
+          },
+        ),
+      ),
       PersistentBottomNavBarItem(
-          icon: Icon(Icons.markunread_mailbox_outlined),
-          activeColorPrimary: Color(0xFF6488E5),
-          inactiveColorPrimary: Colors.grey,
-          routeAndNavigatorSettings:
-              RouteAndNavigatorSettings(initialRoute: '/', routes: {})),
+        icon: Icon(Icons.markunread_mailbox_outlined),
+        activeColorPrimary: Color(0xFF6488E5),
+        inactiveColorPrimary: Colors.grey,
+        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+          initialRoute: '/inbox',
+          onGenerateRoute: (RouteSettings? settings) {
+            switch (settings!.name) {
+              case PlaceScreen.routeName:
+                {
+                  final PlaceScreenArguments args =
+                      settings.arguments as PlaceScreenArguments;
+                  return MaterialPageRoute(builder: (context) {
+                    return PlaceScreen(args.place, args.favourites);
+                  });
+                  // ignore: dead_code
+                  break;
+                }
+            }
+            return null;
+          },
+        ),
+      ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.person_sharp),
         activeColorPrimary: Color(0xFF6488E5),

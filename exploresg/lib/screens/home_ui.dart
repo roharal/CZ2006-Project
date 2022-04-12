@@ -261,7 +261,7 @@ class _HomeScreen extends State<HomeScreen> {
   Widget _searchBar(double width, double height) {
     return Container(
       width: width,
-      height: height / 4,
+      height: height / 5,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20), color: Colors.white),
       child: TextField(
@@ -392,11 +392,9 @@ class _HomeScreen extends State<HomeScreen> {
                     await _favouritesController.addOrRemoveFav(place.id);
                     _favourites =
                         await _favouritesController.getFavouritesList();
-                    print('<3 pressed');
                     setState(() {
                       place.likes = !place.likes;
                     });
-                    print(place.likes);
                   },
                   child: _favourites.contains(place.id)
                       ? Icon(
@@ -440,7 +438,7 @@ class _HomeScreen extends State<HomeScreen> {
                 child: placeContainer(
                     places[index],
                     0.8 * width,
-                    0.23 * height,
+                    0.24 * height,
                     _addFav(places[index], 0.05 * height, 0.8 * width),
                     Container()),
               ),

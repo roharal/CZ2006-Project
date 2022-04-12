@@ -25,7 +25,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
     _loadFavourites();
   }
 
-  Widget _addFav(Place place, double height, double width) {
+  Widget _addFav(int index, Place place, double height, double width) {
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -40,14 +40,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                 onTap: () async {
                   await _favouritesController.addOrRemoveFav(place.id);
                   _favourites = await _favouritesController.getFavouritesList();
-                  _favourite_places = [];
-                  if (_favourites != []) {
-                    for (var fav in _favourites) {
-                      var _place =
-                          await _placesApi.placeDetailsSearchFromText(fav);
-                      _favourite_places.add(_place!);
-                    }
-                  }
+                  _favourite_places = await _favouritesController.removeFavourites(index, _favourite_places);
                   setState(() {});
                 },
                 child: _favourites.contains(place.id)
@@ -95,7 +88,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                       places[index],
                       0.8 * width,
                       0.215 * height,
-                      _addFav(places[index], 0.05 * height, 0.8 * width),
+                      _addFav(index, places[index], 0.05 * height, 0.8 * width),
                       Container()),
                 ),
               ],
@@ -182,11 +175,9 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                       SizedBox(
                         height: 20,
                       ),
-                      SearchBar(width: 0.8 * width, height: 0.3 * height),
                       SizedBox(
                         height: 10,
                       ),
-                      Search(width: 0.8 * width, height: 0.3 * height),
                       SizedBox(
                         height: 30,
                       ),

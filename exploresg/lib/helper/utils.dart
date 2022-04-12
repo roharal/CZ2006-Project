@@ -138,152 +138,6 @@ Widget progressionIndicator() {
   );
 }
 
-class SearchBar extends StatefulWidget {
-  final double width;
-  final double height;
-
-  const SearchBar({Key? key, required this.width, required this.height})
-      : super(key: key);
-
-  @override
-  State<SearchBar> createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<SearchBar> {
-  bool searching = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: widget.width,
-      height: widget.height / 5.4,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20), color: Colors.white),
-      child: Container(
-        child: TextField(
-          cursorColor: Color(0xffD1D1D6),
-          cursorHeight: 14.0,
-          style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14),
-          decoration: new InputDecoration(
-            prefixIcon: Icon(
-              Icons.search,
-              color: Color(0xffD1D1D6),
-            ),
-            hintText: 'type a place...',
-            hintStyle: TextStyle(
-                fontFamily: 'AvenirLtStd',
-                fontSize: 14,
-                color: Color(0xffD1D1D6)),
-            contentPadding: EdgeInsets.zero,
-            enabledBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              borderSide: const BorderSide(
-                color: Colors.white,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              borderSide: BorderSide(color: Colors.white),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class Search extends StatefulWidget {
-  final double width;
-  final double height;
-
-  const Search({Key? key, required this.width, required this.height})
-      : super(key: key);
-
-  @override
-  State<Search> createState() => _SearchState();
-}
-
-class _SearchState extends State<Search> {
-  @override
-  // bool _searchByKeyword = true;
-  // ignore: override_on_non_overriding_member
-  String filterbydropdownValue = 'filter by';
-  String sortbydropdownValue = 'sort by';
-
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0.0625 * widget.width)),
-          Container(
-            width: widget.width / 2.1,
-            padding: EdgeInsets.symmetric(horizontal: 0.1 * widget.width),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20), color: Colors.white),
-            child: DropdownButtonFormField<String>(
-              icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
-              focusColor: Colors.white,
-              items: [
-                DropdownMenuItem(
-                    child: textMinor("filter by", Color(0xffD1D1D6)),
-                    value: "filter by"),
-                DropdownMenuItem(
-                    child: textMinor("distance", Color(0xff22254C)),
-                    value: "distance")
-              ],
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  labelStyle:
-                      TextStyle(color: Color(0xff22254C), fontSize: 16)),
-              isExpanded: true,
-              value: filterbydropdownValue,
-              onChanged: (String? newValue) {
-                print(newValue);
-              },
-            ),
-          ),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0.02 * widget.width)),
-          Container(
-            width: widget.width / 2.1,
-            padding: EdgeInsets.symmetric(horizontal: 0.1 * widget.width),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20), color: Colors.white),
-            child: DropdownButtonFormField<String>(
-              icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
-              focusColor: Colors.white,
-              items: [
-                DropdownMenuItem(
-                    child: textMinor("sort by", Color(0xffD1D1D6)),
-                    value: "sort by"),
-                DropdownMenuItem(
-                    child: textMinor("distance", Color(0xff22254C)),
-                    value: "distance")
-              ],
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  labelStyle:
-                      TextStyle(color: Color(0xff22254C), fontSize: 16)),
-              isExpanded: true,
-              value: sortbydropdownValue,
-              onChanged: (String? newValue) {},
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 Widget _printDist(distance) {
   return (distance != null)
       ? textMinor(distance.toString() + "km", Color(0xff22254C))
@@ -300,7 +154,6 @@ Widget placeContainer(
     padding:
         EdgeInsets.symmetric(vertical: 0.05 * height, horizontal: 0.05 * width),
     width: width,
-    height: height,
     child: Column(
       children: [
         top,
@@ -352,7 +205,7 @@ Widget placeContainer(
           ],
         ),
         SizedBox(
-          height: 20,
+          height: height * 0.14,
         ),
         extra,
       ],

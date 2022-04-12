@@ -44,7 +44,14 @@ class TrackerController {
   }
 
   Future acceptInvite(Invitation invite, UserModel user) async {
-    invite.addUsers(user);
+    for (UserModel u in invite.users) {
+      late Invitation currentInvite;
+      await _firestore.collection("users").doc(u.id).collection("toExplore").doc(invite.id).get().then((value) {
+        currentInvite = Invitation.fromSnapshot(value);
+        currentInvite.addUsers(user);
+      });
+      await _firestore.collection("users").doc(u.id).collection("toExplore").doc(invite.id).update(currentInvite.toJson());
+    }
     await _firestore.collection("users").doc(user.id).collection("toExplore").doc(invite.id).set(invite.toJson());
     await _firestore.collection("users").doc(user.id).collection("invites").doc(invite.id).delete();
   }

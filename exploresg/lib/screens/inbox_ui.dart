@@ -1,4 +1,5 @@
 import 'package:exploresg/helper/auth_controller.dart';
+import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:exploresg/helper/inbox_controller.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/tracker_controller.dart';
@@ -6,6 +7,7 @@ import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/invitation.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:exploresg/models/user.dart';
+import 'package:exploresg/screens/place_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +32,8 @@ class _InboxScreen extends State<InboxScreen> {
   var valueChoose;
   late UserModel _userModel;
   List listItem = ["Filter 1", "Filter 2", "Filter 3", "Filter 4"];
+  List<String> _favourites = [];
+  FavouritesController _favouritesController = FavouritesController();
 
   @override
   void initState() {
@@ -37,7 +41,8 @@ class _InboxScreen extends State<InboxScreen> {
     _loadInbox();
   }
 
-  Widget _invitationContainer(int index, var width, Invitation invitationC, Place place) {
+  Widget _invitationContainer(
+      int index, var width, Invitation invitationC, Place place) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -58,9 +63,10 @@ class _InboxScreen extends State<InboxScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                    // color: Colors.yellow,
-                    height: width * (1 / 10),
-                    child: Image.network(invitationC.users[0].picture),),
+                  // color: Colors.yellow,
+                  height: width * (1 / 10),
+                  child: Image.network(invitationC.users[0].picture),
+                ),
                 Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
@@ -156,8 +162,7 @@ class _InboxScreen extends State<InboxScreen> {
                     onPressed: () {
                       _trackerController.acceptInvite(invitationC, _userModel);
                       _removeInvite(index);
-                      setState(() {
-                      });
+                      setState(() {});
                     },
                   ),
                 ),
@@ -175,8 +180,7 @@ class _InboxScreen extends State<InboxScreen> {
                     onPressed: () {
                       _trackerController.rejectInvite(invitationC, _userModel);
                       _removeInvite(index);
-                      setState(() {
-                      });
+                      setState(() {});
                     },
                   ),
                 ),
@@ -196,8 +200,18 @@ class _InboxScreen extends State<InboxScreen> {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            _invitationContainer(index, width, _inbox[index], _places[_inbox[index].place]!),
-            SizedBox(height: 5,)
+            InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, PlaceScreen.routeName,
+                    arguments: PlaceScreenArguments(
+                        _places[_inbox[index].place]!, _favourites));
+              },
+              child: _invitationContainer(
+                  index, width, _inbox[index], _places[_inbox[index].place]!),
+            ),
+            SizedBox(
+              height: 5,
+            )
           ],
         );
       },
@@ -209,6 +223,7 @@ class _InboxScreen extends State<InboxScreen> {
   }
 
   void _loadInbox() async {
+    _favourites = await _favouritesController.getFavouritesList();
     var user = _authController.getCurrentUser();
     await _authController.getUserFromId(user!.uid).then((value) {
       _userModel = UserModel.fromSnapshot(value);
@@ -235,7 +250,6 @@ class _InboxScreen extends State<InboxScreen> {
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
         ? Scaffold(
-            backgroundColor: Color(0xfffffcec),
             body: SingleChildScrollView(
               child: Container(
                 child: Column(
@@ -244,7 +258,6 @@ class _InboxScreen extends State<InboxScreen> {
                         "my inbox", height, width, 'assets/img/inbox-top.svg'),
                     _inboxList(width),
                   ],
-
                 ),
               ),
             ),
