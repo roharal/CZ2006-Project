@@ -440,7 +440,7 @@ class _HomeScreen extends State<HomeScreen> {
                 child: placeContainer(
                     places[index],
                     0.8 * width,
-                    0.215 * height,
+                    0.23 * height,
                     _addFav(places[index], 0.05 * height, 0.8 * width),
                     Container()),
               ),

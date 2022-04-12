@@ -115,7 +115,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       radius: 45,
       foregroundImage: NetworkImage(_userModel.picture),
       backgroundColor: Color(0xff6488E5),
-      child: textMajor(_userModel.username[0], Colors.white, 35),
+      child: textMajor(_userModel.username == "" ? _userModel.username[0] : "?", Colors.white, 35),
     );
   }
 
@@ -132,7 +132,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 fontSize: 18,
                 fontFamily: "AvenirLtStd",
                 fontWeight: FontWeight.bold,
-              )),
+              ),),
         ),
         Form(
           key: _formkey2,
@@ -253,7 +253,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                           )))),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -291,7 +291,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
                       )))))
-    ]);
+    ],);
   }
 
   Widget _changeUsername(width) {
@@ -322,7 +322,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                     fontSize: 12,
                     fontFamily: "AvenirLtStd",
                     fontWeight: FontWeight.bold,
-                  )),
+                  ),),
               onPressed: () async {
                 await showInformationDialog(context, "username");
               },
@@ -331,8 +331,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                      )))))
-    ]);
+                      ),),),),),
+    ],);
   }
 
   Widget _changePassword(width) {
@@ -349,13 +349,13 @@ class _ProfileScreen extends State<ProfileScreen> {
                   fontSize: 18,
                   fontFamily: "AvenirLtStd",
                   fontWeight: FontWeight.bold,
-                )),
+                ),),
             Text("must be between 8-20 characters",
                 style: TextStyle(
                   fontSize: 13,
                   fontFamily: "AvenirLtStd",
-                ))
-          ])),
+                ),)
+          ],),),
       Container(
           child: ElevatedButton(
               child: Text("change",

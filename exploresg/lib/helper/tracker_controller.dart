@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/models/invitation.dart';
+import 'package:exploresg/models/user.dart';
 
 class TrackerController {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ignore: body_might_complete_normally_nullable
   Future<List<Invitation>> getConfirmedInvitations(String uid) async {
     List<Invitation> invites = [];
     await _firestore
@@ -23,8 +23,7 @@ class TrackerController {
     return invites;
   }
 
-  Future<List<List<Invitation>>> sortBasedOnToExploreAndExplored(
-      List<Invitation> invites) async {
+  Future<List<List<Invitation>>> sortBasedOnToExploreAndExplored(List<Invitation> invites) async {
     List<Invitation> toExplore = [], explored = [];
     String now = DateTime.now().toString().split(" ")[0];
     String month, day, nowMonth, nowDay;
@@ -42,5 +41,15 @@ class TrackerController {
       }
     }
     return [toExplore, explored];
+  }
+
+  Future acceptInvite(Invitation invite, UserModel user) async {
+    invite.addUsers(user);
+    await _firestore.collection("users").doc(user.id).collection("toExplore").doc(invite.id).set(invite.toJson());
+    await _firestore.collection("users").doc(user.id).collection("invites").doc(invite.id).delete();
+  }
+
+  Future rejectInvite(Invitation invite, UserModel user) async {
+    await _firestore.collection("users").doc(user.id).collection("invites").doc(invite.id).delete();
   }
 }

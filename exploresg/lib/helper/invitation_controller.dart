@@ -35,9 +35,9 @@ class InvitationController {
           return "unable to send invitation";
         }
       });
-      Invitation invitation = Invitation(place, date, time, users);
       var sender = _firestore.collection("users").doc(from).collection("toExplore");
       String key = sender.doc().id;
+      Invitation invitation = Invitation(key, place, date, time, users);
       await sender.doc(key).set(invitation.toJson());
 
       for (UserModel u in unconfirmed) {

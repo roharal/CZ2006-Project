@@ -1,8 +1,11 @@
 import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/helper/inbox_controller.dart';
+import 'package:exploresg/helper/places_api.dart';
+import 'package:exploresg/helper/tracker_controller.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/invitation.dart';
 import 'package:exploresg/models/place.dart';
+import 'package:exploresg/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -16,12 +19,16 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreen extends State<InboxScreen> {
   InboxController _inboxController = InboxController();
+  TrackerController _trackerController = TrackerController();
   AuthController _authController = AuthController();
+  PlacesApi _placesApi = PlacesApi();
+  Map<String, Place> _places = {};
   final DateFormat formatterDate = DateFormat('dd-MM-yyyy');
   final DateFormat formatterTime = DateFormat('HH:MM');
   List<Invitation> _inbox = [];
   bool _isLoaded = false;
   var valueChoose;
+  late UserModel _userModel;
   List listItem = ["Filter 1", "Filter 2", "Filter 3", "Filter 4"];
 
   @override
@@ -30,7 +37,7 @@ class _InboxScreen extends State<InboxScreen> {
     _loadInbox();
   }
 
-  Widget _invitationContainer(var width, Invitation invitationC, Place place) {
+  Widget _invitationContainer(int index, var width, Invitation invitationC, Place place) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -53,7 +60,7 @@ class _InboxScreen extends State<InboxScreen> {
                 Container(
                     // color: Colors.yellow,
                     height: width * (1 / 10),
-                    child: Image(image: AssetImage("assets/img/oshy.png"))),
+                    child: Image.network(invitationC.users[0].picture),),
                 Container(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     alignment: Alignment.center,
@@ -146,7 +153,12 @@ class _InboxScreen extends State<InboxScreen> {
                             MaterialStateProperty.all(Colors.white)),
                     icon: Icon(Icons.alarm_on_sharp, color: Colors.blue),
                     label: Text("Accept", style: TextStyle(color: Colors.blue)),
-                    onPressed: null,
+                    onPressed: () {
+                      _trackerController.acceptInvite(invitationC, _userModel);
+                      _removeInvite(index);
+                      setState(() {
+                      });
+                    },
                   ),
                 ),
                 Container(
@@ -160,7 +172,12 @@ class _InboxScreen extends State<InboxScreen> {
                       "Reject",
                       style: TextStyle(color: Colors.red),
                     ),
-                    onPressed: null,
+                    onPressed: () {
+                      _trackerController.rejectInvite(invitationC, _userModel);
+                      _removeInvite(index);
+                      setState(() {
+                      });
+                    },
                   ),
                 ),
               ],
@@ -171,9 +188,42 @@ class _InboxScreen extends State<InboxScreen> {
     );
   }
 
+  Widget _inboxList(double width) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: _inbox.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            _invitationContainer(index, width, _inbox[index], _places[_inbox[index].place]!),
+            SizedBox(height: 5,)
+          ],
+        );
+      },
+    );
+  }
+
+  void _removeInvite(int index) {
+    _inbox.removeAt(index);
+  }
+
   void _loadInbox() async {
     var user = _authController.getCurrentUser();
-    _inbox = await _inboxController.getConfirmedInvitations(user!.uid);
+    await _authController.getUserFromId(user!.uid).then((value) {
+      _userModel = UserModel.fromSnapshot(value);
+    });
+    _inbox = await _inboxController.getConfirmedInvitations(_userModel.id);
+
+    if (_inbox.length != 0) {
+      for (Invitation iv in _inbox) {
+        var place = await _placesApi.placeDetailsSearchFromText(iv.place);
+        if (place != null) {
+          _places[iv.place] = place;
+          print(place.id);
+        }
+      }
+    }
     setState(() {
       _isLoaded = true;
     });
@@ -192,8 +242,9 @@ class _InboxScreen extends State<InboxScreen> {
                   children: [
                     topBar(
                         "my inbox", height, width, 'assets/img/inbox-top.svg'),
-                    SizedBox(height: 20)
+                    _inboxList(width),
                   ],
+
                 ),
               ),
             ),
