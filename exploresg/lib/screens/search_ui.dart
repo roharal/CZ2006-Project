@@ -117,11 +117,12 @@ class _SearchScreen extends State<SearchScreen> {
                               _places![index], _favourites));
                     },
                     child: placeContainer(
-                        places[index],
-                        0.8 * width,
-                        0.215 * height,
-                        _addFav(places[index], 0.05 * height, 0.8 * width),
-                        Container()),
+                      places[index],
+                      0.8 * width,
+                      0.215 * height,
+                      _addFav(places[index], 0.05 * height, 0.8 * width),
+                      Container(),
+                    ),
                   ),
                 ],
               ),

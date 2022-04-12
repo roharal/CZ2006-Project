@@ -8,6 +8,7 @@ import 'dart:core';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:exploresg/helper/location.dart';
 
 Text textMajor(String text, Color color, double size) {
   return Text(
@@ -263,7 +264,13 @@ class _SearchState extends State<Search> {
                     value: "sort by"),
                 DropdownMenuItem(
                     child: textMinor("distance", Color(0xff22254C)),
-                    value: "distance")
+                    value: "distance"),
+                DropdownMenuItem(
+                    child: textMinor("ratings", Color(0xff22254C)),
+                    value: "ratings"),
+                DropdownMenuItem(
+                    child: textMinor("price", Color(0xff22254C)),
+                    value: "price")
               ],
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -293,6 +300,14 @@ Widget _printDist(distance) {
 Widget placeContainer(
     Place place, double width, double height, Widget extra, Widget top,
     [double? distance]) {
+  // Locator location = new Locator();
+  // var userLoc = location.getCurrentLocation();
+
+  // if (userLoc != null) {
+  //   String lat = userLoc.latitude.toString();
+  //   String long = userLoc.longitude.toString();
+  // }
+
   return Container(
     decoration: BoxDecoration(
         color: Colors.white,
@@ -345,7 +360,7 @@ Widget placeContainer(
 
                   //include dist for afterseach
                   // textMinor(distance.toString() + "km", Colors.black)
-                  _printDist(distance),
+                  //_printDist(distance),
                 ],
               ),
             ),

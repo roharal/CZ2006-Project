@@ -19,29 +19,31 @@ class SearchController {
 
     Locator location = new Locator();
     var userLoc = await location.getCurrentLocation();
+
     if (userLoc != null) {
       String lat = userLoc.latitude.toString();
       String long = userLoc.longitude.toString();
-      var result = placeType.contains(arguments.text)
-          ? await _placesApi.nearbySearchFromText(
-              lat,
-              long,
-              arguments.max,
-              "&type=" + arguments.text,
-            )
-          : await _placesApi.nearbySearchFromText(
-              lat,
-              long,
-              arguments.max,
-              "&keyword=" + arguments.text,
-            );
-      places = result!;
+
       switch (arguments.sort) {
         case 'distance':
           {
+            var places = placeType.contains(arguments.text)
+                ? await _placesApi.nearbySearchFromText(
+                    lat,
+                    long,
+                    arguments.max,
+                    "&type=" + arguments.text,
+                  )
+                : await _placesApi.nearbySearchFromText(
+                    lat,
+                    long,
+                    arguments.max,
+                    "&keyword=" + arguments.text,
+                  );
+
             filteredPlace.clear();
             var distMap = {};
-            for (var i in places) {
+            for (var i in places!) {
               //FN TO SORT PLACES BY DIST
               distMap[i] = calculateDistance(
                   userLoc.latitude,
@@ -51,48 +53,71 @@ class SearchController {
             }
             var sortedKeys = distMap.keys.toList(growable: false)
               ..sort((a, b) => distMap[a].compareTo(distMap[b]));
+
             LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
                 key: (k) => k, value: (k) => distMap[k]);
-
             for (var i in sortedMap.values) {
               _distance.add(double.parse(i.toStringAsFixed(2)));
             }
+
             for (var i in sortedKeys) {
               filteredPlace.add(i);
             }
             break;
           }
+
         case 'ratings':
           {
+            var places = placeType.contains(arguments.text)
+                ? await _placesApi.nearbySearchFromText(
+                    lat,
+                    long,
+                    15000,
+                    "&type=" + arguments.text,
+                  )
+                : await _placesApi.nearbySearchFromText(
+                    lat,
+                    long,
+                    15000,
+                    "&keyword=" + arguments.text,
+                  );
+
             filteredPlace.clear();
             var ratingsMap = {};
-            for (var i in places) {
+            for (var i in places!) {
               if (arguments.min <= i.ratings && i.ratings <= arguments.max) {
+                print("price");
+                print(i.price);
                 ratingsMap[i] = i.ratings;
               }
             }
             var sortedKeys = ratingsMap.keys.toList(growable: false)
               ..sort((a, b) => ratingsMap[a].compareTo(ratingsMap[b]));
-            // LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
-            //     key: (k) => k, value: (k) => ratingsMap[k]);
+
             for (var i in sortedKeys) {
               filteredPlace.add(i);
             }
             break;
           }
+
         case 'price':
           {
+            var places = placeType.contains(arguments.text)
+                ? await _placesApi.nearbySearchFromText(lat, long, 15000,
+                    "&type=" + arguments.text, arguments.max, arguments.min)
+                : await _placesApi.nearbySearchFromText(lat, long, 15000,
+                    "&keyword=" + arguments.text, arguments.max, arguments.min);
+
             filteredPlace.clear();
             var priceMap = {};
-            for (var i in places) {
-              if (arguments.min <= i.price && i.price <= arguments.max)
-                priceMap[i] = i.price;
+
+            for (var i in places!) {
+              priceMap[i] = i.price;
             }
+
             var sortedKeys = priceMap.keys.toList(growable: false)
               ..sort((a, b) => priceMap[a].compareTo(priceMap[b]));
-            LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
-                key: (k) => k, value: (k) => priceMap[k]);
-            print(sortedMap.values);
+
             for (var i in sortedKeys) {
               filteredPlace.add(i);
             }
