@@ -10,6 +10,7 @@ import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/favourites_controller.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SearchScreenArguments {
   final int max;
@@ -34,9 +35,10 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreen extends State<SearchScreen> {
-  PlacesApi _placesApi = PlacesApi();
   FavouritesController _favouritesController = FavouritesController();
   SearchController _searchController = SearchController();
+  Locator _locator = new Locator();
+  late LatLng _userLoc;
   bool _isLoaded = false;
   List<Place>? _places = [];
   List<double> _distance = [];
@@ -120,8 +122,9 @@ class _SearchScreen extends State<SearchScreen> {
                       places[index],
                       0.8 * width,
                       0.215 * height,
-                      _addFav(places[index], 0.05 * height, 0.8 * width),
+                      _addFav(places[index], 0.05 * height, 0.8 * width,),
                       Container(),
+                        _userLoc != null ? calculateDistance(_userLoc.latitude, _userLoc.longitude, double.parse(_places![index].coordinates["lat"]!), double.parse(_places![index].coordinates["long"]!)) : 0.0
                     ),
                   ),
                 ],
@@ -137,6 +140,10 @@ class _SearchScreen extends State<SearchScreen> {
   }
 
   void _loadPage() async {
+    var result = await _locator.getCurrentLocation();
+    if (result != null) {
+      _userLoc = result;
+    }
     _places = await _searchController.loadSearch(
         context,
         SearchScreenArguments(

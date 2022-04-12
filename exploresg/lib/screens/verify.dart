@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:exploresg/screens/base.dart';
+import 'package:exploresg/screens/interests_ui.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../helper/utils.dart';
@@ -39,8 +40,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     await user.reload();
     if (user.emailVerified) {
       timer.cancel();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => BaseScreen()));
+      Navigator.pushReplacementNamed(context, InterestScreen.routeName,arguments: InterestScreenArguments(user.uid, ""));
     }
   }
 

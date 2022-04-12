@@ -25,19 +25,23 @@ class TrackerController {
 
   Future<List<List<Invitation>>> sortBasedOnToExploreAndExplored(List<Invitation> invites) async {
     List<Invitation> toExplore = [], explored = [];
-    String now = DateTime.now().toString().split(" ")[0];
-    String month, day, nowMonth, nowDay;
+    // String now = DateTime.now().toString().split(" ")[0];
+    // String month, day, nowMonth, nowDay;
     for (Invitation invite in invites) {
-      month = invite.date.split("-")[1];
-      day = invite.date.split("-")[2];
-      nowMonth = now.split("-")[1];
-      nowDay = now.split("-")[2];
-      if (int.parse(nowMonth) > int.parse(month)) {
+    //   month = invite.date.split("-")[1];
+    //   day = invite.date.split("-")[2];
+    //   nowMonth = now.split("-")[1];
+    //   nowDay = now.split("-")[2];
+      if (invite.visited) {
         explored.add(invite);
-      } else if (int.parse(nowDay) > int.parse(day)) {
-        explored.add(invite);
-      } else {
+      } else  {
         toExplore.add(invite);
+      //   if (int.parse(nowMonth) > int.parse(month)) {
+      //   explored.add(invite);
+      // } else if (int.parse(nowDay) > int.parse(day)) {
+      //   explored.add(invite);
+      // } else {
+      //   toExplore.add(invite);
       }
     }
     return [toExplore, explored];
@@ -58,5 +62,15 @@ class TrackerController {
 
   Future rejectInvite(Invitation invite, UserModel user) async {
     await _firestore.collection("users").doc(user.id).collection("invites").doc(invite.id).delete();
+  }
+
+  Future setExplored(Invitation invite, String user) async {
+    invite.visited = true;
+    await _firestore.collection("users").doc(user).collection("toExplore").doc(invite.id).update(invite.toJson());
+  }
+
+  Future setToExplored(Invitation invite, String user) async {
+    invite.visited = false;
+    await _firestore.collection("users").doc(user).collection("toExplore").doc(invite.id).update(invite.toJson());
   }
 }

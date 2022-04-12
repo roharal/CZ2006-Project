@@ -1,3 +1,4 @@
+import 'package:exploresg/screens/base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:exploresg/helper/interestController.dart';
@@ -150,7 +151,11 @@ class _InterestScreenState extends State<InterestScreen> {
                   onPressed: () async {
                     _interestController.updateUserInterests(
                         interestsMap, widget.userID);
-                    Navigator.pop(context);
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+                    }
                   },
                   child: Text(
                     "Save changes",

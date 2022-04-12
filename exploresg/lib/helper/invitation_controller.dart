@@ -18,7 +18,7 @@ class InvitationController {
     });
     var sender = _firestore.collection("users").doc(user.uid).collection("toExplore");
     String key = sender.doc().id;
-    Invitation invitation = Invitation(key, place, date, time, users);
+    Invitation invitation = Invitation(key, place, date, time, users, false);
     await sender.doc(key).set(invitation.toJson());
   }
 
@@ -51,7 +51,7 @@ class InvitationController {
       });
       var sender = _firestore.collection("users").doc(from).collection("toExplore");
       String key = sender.doc().id;
-      Invitation invitation = Invitation(key, place, date, time, users);
+      Invitation invitation = Invitation(key, place, date, time, users, false);
       await sender.doc(key).set(invitation.toJson());
 
       for (UserModel u in unconfirmed) {

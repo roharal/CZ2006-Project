@@ -1,4 +1,5 @@
 import 'package:exploresg/helper/home_controller.dart';
+import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/screens/search_ui.dart';
 import 'package:exploresg/screens/place_ui.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,8 @@ import 'package:exploresg/models/place.dart';
 
 import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,8 +27,10 @@ class _HomeScreen extends State<HomeScreen> {
   TextEditingController _searchController = new TextEditingController();
   HomeController _homeController = HomeController();
   FavouritesController _favouritesController = FavouritesController();
+  Locator _locator = Locator();
   List<Place>? _places = [];
   List<String> _favourites = [];
+  late LatLng _userLoc;
 
   @override
   void initState() {
@@ -34,6 +39,10 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Future<void> _loadPage() async {
+    var result = await _locator.getCurrentLocation();
+    if (result != null) {
+      _userLoc = result;
+    }
     _places = await _homeController.loadRecommendations(context);
     _favourites = await _favouritesController.getFavouritesList();
     setState(() {
@@ -326,18 +335,20 @@ class _HomeScreen extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(20.0),
             ))),
         onPressed: () {
-          Navigator.pushNamed(context, SearchScreen.routeName,
-              arguments: _searchByCategory == false //using input searchbar
-                  ? SearchScreenArguments(_maxFilter, _minFilter,
-                      _filterByDropdownValue, _searchController.text)
-                  : SearchScreenArguments(
-                      //using place type dropdown
-                      _maxFilter,
-                      _minFilter,
-                      _filterByDropdownValue,
-                      _placeTypeDropdownValue,
-                    ));
-          // print(_filterByDropdownValue);
+          if (_filterByDropdownValue != "filter by") {
+            Navigator.pushNamed(context, SearchScreen.routeName,
+                arguments: _searchByCategory == false //using input searchbar
+                    ? SearchScreenArguments(_maxFilter, _minFilter,
+                        _filterByDropdownValue, _searchController.text)
+                    : SearchScreenArguments(
+                        //using place type dropdown
+                        _maxFilter,
+                        _minFilter,
+                        _filterByDropdownValue,
+                        _placeTypeDropdownValue,
+                      ));
+            // print(_filterByDropdownValue);
+          }
         },
         child: Text('go!',
             style: TextStyle(
@@ -441,7 +452,14 @@ class _HomeScreen extends State<HomeScreen> {
                     0.8 * width,
                     0.24 * height,
                     _addFav(places[index], 0.05 * height, 0.8 * width),
-                    Container()),
+                    Container(),
+                    _userLoc != null
+                        ? calculateDistance(
+                            _userLoc.latitude,
+                            _userLoc.longitude,
+                            double.parse(_places![index].coordinates["lat"]!),
+                            double.parse(_places![index].coordinates["long"]!))
+                        : 0.0),
               ),
             ]),
             SizedBox(
@@ -453,7 +471,8 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
-  Future<void> _reloadRecommendations() async {
+  Future<void> _reload() async {
+    _isLoaded = false;
     _places = await _homeController.loadRecommendations(context);
     setState(() {
       _isLoaded = true;
@@ -470,7 +489,7 @@ class _HomeScreen extends State<HomeScreen> {
               setState(() {
                 _isLoaded = false;
               });
-              _reloadRecommendations();
+              _reload();
             },
             child: Scaffold(
               body: Container(
@@ -479,7 +498,13 @@ class _HomeScreen extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      topBar('home', height, width, 'assets/img/home-top.svg'),
+                      GestureDetector(
+                        onTap: () {
+                          _reload();
+                        },
+                        child: topBar(
+                            'home', height, width, 'assets/img/home-top.svg'),
+                      ),
                       SizedBox(height: 30),
                       textMajor('find places', Color(0xff22254C), 26),
                       SizedBox(

@@ -2,6 +2,7 @@ import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/helper/google_sign_it.dart';
 import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/forgotpassword.dart';
+import 'package:exploresg/screens/interests_ui.dart';
 import 'package:exploresg/screens/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -252,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (error != null) {
                 showAlert(context, "Google Sign In Error", error);
               } else {
-                Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+                Navigator.pushReplacementNamed(context, InterestScreen.routeName, arguments: InterestScreenArguments(result.uid,""));
               }
             } else {
               Navigator.pushReplacementNamed(context, BaseScreen.routeName);
@@ -312,10 +313,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _emailLogin(String email, String password) async {
     var result = await _authController.signInEmail(email, password);
     if (result is User) {
-      var token = _authController.getToken();
-      await _authController.updateUserById(
-          result.uid,
-          {"token": token});
       Navigator.pushReplacementNamed(context, BaseScreen.routeName);
     } else {
       showAlert(context, "Login Error (1)", result);

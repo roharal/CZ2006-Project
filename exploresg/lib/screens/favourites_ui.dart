@@ -22,7 +22,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
   @override
   void initState() {
     super.initState();
-    _loadFavourites();
+    _reload();
   }
 
   Widget _addFav(int index, Place place, double height, double width) {
@@ -40,7 +40,8 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                 onTap: () async {
                   await _favouritesController.addOrRemoveFav(place.id);
                   _favourites = await _favouritesController.getFavouritesList();
-                  _favourite_places = await _favouritesController.removeFavourites(index, _favourite_places);
+                  _favourite_places = await _favouritesController
+                      .removeFavourites(index, _favourite_places);
                   setState(() {});
                 },
                 child: _favourites.contains(place.id)
@@ -102,7 +103,8 @@ class _FavouriteScreen extends State<FavouriteScreen> {
     );
   }
 
-  Future<void> _loadFavourites() async {
+  Future<void> _reload() async {
+    _isLoaded = false;
     _favourite_places = [];
     _favourites = await _favouritesController.getFavouritesList();
     if (_favourites != []) {
@@ -160,7 +162,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
               setState(() {
                 _isLoaded = false;
               });
-              _loadFavourites();
+              _reload();
             },
             child: Scaffold(
               backgroundColor: Color(0xFFFFF9ED),
@@ -170,8 +172,13 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      topBar("favourites", height, width,
-                          'assets/img/favourites-top.svg'),
+                      GestureDetector(
+                        onTap: () {
+                          _reload();
+                        },
+                        child: topBar("favourites", height, width,
+                            'assets/img/favourites-top.svg'),
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -190,6 +197,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
             ),
           )
         : Container(
+            color: Color(0XffFFF9ED),
             child: Center(
               child: CircularProgressIndicator(),
             ),

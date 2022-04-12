@@ -144,7 +144,7 @@ class _TrackerScreen extends State<TrackerScreen> {
   List<Invitation> _invites = [], _toExplore = [], _explored = [];
   Map<String, Place> _places = {};
   bool _isLoaded = false;
-  String dropDownValue = 'to explore';
+  String _dropDownValue = 'to explore';
   List<String> _favourites = [];
 
   @override
@@ -153,10 +153,49 @@ class _TrackerScreen extends State<TrackerScreen> {
     _loadExplores();
   }
 
+  Widget _dropDown(Invitation invite) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(vertical: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Color(0XffFFF9ED),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _dropDownValue,
+          icon: const Icon(Icons.keyboard_arrow_down),
+          style: const TextStyle(
+            color: Colors.orange,
+            fontFamily: 'AvenirLtStd',
+            fontSize: 14,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              _dropDownValue = newValue!;
+              _checkAction(invite);
+            });
+          },
+          items: <String>['to explore', 'explored']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
   Widget _inviteContainer(Invitation invite, double width) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        _dropDown(invite),
         Container(
             child: textMinor("Date: ${invite.date}", Colors.black),
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
@@ -210,8 +249,8 @@ class _TrackerScreen extends State<TrackerScreen> {
             InkWell(
               onTap: () {
                 Navigator.pushNamed(context, PlaceScreen.routeName,
-                    arguments:
-                    PlaceScreenArguments(_places[_toExplore[index].place]!, _favourites));
+                    arguments: PlaceScreenArguments(
+                        _places[_toExplore[index].place]!, _favourites));
               },
               child: placeContainer(
                   _places[_toExplore[index].place]!,
@@ -225,16 +264,32 @@ class _TrackerScreen extends State<TrackerScreen> {
             ),
             InkWell(
               onTap: () {
-
+                _toExplore[index].setVisited();
+                _explored.add(_toExplore[index]);
+                print(_toExplore[index]);
+                _toExplore.removeAt(index);
+                setState(() {});
               },
               child: Center(
-                child: textMinorBold("Explored", Colors.black),
+                child: textMinorBold("Explored", Colors.black12),
               ),
             )
           ],
         );
       },
     );
+  }
+
+  void _checkAction(Invitation invite) async {
+    var user = _authController.getCurrentUser();
+    if (_dropDownValue == "explored" && !invite.visited) {
+      await _trackerController.setExplored(invite, user!.uid);
+    } else if (_dropDownValue == "to explore" && invite.visited) {
+      await _trackerController.setToExplored(invite, user!.uid);
+    }
+    setState(() {
+      _loadExplores();
+    });
   }
 
   void _loadExplores() async {
@@ -260,39 +315,57 @@ class _TrackerScreen extends State<TrackerScreen> {
     });
   }
 
+  void _reload() {
+    _isLoaded = false;
+    setState(() {});
+    _loadExplores();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
-        ? Scaffold(
-            body: Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    topBar("my tracker", height, width,
-                        'assets/img/tracker-top.svg'),
-                    FittedBox(
-                        fit: BoxFit.fill,
-                        child: SvgPicture.asset('assets/img/tracker-mid.svg',
-                            width: width, height: width)),
-                    textMajor("to explore", Color(0xff22254C), 26),
-                    _exploreList(_toExplore, height, width),
-                    SizedBox(
-                      height: 35,
-                    ),
-                    textMajor("explored", Color(0xff22254C), 26),
-                    _exploreList(_explored, height, width),
-                    SizedBox(
-                      height: 35,
-                    ),
-                  ],
+        ? RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _isLoaded = false;
+              });
+              _reload();
+            },
+            child: Scaffold(
+              body: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _reload();
+                        },
+                        child: topBar("my tracker", height, width,
+                            'assets/img/tracker-top.svg'),
+                      ),
+                      FittedBox(
+                          fit: BoxFit.fill,
+                          child: SvgPicture.asset('assets/img/tracker-mid.svg',
+                              width: width, height: width)),
+                      textMajor("to explore", Color(0xff22254C), 26),
+                      _exploreList(_toExplore, height, width),
+                      SizedBox(
+                        height: 35,
+                      ),
+                      textMajor("explored", Color(0xff22254C), 26),
+                      _exploreList(_explored, height, width),
+                      SizedBox(
+                        height: 35,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
+            ))
         : Container(
             child: Center(
               child: CircularProgressIndicator(),

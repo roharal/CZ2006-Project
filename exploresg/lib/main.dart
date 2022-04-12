@@ -32,6 +32,16 @@ class MyApp extends StatelessWidget {
         ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
       },
       onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case InterestScreen.routeName: {
+            final InterestScreenArguments args = settings.arguments as InterestScreenArguments;
+            return MaterialPageRoute(builder: (context) {
+              return InterestScreen(args.userID, args.userInts);
+            });
+            // ignore: dead_code
+            break;
+          }
+        }
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },

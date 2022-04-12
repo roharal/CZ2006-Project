@@ -3,10 +3,11 @@ import 'package:exploresg/models/user.dart';
 
 class Invitation {
   String id, place, date, time;
+  bool visited;
   List<UserModel> users;
 
 
-  Invitation(this.id, this.place ,this.date, this.time ,this.users);
+  Invitation(this.id, this.place ,this.date, this.time ,this.users, this.visited);
 
   String getPlace() {
     return this.place;
@@ -28,6 +29,10 @@ class Invitation {
     this.users.add(user);
   }
 
+  void setVisited() {
+    this.visited = true;
+  }
+
   factory Invitation.fromSnapshot(DocumentSnapshot snapshot) {
     var users = snapshot["users"] as List;
     List<UserModel> userModels = users.map((i) => UserModel.fromSnapshot(i)).toList();
@@ -36,7 +41,8 @@ class Invitation {
       snapshot["place"],
       snapshot["date"],
       snapshot["time"],
-      userModels
+      userModels,
+      snapshot["visited"],
     );
   }
 
@@ -45,6 +51,7 @@ class Invitation {
     "place": place,
     "date": date,
     "time": time,
-    "users": users.map((i) => i.toJson()).toList()
+    "users": users.map((i) => i.toJson()).toList(),
+    "visited": visited,
   };
 }
