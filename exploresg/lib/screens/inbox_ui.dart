@@ -244,25 +244,47 @@ class _InboxScreen extends State<InboxScreen> {
     });
   }
 
+  void _reload() async {
+    _isLoaded = false;
+    setState(() {
+
+    });
+    _loadInbox();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
-        ? Scaffold(
-            body: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  children: [
-                    topBar(
-                        "my inbox", height, width, 'assets/img/inbox-top.svg'),
-                    _inboxList(width),
-                  ],
+        ? RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _isLoaded = false;
+              });
+              _reload();
+            },
+            child: Scaffold(
+              body: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _reload();
+                        },
+                        child: topBar("my inbox", height, width,
+                            'assets/img/inbox-top.svg'),
+                      ),
+                      _inboxList(width),
+                    ],
+                  ),
                 ),
               ),
             ),
           )
         : Container(
+            color: Color(0XffFFF9ED),
             child: Center(
               child: CircularProgressIndicator(),
             ),

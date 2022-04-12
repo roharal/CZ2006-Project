@@ -50,7 +50,7 @@ Widget topBar(String title, double height, double width, String imagePath) {
 }
 
 //returns distance in km
-double calculateDistance(lat1, lon1, lat2, lon2) {
+double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
   var p = 0.017453292519943295;
   var c = cos;
   var a = 0.5 -
@@ -144,6 +144,23 @@ Widget _printDist(distance) {
       : SizedBox();
 }
 
+Widget _printPrice(numOfD) {
+  switch (numOfD) {
+    case 0:
+      return textMinor("\$", Colors.black);
+    case 1:
+      return textMinor("\$\$", Colors.black);
+    case 2:
+      return textMinor("\$\$\$", Colors.black);
+    case 3:
+      return textMinor("\$\$\$\$", Colors.black);
+    case 4:
+      return textMinor("\$\$\$\$\$", Colors.black);
+    default:
+      return SizedBox(width: 0);
+  }
+}
+
 Widget placeContainer(
     Place place, double width, double height, Widget extra, Widget top,
     [double? distance]) {
@@ -195,10 +212,12 @@ Widget placeContainer(
                     direction: Axis.horizontal,
                   ),
                   textMinor(place.placeAddress, Color(0xff22254C)),
-
+                  SizedBox(height: 5),
+                  _printPrice(place.price),
+                  SizedBox(height: 5),
                   //include dist for afterseach
-                  // textMinor(distance.toString() + "km", Colors.black)
-                  //_printDist(distance),
+                  // textMinor(distance.toString() + "km", Colors.black),
+                  _printDist(distance?.toStringAsFixed(2)),
                 ],
               ),
             ),
