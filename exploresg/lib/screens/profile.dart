@@ -538,6 +538,14 @@ class _ProfileScreen extends State<ProfileScreen> {
     });
   }
 
+  void _reload() {
+    _isLoaded = false;
+    setState(() {
+
+    });
+    _init();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -549,8 +557,13 @@ class _ProfileScreen extends State<ProfileScreen> {
                   child: Container(
                       child: Column(
                 children: [
-                  topBar("my account", height, width,
-                      'assets/img/account-top.svg'),
+                  GestureDetector(
+                    onTap: () {
+                      _reload();
+                    },
+                    child: topBar("my account", height, width,
+                        'assets/img/account-top.svg'),
+                  ),
                   SizedBox(height: 35),
                   _showPFP(width),
                   _displayName(width),
