@@ -507,7 +507,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       return null;
     }
     // Upload file and Update the User picture attribute
-    _profileController.uploadFileAndUpdateUser(results, _userModel);
+    await _profileController.uploadFileAndUpdateUser(results, _userModel);
     // // Setting file name and details etc
     // final path = results.files.single.path!;
     // final fileName = _userModel.id + "_pfp";
