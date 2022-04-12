@@ -10,8 +10,6 @@ import 'package:flutter/cupertino.dart';
 class SearchController {
   List<double> _distance = [];
 
-  // List<String> _favourites = [];
-
   Future<List<Place>?> loadSearch(
       BuildContext context, SearchScreenArguments arguments) async {
     List<Place> places = [], filteredPlace = [];
@@ -72,13 +70,13 @@ class SearchController {
                 ? await _placesApi.nearbySearchFromText(
                     lat,
                     long,
-                    20000,
+                    5000,
                     "&type=" + arguments.text,
                   )
                 : await _placesApi.nearbySearchFromText(
                     lat,
                     long,
-                    20000,
+                    5000,
                     "&keyword=" + arguments.text,
                   );
 
@@ -103,9 +101,9 @@ class SearchController {
         case 'price':
           {
             var places = placeType.contains(arguments.text)
-                ? await _placesApi.nearbySearchFromText(lat, long, 20000,
+                ? await _placesApi.nearbySearchFromText(lat, long, 5000,
                     "&type=" + arguments.text, arguments.max, arguments.min)
-                : await _placesApi.nearbySearchFromText(lat, long, 20000,
+                : await _placesApi.nearbySearchFromText(lat, long, 5000,
                     "&keyword=" + arguments.text, arguments.max, arguments.min);
 
             filteredPlace.clear();
@@ -130,13 +128,13 @@ class SearchController {
                 ? await _placesApi.nearbySearchFromText(
                     lat,
                     long,
-                    20000,
+                    5000,
                     "&type=" + arguments.text,
                   )
                 : await _placesApi.nearbySearchFromText(
                     lat,
                     long,
-                    20000,
+                    5000,
                     "&keyword=" + arguments.text,
                   );
 
