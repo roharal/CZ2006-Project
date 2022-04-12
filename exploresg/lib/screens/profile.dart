@@ -544,7 +544,6 @@ class _ProfileScreen extends State<ProfileScreen> {
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
         ? Scaffold(
-            backgroundColor: Color(0xfffffcec),
             body: Container(
               child: SingleChildScrollView(
                   child: Container(
@@ -563,7 +562,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                               width: width, height: width / 375 * 148))),
                   Container(
                       padding: EdgeInsets.all(10),
-                      child: textMajor("Account settings", Colors.black, 30)),
+                      child: textMajor("account settings", Colors.black, 30)),
                   _changePFP(width),
                   _changeUsername(width),
                   _changePassword(width),

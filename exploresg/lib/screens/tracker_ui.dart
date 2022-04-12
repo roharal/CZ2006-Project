@@ -176,7 +176,7 @@ class _TrackerScreen extends State<TrackerScreen> {
               _checkAction(invite);
             });
           },
-          items: <String>['to explore', 'explored']
+          items: <String>['unexplored','to explore', 'explored']
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
