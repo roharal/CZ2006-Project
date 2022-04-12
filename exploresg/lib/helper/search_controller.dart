@@ -10,8 +10,6 @@ import 'package:flutter/cupertino.dart';
 class SearchController {
   List<double> _distance = [];
 
-  // List<String> _favourites = [];
-
   Future<List<Place>?> loadSearch(
       BuildContext context, SearchScreenArguments arguments) async {
     List<Place> places = [], filteredPlace = [];
