@@ -227,9 +227,6 @@ class _ProfileScreen extends State<ProfileScreen> {
                       )),
                   onPressed: ()  {
                     print("Button pressed");
-                    final isValid = _formkey2.currentState!.validate();
-                    if(isValid){
-                    }
                     if (_formkey2.currentState!.validate()) {
                       print("Form is valid!");
                       _firebaseApi.updateDocumentByIdFromCollection("users",
@@ -239,6 +236,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                       setState(() {
                                 _userModel.firstName = _firstName;
                                 _userModel.lastName = _lastName;
+                                _textControllerFirst.clear();
+                                _textControllerLast.clear();
                         });
                     }else{
                       print("Form not valid!");
