@@ -221,6 +221,12 @@ class _TrackerScreen extends State<TrackerScreen> {
                 itemBuilder: (BuildContext context, int idx) => ClipOval(
                   child: Column(
                     children: [
+                      invite.users[idx].picture == "" ? CircleAvatar(
+                        radius: 12.5,
+                        backgroundColor: Color(0xff6488E5),
+                        child: textMajor(invite.users[idx].username != "" ? invite.users[idx].username[0] : "?",
+                            Colors.white, 10),
+                      ):
                       Image.network(
                         invite.users[idx].picture,
                         height: width / 16,
@@ -286,6 +292,8 @@ class _TrackerScreen extends State<TrackerScreen> {
       await _trackerController.setExplored(invite, user!.uid);
     } else if (_dropDownValue == "to explore" && invite.visited) {
       await _trackerController.setToExplored(invite, user!.uid);
+    } else if (_dropDownValue == "unexplored") {
+      await _trackerController.setUnexplored(invite, user!.uid);
     }
     setState(() {
       _loadExplores();

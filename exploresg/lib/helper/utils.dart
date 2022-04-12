@@ -179,14 +179,11 @@ Widget placeContainer(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: Image.network(
-                place.images.length != 0
-                    ? place.images[0]
-                    : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
+              child:  place.images.length != 0 ? Image.network(place.images[0],
                 fit: BoxFit.fill,
                 height: 100,
                 width: 100,
-              ),
+              ) : Icon(Icons.question_mark, size: 100,),
             ),
             SizedBox(width: 20),
             Expanded(

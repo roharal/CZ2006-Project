@@ -111,7 +111,7 @@ class _PlaceScreen extends State<PlaceScreen> {
       ),
       child: place.images.length > 0
           ? Image.network(place.images[0])
-          : Image.asset('assets/img/catsafari.png'),
+          : Icon(Icons.question_mark),
     );
   }
 
