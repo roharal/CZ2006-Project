@@ -337,6 +337,7 @@ class _HomeScreen extends State<HomeScreen> {
                       _filterByDropdownValue,
                       _placeTypeDropdownValue,
                     ));
+          // print(_filterByDropdownValue);
         },
         child: Text('go!',
             style: TextStyle(
