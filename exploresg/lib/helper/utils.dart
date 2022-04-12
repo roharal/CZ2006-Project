@@ -147,15 +147,15 @@ Widget _printDist(distance) {
 Widget _printPrice(numOfD) {
   switch (numOfD) {
     case 0:
-      return textMinor("\$", Colors.black);
+      return textMinor("\$", Color(0xff22254C));
     case 1:
-      return textMinor("\$\$", Colors.black);
+      return textMinor("\$\$", Color(0xff22254C));
     case 2:
-      return textMinor("\$\$\$", Colors.black);
+      return textMinor("\$\$\$", Color(0xff22254C));
     case 3:
-      return textMinor("\$\$\$\$", Colors.black);
+      return textMinor("\$\$\$\$", Color(0xff22254C));
     case 4:
-      return textMinor("\$\$\$\$\$", Colors.black);
+      return textMinor("\$\$\$\$\$", Color(0xff22254C));
     default:
       return SizedBox(width: 0);
   }

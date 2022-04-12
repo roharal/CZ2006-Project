@@ -64,7 +64,7 @@ class _SplashScreen extends State<SplashScreen> {
               top: height / 2.9,
               left: width / 4.5,
               child: SizedBox(
-                width: width / 3,
+                width: width / 2,
                 child: textMinor(
                     "discover new places and invite your friend to go together!",
                     Colors.black),

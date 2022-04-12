@@ -276,7 +276,7 @@ class _HomeScreen extends State<HomeScreen> {
       child: TextField(
         textAlignVertical: TextAlignVertical.center,
         controller: _searchController,
-        cursorColor: Colors.grey,
+        cursorColor: Color(0xffD1D1D6),
         cursorHeight: 14.0,
         style: TextStyle(
             fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xff22254C)),
