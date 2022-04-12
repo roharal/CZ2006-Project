@@ -1,8 +1,9 @@
-import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/helper/google_sign_it.dart';
 import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/forgotpassword.dart';
 import 'package:exploresg/screens/signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -19,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _username, _password, _email;
   bool _isLoading = false, _useEmail = false;
   final _loginKey = GlobalKey<FormState>();
-  AuthController _auth = AuthController();
+  AuthController _authController = AuthController();
   GoogleSignInProvider _googleSignInProvider = GoogleSignInProvider();
 
   Widget _topBar(double width) {
@@ -38,16 +39,19 @@ class _LoginScreenState extends State<LoginScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textMajor("sign in", Color(0xff22254C), 36),
-        SizedBox(height: 10),
-        _loginForm(),
-        SizedBox(height: 30),
-        _progressButton(width, height),
-        SizedBox(height: 5),
-        _useUsernameOrEmail(),
-        _googleRegisterButton(width, height),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          textMajor("sign in", Color(0xff22254C), 36),
+          SizedBox(height: 10),
+          _loginForm(),
+          SizedBox(height: 30),
+          _progressButton(width, height),
+          SizedBox(height: 5),
+          _useUsernameOrEmail(),
+          _googleRegisterButton(width, height),
+        ],
+      ),
     );
   }
 
@@ -63,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(
             width: 5,
           ),
-          textMinor("sign up", createMaterialColor(Color(0xff6488E5)))
+          textMinor("sign up", Color(0xff6488E5)),
         ],
       ),
     );
@@ -96,89 +100,92 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _emailTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "email",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.email,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: false,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "email",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.email,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.emailAddress,
-          validator: _validateEmail,
-          onSaved: (String? saved) {
-            _email = saved!.trim();
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.emailAddress,
+        validator: _validateEmail,
+        onSaved: (String? saved) {
+          _email = saved!.trim();
+        },
+      ),
+    );
   }
 
   Widget _passwordTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: true,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "password",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.lock,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: true,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "password",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.lock,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.text,
-          validator: _validatePassword,
-          onSaved: (String? saved) {
-            _password = saved!;
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.text,
+        validator: _validatePassword,
+        onSaved: (String? saved) {
+          _password = saved!;
+        },
+      ),
+    );
   }
 
   Widget _usernameTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "username",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.alternate_email,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: false,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "username",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.alternate_email,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.text,
-          validator: _validateUsername,
-          onSaved: (saved) {
-            _username = saved!.trim().toLowerCase();
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.text,
+        validator: _validateUsername,
+        onSaved: (saved) {
+          _username = saved!.trim().toLowerCase();
+        },
+      ),
+    );
   }
 
   Widget _useUsernameOrEmail() {
@@ -239,9 +246,9 @@ class _LoginScreenState extends State<LoginScreen> {
           var result =
               await _googleSignInProvider.googleLogin(context: context);
           if (result != null) {
-            var bool = await _auth.checkUserExist(result.uid);
+            var bool = await _authController.checkUserExist(result.uid);
             if (!bool) {
-              var error = await _auth.createUserFromGoogleSignIn(result);
+              var error = await _authController.createUserFromGoogleSignIn(result);
               if (error != null) {
                 showAlert(context, "Google Sign In Error", error);
               } else {
@@ -303,28 +310,25 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _emailLogin(String email, String password) async {
-    await _auth.loginUsingEmail(email, password).then((value) {
-      setState(() {
-        _isLoading = false;
-        if (value == null) {
-          print("user login");
-          Navigator.pushReplacementNamed(context, BaseScreen.routeName);
-        } else {
-          showAlert(context, "Login Error (1)", value);
-        }
-      });
-    }).onError((error, stackTrace) {
+    var result = await _authController.signInEmail(email, password);
+    if (result is User) {
+      var token = _authController.getToken();
+      await _authController.updateUserById(
+          result.uid,
+          {"token": token});
+      Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+    } else {
+      showAlert(context, "Login Error (1)", result);
       setState(() {
         _isLoading = false;
       });
-      showAlert(context, "Login Error (2)", error.toString());
-    });
+    }
   }
 
   void _usernameLogin() async {
-    String uid = await _auth.getUidfromUsername(_username);
+    String uid = await _authController.getUidfromUsername(_username);
     if (uid != "notFound") {
-      await _auth.getUserFromId(uid).then((value) {
+      await _authController.getUserFromId(uid).then((value) {
         _emailLogin(value["email"], _password);
       }).onError((error, stackTrace) {
         print(stackTrace);
@@ -334,7 +338,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = false;
       });
-      showAlert(context,"User error (2)", "Username or password incorrect");
+      showAlert(context, "User error (2)", "Username or password incorrect");
     }
   }
 
@@ -345,26 +349,27 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Color(0xfffffcec),
       body: SingleChildScrollView(
-          child: Container(
-        height: _height - 20,
-        child: Stack(
-          children: [
-            Positioned(child: _topBar(_width)),
-            Positioned(
-              top: _height * 0.25,
-              child: Column(
-                children: [
-                  _login(_width, _height),
-                  SizedBox(height: 10),
-                  _signupLabel(),
-                  SizedBox(height: 5),
-                  _forgotPassword(),
-                ],
+        child: Container(
+          height: _height - 20,
+          child: Stack(
+            children: [
+              Positioned(child: _topBar(_width)),
+              Positioned(
+                top: _height * 0.25,
+                child: Column(
+                  children: [
+                    _login(_width, _height),
+                    SizedBox(height: 10),
+                    _signupLabel(),
+                    SizedBox(height: 5),
+                    _forgotPassword(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }

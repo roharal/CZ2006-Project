@@ -6,7 +6,7 @@ class Invitation {
   List<UserModel> users;
 
 
-  Invitation(this.place,this.date, this.time ,this.users);
+  Invitation(this.place ,this.date, this.time ,this.users);
 
   String getPlace() {
     return this.place;

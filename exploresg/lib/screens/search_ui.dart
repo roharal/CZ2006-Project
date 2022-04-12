@@ -26,6 +26,7 @@ class SearchScreen extends StatefulWidget {
   final int min;
   final String sort;
   final String text;
+
   SearchScreen(this.max, this.min, this.sort, this.text);
 
   @override
@@ -46,18 +47,6 @@ class _SearchScreen extends State<SearchScreen> {
     _loadPage();
   }
 
-  void _loadPage() async {
-    _places = await _searchController.loadSearch(context, SearchScreenArguments(widget.max, widget.min, widget.sort, widget.text));
-    if (_places == null) {
-      print("null");
-    }
-    // _favourites = await _favouritesController
-    //     .getFavouritesList(); // i think this function can be defined in a controller class instead
-    setState(() {
-      _isLoaded = true;
-    });
-  }
-
   Widget buildSideLabel(double value) {
     return Container(
       width: 30,
@@ -71,50 +60,56 @@ class _SearchScreen extends State<SearchScreen> {
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        color: Colors.white,
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
+      color: Colors.white,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
             children: [
-              Row(children: [
-                InkWell(
-                    onTap: () async {
-                      await _favouritesController.addOrRemoveFav(place.id);
-                      _favourites =
-                          await _favouritesController.getFavouritesList();
-                      print("<3 pressed");
-                      setState(() {
-                        place.likes = !place.likes;
-                      });
-                      print(place.likes);
-                    },
-                    child: _favourites.contains(place.id)
-                        ? Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.favorite_border,
-                            color: Colors.grey,
-                          )),
-                SizedBox(
-                  width: 10,
-                ),
-                textMinor("add to favourites", Colors.black)
-              ])
-            ]));
+              InkWell(
+                onTap: () async {
+                  await _favouritesController.addOrRemoveFav(place.id);
+                  _favourites = await _favouritesController.getFavouritesList();
+                  print("<3 pressed");
+                  setState(() {
+                    place.likes = !place.likes;
+                  });
+                  print(place.likes);
+                },
+                child: _favourites.contains(place.id)
+                    ? Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : Icon(
+                        Icons.favorite_border,
+                        color: Colors.grey,
+                      ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              textMinor("add to favourites", Colors.black)
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _printSearch(List<Place> places, double height, double width) {
     return Container(
-        height: height,
-        width: width,
-        child: ListView.builder(
-            //shrinkWrap: true,
-            itemCount: places.length,
-            itemBuilder: (context, index) {
-              return Column(children: [
-                Stack(children: [
+      height: height,
+      width: width,
+      child: ListView.builder(
+        //shrinkWrap: true,
+        itemCount: places.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              Stack(
+                children: [
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, PlaceScreen.routeName,
@@ -122,50 +117,74 @@ class _SearchScreen extends State<SearchScreen> {
                               _places![index], _favourites));
                     },
                     child: placeContainer(
-                        places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
+                        places[index],
+                        0.8 * width,
+                        0.215 * height,
+                        _addFav(places[index], 0.05 * height, 0.8 * width),
+                        Container()),
                   ),
-                ]),
-                SizedBox(
-                  height: 15,
-                )
-              ]);
-            }));
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _loadPage() async {
+    _places = await _searchController.loadSearch(
+        context,
+        SearchScreenArguments(
+            widget.max, widget.min, widget.sort, widget.text));
+    if (_places == null) {
+      print("null");
+    }
+    // _favourites = await _favouritesController
+    //     .getFavouritesList(); // i think this function can be defined in a controller class instead
+    setState(() {
+      _isLoaded = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;;
+    final width = MediaQuery.of(context).size.width;
+    ;
     return _isLoaded
         ? Scaffold(
-            backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
             appBar: AppBar(
-                // Here we take the value from the MyHomePage object that was created by
-                // the App.build method, and use it to set our appbar title.
-                //title: Text(widget.title),
-                backgroundColor: Color(0xfffffcec),
-                automaticallyImplyLeading: true,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.grey),
-                  onPressed: () => Navigator.pop(context, false),
-                )),
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              //title: Text(widget.title),
+              backgroundColor: Color(0xfffffcec),
+              automaticallyImplyLeading: true,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.grey),
+                onPressed: () => Navigator.pop(context, false),
+              ),
+            ),
             body: Container(
-                //height: 220.0,
-                child: SingleChildScrollView(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        //mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                  // Container(
-                  //     alignment: Alignment.center,topBar("places", height, width, 'assets/img/afterSearchTop.png'),
+              //height: 220.0,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    // Container(
+                    //     alignment: Alignment.center,topBar("places", height, width, 'assets/img/afterSearchTop.png'),
 
-                      _printSearch(_places!, height, width)
-                        ]
-                    )
-                )
-            )
-    )
+                    _printSearch(_places!, height, width)
+                  ],
+                ),
+              ),
+            ),
+          )
         : Container(
             color: Color(0xfffffcec),
             child: Center(

@@ -1,10 +1,10 @@
+import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/user.dart';
 import 'package:exploresg/screens/login.dart';
 import 'package:exploresg/screens/verify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:exploresg/helper/firebase_api.dart';
 
 class SignUpScreen extends StatefulWidget {
   static const routeName = "/signUp";
@@ -14,12 +14,12 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  FirebaseApi _firebaseApi = FirebaseApi();
   final _registerKey = GlobalKey<FormState>();
   bool _isLoading = false, _isChecked = false;
   late bool _isTaken;
   static final validUsername = RegExp(r'^[a-zA-Z0-9]+$');
   late String _email, _password, _username, _first, _last;
+  AuthController _authController = AuthController();
 
   Widget _topBar(double width) {
     return FittedBox(
@@ -90,96 +90,99 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _emailTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "email",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.email,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: false,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "email",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.email,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.emailAddress,
-          validator: _validateEmail,
-          onSaved: (String? saved) {
-            _email = saved!.trim();
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.emailAddress,
+        validator: _validateEmail,
+        onSaved: (String? saved) {
+          _email = saved!.trim();
+        },
+      ),
+    );
   }
 
   Widget _passwordTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: true,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "password",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.lock,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: true,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "password",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.lock,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.text,
-          validator: _validatePassword,
-          onSaved: (String? saved) {
-            _password = saved!;
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.text,
+        validator: _validatePassword,
+        onSaved: (String? saved) {
+          _password = saved!;
+        },
+      ),
+    );
   }
 
   Widget _usernameTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "username",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.alternate_email,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: false,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "username",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.alternate_email,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.text,
-          onChanged: (value) {
-            if (_isChecked) {
-              setState(() {
-                _isChecked = false;
-              });
-            }
-            _username = value.trim().toLowerCase();
-          },
-          onSaved: (String? saved) {
-            _username = saved!.trim().toLowerCase();
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.text,
+        onChanged: (value) {
+          if (_isChecked) {
+            setState(() {
+              _isChecked = false;
+            });
+          }
+          _username = value.trim().toLowerCase();
+        },
+        onSaved: (String? saved) {
+          _username = saved!.trim().toLowerCase();
+        },
+      ),
+    );
   }
 
   Widget _registerForm() {
@@ -207,14 +210,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        //SizedBox(height: 25),
-        textMajor("sign up", Color(0xff22254C), 36),
-        SizedBox(height: 10),
-        _registerForm(),
-        SizedBox(height: 30),
-        _progressButton(width, height)
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          //SizedBox(height: 25),
+          textMajor("sign up", Color(0xff22254C), 36),
+          SizedBox(height: 10),
+          _registerForm(),
+          SizedBox(height: 30),
+          _progressButton(width, height)
+        ],
+      ),
     );
   }
 
@@ -230,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(
             width: 5,
           ),
-          textMinor("sign in", createMaterialColor(Color(0xff6488E5)))
+          textMinor("sign in", Color(0xff6488E5))
         ],
       ),
     );
@@ -298,7 +304,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       showAlert(context, "Invalid username",
           "Username cannot be less than 4 characters!");
     } else {
-      await _firebaseApi.getUidfromUsername(_username).then((value) {
+      await _authController.getUidfromUsername(_username).then((value) {
         if (value == "notFound") {
           _isTaken = false;
         } else {
@@ -332,10 +338,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _createUser() async {
     UserModel user = UserModel("", _username, _first, _last, _email, "", "", "",
-
         false, false, "shopping_mall,cafe,park", "");
 
-    await _firebaseApi.createUserFromEmail(user, _password).then((value) {
+    await _authController.createUserFromEmail(user, _password).then((value) {
       setState(() {
         _isLoading = false;
       });
@@ -353,9 +358,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
-        backgroundColor: Color(0xfffffcec),
-        body: SingleChildScrollView(
-            child: Container(
+      body: SingleChildScrollView(
+        child: Container(
           height: _height - 20,
           child: Stack(
             children: [
@@ -376,6 +380,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ],
           ),
-        )));
+        ),
+      ),
+    );
   }
 }

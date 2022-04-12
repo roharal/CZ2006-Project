@@ -23,8 +23,7 @@ class AuthController {
       final User user = result.user!;
       return user;
     } catch (error) {
-      print(error.toString());
-      return null;
+      return error.toString();
     }
   }
 
@@ -59,7 +58,8 @@ class AuthController {
       var token = await _fcm.getToken();
       userModel.setToken(token);
       userModel.setEmailVerified(user.emailVerified);
-      batch.set(_firestore.collection("users").doc(userModel.getId()), userModel.toJson());
+      batch.set(_firestore.collection("users").doc(userModel.getId()),
+          userModel.toJson());
       batch.set(_firestore.collection("usernames").doc(userModel.getId()),
           {"username": userModel.getUsername()});
       batch.commit();
@@ -84,9 +84,7 @@ class AuthController {
           last,
           user.email!,
           token,
-          user.photoURL == null
-              ? ""
-              : user.photoURL!,
+          user.photoURL == null ? "" : user.photoURL!,
           user.phoneNumber == null
               ? ""
               : user.phoneNumber! == null
@@ -119,16 +117,8 @@ class AuthController {
     return uid;
   }
 
-  Future<String?> loginUsingEmail(String email, String password) async {
-    var token;
-    try {
-      var user = await this.signInEmail(email, password);
-      token = await _fcm.getToken();
-      this.updateUserById(user!.uid, {"token": token});
-      return null;
-    } on FirebaseAuthException catch (e) {
-      return e.toString();
-    }
+  Future<String?> getToken() async {
+    return _fcm.getToken();
   }
 
   Future<bool> checkUserExist(String id) async {

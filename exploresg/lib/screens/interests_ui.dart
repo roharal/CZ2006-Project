@@ -3,16 +3,19 @@ import 'package:flutter_svg/svg.dart';
 import 'package:exploresg/helper/interestController.dart';
 import 'dart:convert';
 
+class InterestScreenArguments {
+  final String userID;
+  final String userInts;
+
+  InterestScreenArguments(this.userID, this.userInts);
+}
+
 class InterestScreen extends StatefulWidget {
   static const routeName = "/interests";
-  late String userID;
-  late List userInts;
+  final String userID;
+  String userInts;
 
-  InterestScreen(String userID,String userInts){
-    this.userID = userID;
-    this.userInts =userInts.split(",");
-
-  }
+  InterestScreen(this.userID, this.userInts);
 
   @override
   State<InterestScreen> createState() => _InterestScreenState();
@@ -68,16 +71,15 @@ class _InterestScreenState extends State<InterestScreen> {
     }
   }
 
-  void updateInterestChoices(){
+  void updateInterestChoices() {
     interestsMap.forEach((key, value) {
-      for(String i in widget.userInts){
-        if(i == key){
+      for (String i in widget.userInts.split(",")) {
+        if (i == key) {
           interestsMap[key] = true;
           break;
         }
       }
     });
-    widget.userInts.clear();
   }
 
   @override
@@ -85,18 +87,20 @@ class _InterestScreenState extends State<InterestScreen> {
     double w = MediaQuery.of(context).size.width;
     updateInterestChoices();
     return Scaffold(
-        backgroundColor: Color(0xfffffcec),
-        body: Container(
-          child: SingleChildScrollView(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      backgroundColor: Color(0xfffffcec),
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               FittedBox(
-                  fit: BoxFit.fill,
-                  child: SvgPicture.asset(
-                    'assets/img/interests-top.svg',
-                    width: w,
-                    height: w * 116 / 375, //dimensions from figma lol
-                  )),
+                fit: BoxFit.fill,
+                child: SvgPicture.asset(
+                  'assets/img/interests-top.svg',
+                  width: w,
+                  height: w * 116 / 375, //dimensions from figma lol
+                ),
+              ),
               Text("what are your interests?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -138,29 +142,34 @@ class _InterestScreenState extends State<InterestScreen> {
                 ),
               ),
               Container(
-                  child: ElevatedButton(
-                onPressed: () async {
-                  _interestController.updateUserInterests(
-                      interestsMap, widget.userID);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  "Save changes",
-                  style: TextStyle(
-                    fontFamily: 'AvenirLtStd',
-                    fontSize: 16,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    _interestController.updateUserInterests(
+                        interestsMap, widget.userID);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Save changes",
+                    style: TextStyle(
+                      fontFamily: 'AvenirLtStd',
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                style: ButtonStyle(
+                  style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.blue),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                    ))),
-              )),
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               Container(height: 20)
-            ]),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

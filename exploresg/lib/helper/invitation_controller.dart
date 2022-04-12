@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/models/invitation.dart';
 import 'package:exploresg/models/user.dart';
 

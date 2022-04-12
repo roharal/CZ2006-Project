@@ -25,7 +25,8 @@ class Locator {
       // return Future.error('Location permissions are permanently denied, we cannot request permissions.');
       return null;
     }
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    return LatLng(position.latitude,position.longitude);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    return LatLng(position.latitude, position.longitude);
   }
 }

@@ -1,23 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class InterestController{
+class InterestController {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void updateUserInterests(Map interestsMap, String userID) async {
-    String finalString ="";
+    String finalString = "";
     interestsMap.forEach((key, value) {
-      if(value == true){
+      if (value == true) {
         finalString = finalString + key + ",";
       }
     });
     print("The final string is here " + finalString);
-    if(finalString != "") {// String is not empty
+    if (finalString != "") {
+      // String is not empty
       finalString = finalString.substring(0, finalString.length - 1);
       print("Interests are not empty");
     }
-    await _firestore.collection("users").doc(userID).update({"interest":finalString});
+    await _firestore
+        .collection("users")
+        .doc(userID)
+        .update({"interest": finalString});
 
     var userInterests = await _firestore.collection("users").doc(userID).get();
 

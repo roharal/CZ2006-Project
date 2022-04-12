@@ -6,6 +6,7 @@ import '../helper/utils.dart';
 
 class VerifyScreen extends StatefulWidget {
   static const routeName = "/verifyEmail";
+
   const VerifyScreen({Key? key}) : super(key: key);
 
   @override
@@ -21,7 +22,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
   void initState() {
     user = auth.currentUser!;
     user.sendEmailVerification();
-
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       checkEmailVerified();
     });
@@ -34,12 +34,22 @@ class _VerifyScreenState extends State<VerifyScreen> {
     super.dispose();
   }
 
+  Future<void> checkEmailVerified() async {
+    user = auth.currentUser!;
+    await user.reload();
+    if (user.emailVerified) {
+      timer.cancel();
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => BaseScreen()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _height = MediaQuery.of(context).size.height;
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: createMaterialColor(Color(0xfffffcec)),
+      // backgroundColor: createMaterialColor(Color(0xfffffcec)),
       body: Container(
         height: _height,
         width: _width,
@@ -54,15 +64,5 @@ class _VerifyScreenState extends State<VerifyScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> checkEmailVerified() async {
-    user = auth.currentUser!;
-    await user.reload();
-    if (user.emailVerified) {
-      timer.cancel();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => BaseScreen()));
-    }
   }
 }

@@ -5,15 +5,17 @@ import 'dart:io';
 class Storage {
   final FirebaseStorage storage = FirebaseStorage.instance;
 
-  Future<void> uploadFile( String filePath, String fileName, String folder) async{
+  Future<void> uploadFile(
+      String filePath, String fileName, String folder) async {
     File file = File(filePath);
 
-    try{
+    try {
       await storage.ref('$folder/$fileName').putFile(file);
-    } on FirebaseException catch (e){
+    } on FirebaseException catch (e) {
       print(e);
     }
   }
+
   Future<ListResult> listFiles() async {
     ListResult results = await storage.ref('test').listAll();
 
@@ -23,6 +25,7 @@ class Storage {
 
     return results;
   }
+
   Future<String> downloadURL(String imageName, String folder) async {
     print("Getting download url");
     var temp = await storage.ref("$folder/$imageName");
@@ -31,7 +34,7 @@ class Storage {
     try {
       downloadURL = await temp.getDownloadURL();
       print("the download url is " + downloadURL.toString());
-    }catch(e){
+    } catch (e) {
       print("the error is " + e.toString());
       print("Returning ooooops");
       return "oops";

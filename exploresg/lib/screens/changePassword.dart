@@ -48,12 +48,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textMajor("reset password", Color(0xff22254C), 30),
-        SizedBox(height: 30),
-        // _emailTextField(),
-        _sendRequest()
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          textMajor("reset password", Color(0xff22254C), 30),
+          SizedBox(height: 30),
+          // _emailTextField(),
+          _sendRequest()
+        ],
+      ),
     );
   }
 
@@ -87,8 +90,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   // }
 
   Widget _sendRequest() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-      ElevatedButton(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ElevatedButton(
           style: ElevatedButton.styleFrom(
               primary: Colors.white,
               elevation: 0,
@@ -102,20 +107,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           child: textMinor(
             'reset my password',
             Color(0xff6488E5),
-          ))
-    ]);
-  }
-
-  String? _validateEmail(String? value) {
-    String pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    if (value == null || value.isEmpty) {
-      return "Email cannot be empty";
-    } else if (!regex.hasMatch(value))
-      return 'Enter a valid email';
-    else
-      return null;
+          ),
+        )
+      ],
+    );
   }
 
   Widget build(BuildContext context) {
@@ -124,24 +119,25 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Scaffold(
       backgroundColor: Color(0xfffffcec),
       body: SingleChildScrollView(
-          child: Container(
-            height: _height - 20,
-            child: Stack(
-              children: [
-                Positioned(child: _topBar(_width)),
-                Positioned(
-                  top: _height * 0.3,
-                  child: Column(
-                    children: [
-                      _resetPassword(_width, _height),
-                      SizedBox(height: 20),
-                      _returnLogin(),
-                    ],
-                  ),
+        child: Container(
+          height: _height - 20,
+          child: Stack(
+            children: [
+              Positioned(child: _topBar(_width)),
+              Positioned(
+                top: _height * 0.3,
+                child: Column(
+                  children: [
+                    _resetPassword(_width, _height),
+                    SizedBox(height: 20),
+                    _returnLogin(),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

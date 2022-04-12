@@ -2,7 +2,7 @@ import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
-import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/auth_controller.dart';
 import 'package:flutter/material.dart';
 
 class HomeController {

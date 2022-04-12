@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:exploresg/helper/authController.dart';
+import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/screens/base.dart';
 import 'package:exploresg/screens/login.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import '../helper/utils.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = "/splash";
+
   @override
   State<StatefulWidget> createState() {
     return _SplashScreen();
@@ -70,19 +71,20 @@ class _SplashScreen extends State<SplashScreen> {
               ),
             ),
             Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      textMinor("Copyright HDMILF 2022", Colors.black),
-                      textMinor("All rights reserved", Colors.black)
-                    ],
-                  ),
-                ))
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    textMinor("Copyright HDMILF 2022", Colors.black),
+                    textMinor("All rights reserved", Colors.black)
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

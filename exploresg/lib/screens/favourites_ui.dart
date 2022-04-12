@@ -19,46 +19,60 @@ class _FavouriteScreen extends State<FavouriteScreen> {
   bool _isLoaded = false;
   FavouritesController _favouritesController = FavouritesController();
 
+  @override
+  void initState() {
+    super.initState();
+    _loadFavourites();
+  }
+
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
             children: [
-              Row(children: [
-                InkWell(
-                    onTap: () async {
-                      await _favouritesController.addOrRemoveFav(place.id);
-                      _favourites =
-                          await _favouritesController.getFavouritesList();
-                      _favourite_places = [];
-                      if (_favourites != []) {
-                        for (var fav in _favourites) {
-                          var _place =
-                              await _placesApi.placeDetailsSearchFromText(fav);
-                          _favourite_places.add(_place!);
-                        }
-                      }
-                      setState(() {});
-                    },
-                    child: _favourites.contains(place.id)
-                        ? Icon(
-                            Icons.favorite,
-                            color: Color(0xffE56372),
-                          )
-                        : Icon(
-                            Icons.favorite_border,
-                            color: Color(0xffE56372),
-                          )),
-                SizedBox(
-                  width: 10,
-                ),
-                textMinor(_favourites.contains(place.id) ? 'added to favourites' : "add to favourites", Color(0xffD1D1D6))
-              ])
-            ]));
+              InkWell(
+                onTap: () async {
+                  await _favouritesController.addOrRemoveFav(place.id);
+                  _favourites = await _favouritesController.getFavouritesList();
+                  _favourite_places = [];
+                  if (_favourites != []) {
+                    for (var fav in _favourites) {
+                      var _place =
+                          await _placesApi.placeDetailsSearchFromText(fav);
+                      _favourite_places.add(_place!);
+                    }
+                  }
+                  setState(() {});
+                },
+                child: _favourites.contains(place.id)
+                    ? Icon(
+                        Icons.favorite,
+                        color: Color(0xffE56372),
+                      )
+                    : Icon(
+                        Icons.favorite_border,
+                        color: Color(0xffE56372),
+                      ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              textMinor(
+                  _favourites.contains(place.id)
+                      ? 'added to favourites'
+                      : "add to favourites",
+                  Color(0xffD1D1D6))
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
@@ -67,30 +81,32 @@ class _FavouriteScreen extends State<FavouriteScreen> {
       physics: NeverScrollableScrollPhysics(),
       itemCount: places.length,
       itemBuilder: (context, index) {
-        return Column(children: [
-          Stack(
+        return Column(
+          children: [
+            Stack(
               children: [
                 InkWell(
                   onTap: () {
                     Navigator.pushNamed(context, PlaceScreen.routeName,
-                        arguments: PlaceScreenArguments(places[index], _favourites));
+                        arguments:
+                            PlaceScreenArguments(places[index], _favourites));
                   },
-                  child: placeContainer(places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
+                  child: placeContainer(
+                      places[index],
+                      0.8 * width,
+                      0.215 * height,
+                      _addFav(places[index], 0.05 * height, 0.8 * width),
+                      Container()),
                 ),
-              ]
-          ),
-          SizedBox(
-            height: 15,
-          )
-        ]);
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+          ],
+        );
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFavourites();
   }
 
   Future<void> _loadFavourites() async {
@@ -109,7 +125,6 @@ class _FavouriteScreen extends State<FavouriteScreen> {
     });
   }
 
-  @override
   // Widget _addFav(Place place) {
   //   return Expanded(
   //       child: Row(
@@ -155,13 +170,13 @@ class _FavouriteScreen extends State<FavouriteScreen> {
               _loadFavourites();
             },
             child: Scaffold(
-                backgroundColor: createMaterialColor(Color(0xFFFFF9ED)),
-                body: Container(
-                    child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+              backgroundColor: Color(0xFFFFF9ED),
+              body: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       topBar("favourites", height, width,
                           'assets/img/favourites-top.svg'),
                       SizedBox(
@@ -177,7 +192,12 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                       ),
                       recommendedList(_favourite_places, height, width),
                       SizedBox(height: 20)
-                    ])))))
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
         : Container(
             child: Center(
               child: CircularProgressIndicator(),

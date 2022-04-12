@@ -1,5 +1,5 @@
-import 'package:exploresg/helper/authController.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exploresg/helper/auth_controller.dart';
 
 class FavouritesController {
   AuthController _auth = AuthController();

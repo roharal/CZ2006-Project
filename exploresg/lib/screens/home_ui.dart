@@ -17,8 +17,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  String _placeTypeDropdownValue = 'airport', _filterByDropdownValue = 'filter by', _prevFilter = '';
-  bool _searchByCategory = false,_isLoaded = false;
+  String _placeTypeDropdownValue = 'airport',
+      _filterByDropdownValue = 'filter by',
+      _prevFilter = '';
+  bool _searchByCategory = false, _isLoaded = false;
   TextEditingController _searchController = new TextEditingController();
   HomeController _homeController = HomeController();
   FavouritesController _favouritesController = FavouritesController();
@@ -171,10 +173,10 @@ class _HomeScreen extends State<HomeScreen> {
     if (_filterByDropdownValue == 'distance') {
       if (_prevFilter != _filterByDropdownValue) {
         setState(() {
-        _minFilter = 0;
-        _maxFilter = 15000;
-        _distValue = 15000;
-        }); 
+          _minFilter = 0;
+          _maxFilter = 15000;
+          _distValue = 15000;
+        });
       }
       _prevFilter = _filterByDropdownValue;
       return _distanceFilter(width);
@@ -184,7 +186,7 @@ class _HomeScreen extends State<HomeScreen> {
           _minFilter = 1;
           _maxFilter = 5;
           _priceValues = RangeValues(0, 4);
-        }); 
+        });
       }
       _prevFilter = _filterByDropdownValue;
       return _ratingFilter(width);
@@ -206,48 +208,54 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _filterDropDown(double width) {
     return _dropDownList(
-        0.49 * width,
-        DropdownButtonFormField<String>(
-            icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
-            items: [
-              DropdownMenuItem(
-                  child: textMinor('filter by', Color(0xffD1D1D6)), value: 'filter by'),
-              DropdownMenuItem(
-                  child: textMinor('distance', Color(0xff22254C)), value: 'distance'),
-              DropdownMenuItem(
-                  child: textMinor('ratings', Color(0xff22254C)), value: 'ratings'),
-              DropdownMenuItem(
-                  child: textMinor('price', Color(0xff22254C)), value: 'price')
-            ],
-            decoration: dropdownDeco,
-            isExpanded: true,
-            value: _filterByDropdownValue,
-            onChanged: (String? newValue) {
-              setState(() {
-                _filterByDropdownValue = newValue!;
-                _displayFiltered(width);
-              });
-            }));
+      0.49 * width,
+      DropdownButtonFormField<String>(
+        icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
+        items: [
+          DropdownMenuItem(
+              child: textMinor('filter by', Color(0xffD1D1D6)),
+              value: 'filter by'),
+          DropdownMenuItem(
+              child: textMinor('distance', Color(0xff22254C)),
+              value: 'distance'),
+          DropdownMenuItem(
+              child: textMinor('ratings', Color(0xff22254C)), value: 'ratings'),
+          DropdownMenuItem(
+              child: textMinor('price', Color(0xff22254C)), value: 'price')
+        ],
+        decoration: dropdownDeco,
+        isExpanded: true,
+        value: _filterByDropdownValue,
+        onChanged: (String? newValue) {
+          setState(() {
+            _filterByDropdownValue = newValue!;
+            _displayFiltered(width);
+          });
+        },
+      ),
+    );
   }
 
   Widget _placeTypeDropDown(double width) {
     return _dropDownList(
-        width,
-        DropdownButtonFormField(
-          icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
-          items: placeType
-              .map((String e) =>
-                  DropdownMenuItem(value: e, child: textMinor(e.replaceAll("_", " "), Color(0xff22254C))))
-              .toList(),
-          decoration: dropdownDeco,
-          isExpanded: true,
-          value: _placeTypeDropdownValue,
-          onChanged: (newValue) {
-            setState(() {
-              _placeTypeDropdownValue = newValue!;
-            });
-          },
-        ));
+      width,
+      DropdownButtonFormField(
+        icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
+        items: placeType
+            .map((String e) => DropdownMenuItem(
+                value: e,
+                child: textMinor(e.replaceAll("_", " "), Color(0xff22254C))))
+            .toList(),
+        decoration: dropdownDeco,
+        isExpanded: true,
+        value: _placeTypeDropdownValue,
+        onChanged: (newValue) {
+          setState(() {
+            _placeTypeDropdownValue = newValue!;
+          });
+        },
+      ),
+    );
   }
 
   Widget _searchBar(double width, double height) {
@@ -261,7 +269,8 @@ class _HomeScreen extends State<HomeScreen> {
         controller: _searchController,
         cursorColor: Colors.grey,
         cursorHeight: 14.0,
-        style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xff22254C)),
+        style: TextStyle(
+            fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xff22254C)),
         decoration: new InputDecoration(
           prefixIcon: Icon(
             Icons.search,
@@ -269,8 +278,9 @@ class _HomeScreen extends State<HomeScreen> {
           ),
           hintText: 'type a place...',
           hintStyle: TextStyle(
-              fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xffD1D1D6)
-          ),
+              fontFamily: 'AvenirLtStd',
+              fontSize: 14,
+              color: Color(0xffD1D1D6)),
           contentPadding: EdgeInsets.zero,
           enabledBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -289,115 +299,127 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _searchSwitch() {
     return Transform.scale(
-        transformHitTests: false,
-        scale: .7,
-        child: CupertinoSwitch(
-          activeColor: Color(0xff6488E5),
-          trackColor: Color(0xff6488E5), //change to closer colour
-          value: _searchByCategory,
-          onChanged: (value) {
-            setState(() {
-              _searchByCategory = !_searchByCategory;
-            });
-          },
-        ));
+      transformHitTests: false,
+      scale: .7,
+      child: CupertinoSwitch(
+        activeColor: Color(0xff6488E5),
+        trackColor: Color(0xff6488E5), //change to closer colour
+        value: _searchByCategory,
+        onChanged: (value) {
+          setState(() {
+            _searchByCategory = !_searchByCategory;
+          });
+        },
+      ),
+    );
   }
 
   Widget _goButton() {
     return Align(
-        alignment: Alignment.centerRight,
-        child: TextButton(
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0xff6488E5)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ))),
-          onPressed: () {
-            Navigator.pushNamed(context, SearchScreen.routeName,
-                arguments: _searchByCategory == false //using input searchbar
-                    ? SearchScreenArguments(_maxFilter, _minFilter,
-                        _filterByDropdownValue, _searchController.text)
-                    : SearchScreenArguments(
-                        //using place type dropdown
-                        _maxFilter,
-                        _minFilter,
-                        _filterByDropdownValue,
-                        _placeTypeDropdownValue,
-                      ));
-          },
-          child: Text('go!',
-              style: TextStyle(
-                  fontFamily: 'AvenirLtStd',
-                  fontSize: 16,
-                  color: Colors.white)),
-        ));
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Color(0xff6488E5)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ))),
+        onPressed: () {
+          Navigator.pushNamed(context, SearchScreen.routeName,
+              arguments: _searchByCategory == false //using input searchbar
+                  ? SearchScreenArguments(_maxFilter, _minFilter,
+                      _filterByDropdownValue, _searchController.text)
+                  : SearchScreenArguments(
+                      //using place type dropdown
+                      _maxFilter,
+                      _minFilter,
+                      _filterByDropdownValue,
+                      _placeTypeDropdownValue,
+                    ));
+        },
+        child: Text('go!',
+            style: TextStyle(
+                fontFamily: 'AvenirLtStd', fontSize: 16, color: Colors.white)),
+      ),
+    );
   }
 
   Widget _searchTools(double width, double height) {
     return Container(
-        width: width,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                textMinor('keyword search', _searchByCategory ? Color(0xffD1D1D6) : Color(0xff22254C)),
-                _searchSwitch(),
-                textMinor('dropdown list', _searchByCategory ?  Color(0xff22254C) : Color(0xffD1D1D6))
-              ],
-            ),
-            _searchByCategory == false
-                ? _searchBar(width, height)
-                : _placeTypeDropDown(width),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              SizedBox(width: 0.02 * width),
-              _filterDropDown(width)
-            ]),
-            _displayFiltered(width),
-            _goButton()
-          ],
-        ));
+      width: width,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              textMinor('keyword search',
+                  _searchByCategory ? Color(0xffD1D1D6) : Color(0xff22254C)),
+              _searchSwitch(),
+              textMinor('dropdown list',
+                  _searchByCategory ? Color(0xff22254C) : Color(0xffD1D1D6))
+            ],
+          ),
+          _searchByCategory == false
+              ? _searchBar(width, height)
+              : _placeTypeDropDown(width),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SizedBox(width: 0.02 * width),
+            _filterDropDown(width)
+          ]),
+          _displayFiltered(width),
+          _goButton()
+        ],
+      ),
+    );
   }
 
   Widget _addFav(Place place, double height, double width) {
     return Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        width: width,
-        height: height,
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      width: width,
+      height: height,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
             children: [
-              Row(children: [
-                InkWell(
-                    onTap: () async {
-                      await _favouritesController.addOrRemoveFav(place.id);
-                      _favourites =
-                          await _favouritesController.getFavouritesList();
-                      print('<3 pressed');
-                      setState(() {
-                        place.likes = !place.likes;
-                      });
-                      print(place.likes);
-                    },
-                    child: _favourites.contains(place.id)
-                        ? Icon(
-                      Icons.favorite,
-                      color: Color(0xffE56372),
-                    )
-                        : Icon(
-                      Icons.favorite_border,
-                      color: Color(0xffE56372),
-                    )),
-                SizedBox(
-                  width: 10,
-                ),
-                textMinor(_favourites.contains(place.id) ? 'added to favourites' : "add to favourites", Color(0xffD1D1D6))
-              ])
-            ]));
+              InkWell(
+                  onTap: () async {
+                    await _favouritesController.addOrRemoveFav(place.id);
+                    _favourites =
+                        await _favouritesController.getFavouritesList();
+                    print('<3 pressed');
+                    setState(() {
+                      place.likes = !place.likes;
+                    });
+                    print(place.likes);
+                  },
+                  child: _favourites.contains(place.id)
+                      ? Icon(
+                          Icons.favorite,
+                          color: Color(0xffE56372),
+                        )
+                      : Icon(
+                          Icons.favorite_border,
+                          color: Color(0xffE56372),
+                        )),
+              SizedBox(
+                width: 10,
+              ),
+              textMinor(
+                  _favourites.contains(place.id)
+                      ? 'added to favourites'
+                      : "add to favourites",
+                  Color(0xffD1D1D6))
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget recommendedList(List<Place> places, double height, double width) {
@@ -406,22 +428,28 @@ class _HomeScreen extends State<HomeScreen> {
       physics: NeverScrollableScrollPhysics(),
       itemCount: places.length,
       itemBuilder: (context, index) {
-        return Column(children: [
-          Stack(
-            children: [
+        return Column(
+          children: [
+            Stack(children: [
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, PlaceScreen.routeName,
-                      arguments: PlaceScreenArguments(_places![index], _favourites));
+                      arguments:
+                          PlaceScreenArguments(_places![index], _favourites));
                 },
-                child: placeContainer(places[index], 0.8 * width, 0.215 * height, _addFav(places[index], 0.05 * height, 0.8 * width), Container()),
+                child: placeContainer(
+                    places[index],
+                    0.8 * width,
+                    0.215 * height,
+                    _addFav(places[index], 0.05 * height, 0.8 * width),
+                    Container()),
               ),
-            ]
-          ),
-          SizedBox(
-            height: 15,
-          )
-        ]);
+            ]),
+            SizedBox(
+              height: 15,
+            ),
+          ],
+        );
       },
     );
   }
@@ -438,39 +466,41 @@ class _HomeScreen extends State<HomeScreen> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
-        ? RefreshIndicator(onRefresh: () async {
-      setState(() {
-        _isLoaded = false;
-      });
-      _reloadRecommendations();
-    },
-          child: Scaffold(
-              backgroundColor: createMaterialColor(Color(0xfffffcec)),
+        ? RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _isLoaded = false;
+              });
+              _reloadRecommendations();
+            },
+            child: Scaffold(
+              backgroundColor: Color(0xfffffcec),
               body: Container(
-                  child: SingleChildScrollView(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            topBar('home', height, width, 'assets/img/home-top.svg'),
-                            SizedBox(height: 30),
-                            textMajor('find places', Color(0xff22254C), 26),
-                            SizedBox(height: 7,),
-                            _searchTools(0.80 * width, 0.3 * height),
-                            FittedBox(
-                                fit: BoxFit.fill,
-                                child: SvgPicture.asset('assets/img/home-mid.svg',
-                                    width: width, height: width)
-                            ),
-                            textMajor('explore', Color(0xff22254C), 26),
-                            recommendedList(_places!, height, width),
-                            SizedBox(height: 20)
-                          ]
-                      )
-                  )
-              )
-    ),
-        )
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      topBar('home', height, width, 'assets/img/home-top.svg'),
+                      SizedBox(height: 30),
+                      textMajor('find places', Color(0xff22254C), 26),
+                      SizedBox(
+                        height: 7,
+                      ),
+                      _searchTools(0.80 * width, 0.3 * height),
+                      FittedBox(
+                          fit: BoxFit.fill,
+                          child: SvgPicture.asset('assets/img/home-mid.svg',
+                              width: width, height: width)),
+                      textMajor('explore', Color(0xff22254C), 26),
+                      recommendedList(_places!, height, width),
+                      SizedBox(height: 20)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
         : Container(
             child: Center(
               child: CircularProgressIndicator(),

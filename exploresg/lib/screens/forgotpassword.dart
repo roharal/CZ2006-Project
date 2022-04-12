@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   static const routeName = "/forgetPW";
+
   @override
   State<ForgotPasswordScreen> createState() => _ForgetPasswordScreenState();
 }
@@ -40,56 +41,61 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        textMajor("reset password", Color(0xff22254C), 30),
-        SizedBox(height: 30),
-        _emailForm(),
-        _sendRequest()
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          textMajor("reset password", Color(0xff22254C), 30),
+          SizedBox(height: 30),
+          _emailForm(),
+          _sendRequest()
+        ],
+      ),
     );
   }
 
   Widget _emailTextField() {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: TextFormField(
-          obscureText: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "email",
-            hintStyle: TextStyle(
-              color: Color(0xffD1D1D6),
-            ),
-            icon: Icon(
-              Icons.email,
-              color: Color(0xffD1D1D6),
-            ),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: TextFormField(
+        obscureText: false,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "email",
+          hintStyle: TextStyle(
+            color: Color(0xffD1D1D6),
           ),
-          style: TextStyle(
-            fontFamily: 'AvenirLtStd',
-            color: Color(0xff22254C),
-            fontSize: 14,
+          icon: Icon(
+            Icons.email,
+            color: Color(0xffD1D1D6),
           ),
-          keyboardType: TextInputType.emailAddress,
-          validator: _validateEmail,
-          onChanged: (String? saved) {
-            _email = saved!.trim();
-          },
-        ));
+        ),
+        style: TextStyle(
+          fontFamily: 'AvenirLtStd',
+          color: Color(0xff22254C),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.emailAddress,
+        validator: _validateEmail,
+        onChanged: (String? saved) {
+          _email = saved!.trim();
+        },
+      ),
+    );
   }
 
   Widget _emailForm() {
     return Form(
-      key: _emailKey,
-      child: Container(
-        child: _emailTextField(),
-      )
-    );
+        key: _emailKey,
+        child: Container(
+          child: _emailTextField(),
+        ));
   }
 
   Widget _sendRequest() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-      ElevatedButton(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ElevatedButton(
           style: ElevatedButton.styleFrom(
               primary: Colors.white,
               elevation: 0,
@@ -101,8 +107,10 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
           child: textMinor(
             'send request',
             Color(0xff6488E5),
-          ))
-    ]);
+          ),
+        ),
+      ],
+    );
   }
 
   String? _validateEmail(String? value) {
@@ -133,24 +141,25 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: Color(0xfffffcec),
       body: SingleChildScrollView(
-          child: Container(
-        height: _height - 20,
-        child: Stack(
-          children: [
-            Positioned(child: _topBar(_width)),
-            Positioned(
-              top: _height * 0.3,
-              child: Column(
-                children: [
-                  _resetPassword(_width, _height),
-                  SizedBox(height: 20),
-                  _returnLogin(),
-                ],
+        child: Container(
+          height: _height - 20,
+          child: Stack(
+            children: [
+              Positioned(child: _topBar(_width)),
+              Positioned(
+                top: _height * 0.3,
+                child: Column(
+                  children: [
+                    _resetPassword(_width, _height),
+                    SizedBox(height: 20),
+                    _returnLogin(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }
