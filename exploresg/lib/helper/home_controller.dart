@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:exploresg/helper/location.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/utils.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 class HomeController {
   AuthController _auth = AuthController();
   PlacesApi _placesApi = PlacesApi();
+  var rng = Random();
 
   Future<List<Place>?> loadRecommendations(BuildContext context) async {
     String uid = _auth.getCurrentUser()!.uid;
@@ -24,6 +27,22 @@ class HomeController {
       if (interest != "") {
         var split = interest.split(",");
         for (String s in split) {
+          var result = await _placesApi.nearbySearchFromText(
+              coor.latitude.toString(),
+              coor.longitude.toString(),
+              10000,
+              "&type=$s");
+          for (var i in result!) {
+            _mixPlaces.add(i);
+          }
+        }
+        _mixPlaces = (_mixPlaces..shuffle());
+        while (_mixPlaces.length > 5) {
+          _mixPlaces.removeLast();
+        }
+      } else {
+        var split = placeType..shuffle();
+        for (String s in split.sublist(3,6)) {
           var result = await _placesApi.nearbySearchFromText(
               coor.latitude.toString(),
               coor.longitude.toString(),

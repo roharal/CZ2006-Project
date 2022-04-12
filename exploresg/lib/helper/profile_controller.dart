@@ -15,7 +15,7 @@ class ProfileController {
     return r;
   }
 
-  Future uploadFileAndUpdateUser(
+  Future<String> uploadFileAndUpdateUser(
       FilePickerResult results, UserModel _userModel) async {
     // Setting file name and details etc
     final path = results.files.single.path!;
@@ -33,5 +33,6 @@ class ProfileController {
     final updateUserMap = {'picture': fileURL};
     // Update the users picture attribute to be the url of the chosen picture
     _firestore.collection("users").doc(_userModel.id).update(updateUserMap);
+    return fileURL;
   }
 }
