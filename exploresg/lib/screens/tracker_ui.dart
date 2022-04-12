@@ -163,7 +163,7 @@ class _TrackerScreen extends State<TrackerScreen> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: _dropDownValue,
+          value: invite.visited ? "explored" : "to explored",
           icon: const Icon(Icons.keyboard_arrow_down),
           style: const TextStyle(
             color: Colors.orange,
@@ -256,13 +256,13 @@ class _TrackerScreen extends State<TrackerScreen> {
               onTap: () {
                 Navigator.pushNamed(context, PlaceScreen.routeName,
                     arguments: PlaceScreenArguments(
-                        _places[_toExplore[index].place]!, _favourites));
+                        _places[list[index].place]!, _favourites));
               },
               child: placeContainer(
-                  _places[_toExplore[index].place]!,
+                  _places[list[index].place]!,
                   0.8 * width,
                   0.3 * height,
-                  _inviteContainer(_toExplore[index], width),
+                  _inviteContainer(list[index], width),
                   Container()),
             ),
             SizedBox(
@@ -289,6 +289,7 @@ class _TrackerScreen extends State<TrackerScreen> {
   }
 
   void _loadExplores() async {
+
     _favourites = await _favouritesController.getFavouritesList();
     var user = _authController.getCurrentUser();
     _invites = await _trackerController.getConfirmedInvitations(user!.uid);
