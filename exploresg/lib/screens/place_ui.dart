@@ -255,7 +255,7 @@ class _PlaceScreen extends State<PlaceScreen> {
   Widget _addFav(Place place, double height, double width) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color(0XffFFF9ED),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       width: width,
       height: height,
@@ -297,40 +297,6 @@ class _PlaceScreen extends State<PlaceScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget recommendedList(List<Place> places, double height, double width) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: places.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            Stack(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, PlaceScreen.routeName,
-                        arguments:
-                            PlaceScreenArguments(places[index], _favourites));
-                  },
-                  child: placeContainer(
-                      places[index],
-                      0.8 * width,
-                      0.215 * height,
-                      _addFav(places[index], 0.05 * height, 0.8 * width),
-                      Container()),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -543,7 +509,17 @@ class _PlaceScreen extends State<PlaceScreen> {
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (_isTime && _isDate) {
+                      _invitationController.addToExplore(widget.place.id,
+                          _selectedDate.toString().split(" ")[0],
+                          _selectedTime);
+                      showAlert(context, "Place added to explore","");
+                    } else {
+                      showAlert(context, "invalid date and time",
+                          "Please select a date and time");
+                    }
+                  },
                 ),
               ),
             ],
@@ -854,6 +830,7 @@ class _PlaceScreen extends State<PlaceScreen> {
   }
 
   void _init() async {
+    _favourites = widget.favourites;
     _userID = _auth.getCurrentUser()!.uid;
     _userReviewExists =
         await _reviewsController.userReviewExists(widget.place.id, _userID);
@@ -925,6 +902,7 @@ class _PlaceScreen extends State<PlaceScreen> {
                         _starRatings(widget.place),
                         _placeDetails(widget.place),
                         SizedBox(height: 20),
+                        _addFav(widget.place, height*0.05, width),
                         _midVector(),
                         Container(
                             //padding: const EdgeInsets.fromLTRB(25, 5, 40, 8),

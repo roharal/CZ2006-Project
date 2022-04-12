@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exploresg/helper/auth_controller.dart';
+import 'package:exploresg/models/place.dart';
 
 class FavouritesController {
   AuthController _auth = AuthController();
@@ -12,7 +13,7 @@ class FavouritesController {
         .update({"favourites": favourites});
   }
 
-  Future<void> addOrRemoveFav(placeID) async {
+  Future addOrRemoveFav(placeID) async {
     String uid = _auth.getCurrentUser()!.uid;
     String favourites = '';
     await _firestore.collection("users").doc(uid).get().then((value) {
@@ -30,6 +31,11 @@ class FavouritesController {
       }
     }
     updateFavOnDB(uid, favourites);
+  }
+
+  Future<List<Place>> removeFavourites(int index, List<Place> places) async {
+    places.removeAt(index);
+    return places;
   }
 
   Future<List<String>> getFavouritesList() async {

@@ -8,6 +8,20 @@ class InvitationController {
   AuthController _authController = AuthController();
 
 
+  Future addToExplore(String place, String date, String time) async {
+    List<UserModel> users = [];
+    var user = _authController.getCurrentUser();
+
+    await _authController.getUserFromId(user!.uid).then((value) {
+      UserModel user = UserModel.fromSnapshot(value);
+      users.add(user);
+    });
+    var sender = _firestore.collection("users").doc(user.uid).collection("toExplore");
+    String key = sender.doc().id;
+    Invitation invitation = Invitation(key, place, date, time, users);
+    await sender.doc(key).set(invitation.toJson());
+  }
+
   Future<String?> sendInvitationToUser(List<String> to, String from, String place, String date, String time) async {
     List<UserModel> users = [];
     List<UserModel> unconfirmed = [];
