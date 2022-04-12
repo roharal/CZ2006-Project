@@ -354,12 +354,12 @@ class _TrackerScreen extends State<TrackerScreen> {
                           child: SvgPicture.asset('assets/img/tracker-mid.svg',
                               width: width, height: width)),
                       textMajor("to explore", Color(0xff22254C), 26),
-                      _exploreList(_toExplore, height, width),
+                      _toExplore.length != 0 ? _exploreList(_toExplore, height, width) : Container(),
                       SizedBox(
                         height: 35,
                       ),
                       textMajor("explored", Color(0xff22254C), 26),
-                      _exploreList(_explored, height, width),
+                      _explored.length != 0 ? _exploreList(_explored, height, width) : Container(),
                       SizedBox(
                         height: 35,
                       ),
