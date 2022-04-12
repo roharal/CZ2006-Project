@@ -73,4 +73,9 @@ class TrackerController {
     invite.visited = false;
     await _firestore.collection("users").doc(user).collection("toExplore").doc(invite.id).update(invite.toJson());
   }
+
+  Future setUnexplored(Invitation invite, String user) async {
+    await _firestore.collection("users").doc(user).collection("toExplore").doc(invite.id).delete();
+  }
+
 }

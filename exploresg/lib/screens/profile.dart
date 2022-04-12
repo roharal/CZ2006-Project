@@ -507,7 +507,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       return null;
     }
     // Upload file and Update the User picture attribute
-    await _profileController.uploadFileAndUpdateUser(results, _userModel);
+    _profileController.uploadFileAndUpdateUser(results, _userModel);
     // // Setting file name and details etc
     // final path = results.files.single.path!;
     // final fileName = _userModel.id + "_pfp";
@@ -528,10 +528,12 @@ class _ProfileScreen extends State<ProfileScreen> {
     //     "users", _userModel.id, updateUserMap);
 
     //Setting the state to update profile picture displayed
-    await _auth.getUserFromId(_userModel.id).then((value) {
-      _userModel = UserModel.fromSnapshot(value);
-      setState(() {
+    Future.delayed(Duration(milliseconds: 1000)).then((value) async {
+      await _auth.getUserFromId(_userModel.id).then((value) {
+        _userModel = UserModel.fromSnapshot(value);
+        setState(() {
 
+        });
       });
     });
   }
@@ -542,7 +544,6 @@ class _ProfileScreen extends State<ProfileScreen> {
     final width = MediaQuery.of(context).size.width;
     return _isLoaded
         ? Scaffold(
-            backgroundColor: Color(0xfffffcec),
             body: Container(
               child: SingleChildScrollView(
                   child: Container(
@@ -561,7 +562,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                               width: width, height: width / 375 * 148))),
                   Container(
                       padding: EdgeInsets.all(10),
-                      child: textMajor("Account settings", Colors.black, 30)),
+                      child: textMajor("account settings", Colors.black, 30)),
                   _changePFP(width),
                   _changeUsername(width),
                   _changePassword(width),

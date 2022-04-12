@@ -335,20 +335,17 @@ class _HomeScreen extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(20.0),
             ))),
         onPressed: () {
-          if (_filterByDropdownValue != "filter by") {
-            Navigator.pushNamed(context, SearchScreen.routeName,
-                arguments: _searchByCategory == false //using input searchbar
-                    ? SearchScreenArguments(_maxFilter, _minFilter,
-                        _filterByDropdownValue, _searchController.text)
-                    : SearchScreenArguments(
-                        //using place type dropdown
-                        _maxFilter,
-                        _minFilter,
-                        _filterByDropdownValue,
-                        _placeTypeDropdownValue,
-                      ));
-            // print(_filterByDropdownValue);
-          }
+          Navigator.pushNamed(context, SearchScreen.routeName,
+              arguments: _searchByCategory == false //using input searchbar
+                  ? SearchScreenArguments(_maxFilter, _minFilter,
+                  _filterByDropdownValue, _searchController.text)
+                  : SearchScreenArguments(
+                //using place type dropdown
+                _maxFilter,
+                _minFilter,
+                _filterByDropdownValue,
+                _placeTypeDropdownValue,
+              ));
         },
         child: Text('go!',
             style: TextStyle(
