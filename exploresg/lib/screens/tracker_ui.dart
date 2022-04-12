@@ -154,6 +154,11 @@ class _TrackerScreen extends State<TrackerScreen> {
   }
 
   Widget _dropDown(Invitation invite) {
+    if (invite.visited) {
+      _dropDownValue = "explored";
+    } else {
+      _dropDownValue = "to explore";
+    }
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 3),
@@ -163,7 +168,7 @@ class _TrackerScreen extends State<TrackerScreen> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: invite.visited ? "explored" : "to explored",
+          value: _dropDownValue,
           icon: const Icon(Icons.keyboard_arrow_down),
           style: const TextStyle(
             color: Colors.orange,
