@@ -125,6 +125,7 @@ class SearchController {
           }
         default:
           {
+            //search for default
             var places = placeType.contains(arguments.text)
                 ? await _placesApi.nearbySearchFromText(
                     lat,
