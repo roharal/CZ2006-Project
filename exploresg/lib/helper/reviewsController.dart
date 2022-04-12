@@ -29,8 +29,9 @@ class ReviewsController {
     Map<String, dynamic> dataMap = placeData.data()!;
     int totalNumRatings =
         dataMap['total_num_ratings'] + 1; //add this user's new review
-    double averageRating = (dataMap['average_rating'] + data['rating']) /
-        totalNumRatings; //calculate mean
+    double averageRating =
+        (dataMap['average_rating'] * (totalNumRatings - 1) + data['rating']) /
+            totalNumRatings; //calculate mean
     await _firestore.collection("place").doc(placeID).set({
       'average_rating': averageRating,
       'total_num_ratings': totalNumRatings
