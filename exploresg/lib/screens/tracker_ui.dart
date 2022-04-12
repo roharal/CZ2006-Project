@@ -202,18 +202,18 @@ class _TrackerScreen extends State<TrackerScreen> {
       children: [
         _dropDown(invite),
         Container(
-            child: textMinor("Date: ${invite.date}", Colors.black),
+            child: textMinor("date: ${invite.date}", Color(0xff22254C)),
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
         SizedBox(
           height: 5,
         ),
-        Container(child: textMinor("Time: ${invite.time}", Colors.black)),
+        Container(child: textMinor("time: ${invite.time}", Color(0xff22254C))),
         SizedBox(
           height: 10,
         ),
         Row(
           children: [
-            textMinorBold("people", Colors.black),
+            textMinorBold("people", Color(0xff22254C)),
             SizedBox(
               width: 20,
             ),

@@ -118,9 +118,9 @@ class _ProfileScreen extends State<ProfileScreen> {
     return CircleAvatar(
       radius: 45,
       foregroundImage: NetworkImage(picturez),
-      backgroundColor: Color(0xff6488E5),
+      backgroundColor: Colors.white,
       child: textMajor(_userModel.username != "" ? _userModel.username[0] : "?",
-          Colors.white, 35),
+          Color(0xff22254C), 35),
     );
   }
 

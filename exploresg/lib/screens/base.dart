@@ -39,7 +39,7 @@ class _BaseScreen extends State<BaseScreen> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.home),
         activeColorPrimary: Color(0xFF6488E5),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: Color(0xffd1d1d6),
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
             initialRoute: '/home',
             // ignore: body_might_complete_normally_nullable
@@ -72,7 +72,7 @@ class _BaseScreen extends State<BaseScreen> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.favorite),
         activeColorPrimary: Color(0xFF6488E5),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: Color(0xffd1d1d6),
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: '/favourites',
           onGenerateRoute: (RouteSettings? settings) {
@@ -95,7 +95,7 @@ class _BaseScreen extends State<BaseScreen> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.list_alt_outlined),
         activeColorPrimary: Color(0xFF6488E5),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: Color(0xffd1d1d6),
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: '/tracker',
           onGenerateRoute: (RouteSettings? settings) {
@@ -118,7 +118,7 @@ class _BaseScreen extends State<BaseScreen> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.markunread_mailbox_outlined),
         activeColorPrimary: Color(0xFF6488E5),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: Color(0xffd1d1d6),
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: '/inbox',
           onGenerateRoute: (RouteSettings? settings) {
@@ -141,7 +141,7 @@ class _BaseScreen extends State<BaseScreen> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.person_sharp),
         activeColorPrimary: Color(0xFF6488E5),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: Color(0xffd1d1d6),
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: '/profile',
           onGenerateRoute: (RouteSettings? settings) {

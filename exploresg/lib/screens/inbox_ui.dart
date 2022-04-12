@@ -79,6 +79,7 @@ class _InboxScreen extends State<InboxScreen> {
                     // color: Colors.blue,
                     child: Text("invites you to...",
                         style: TextStyle(
+                          color: Color(0xff22254C),
                             fontFamily: "AvenirLtStd",
                             fontWeight: FontWeight.w100))),
               ],
@@ -119,8 +120,9 @@ class _InboxScreen extends State<InboxScreen> {
                       Spacer(flex: 3),
                       Text(place.placeName,
                           style: TextStyle(
+                            color: Color(0xff22254C),
                               fontFamily: "AvenirLtStd",
-                              fontSize: 23,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold)),
                       RatingBarIndicator(
                         rating: place.ratings,
@@ -136,6 +138,7 @@ class _InboxScreen extends State<InboxScreen> {
                       Text(
                         place.placeAddress,
                         style: TextStyle(
+                          color: Color(0xff22254C),
                           fontFamily: "AvenirLtStd",
                           fontSize: 12,
                         ),
@@ -148,10 +151,10 @@ class _InboxScreen extends State<InboxScreen> {
             ),
           ),
           Container(
-              child: textMinor("Date: ${invitationC.date}", Colors.black),
+              child: textMinor("date: ${invitationC.date}", Color(0xff22254C)),
               padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
           Container(
-              child: textMinor("Time: ${invitationC.time}", Colors.black)),
+              child: textMinor("time: ${invitationC.time}", Color(0xff22254C))),
           Container(
             padding: EdgeInsets.all(1),
             child: Row(
@@ -161,10 +164,11 @@ class _InboxScreen extends State<InboxScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
                         backgroundColor:
                             MaterialStateProperty.all(Colors.white)),
-                    icon: Icon(Icons.alarm_on_sharp, color: Colors.blue),
-                    label: Text("Accept", style: TextStyle(color: Colors.blue)),
+                    icon: Icon(Icons.alarm_on_sharp, color: Color(0xff6488E5)),
+                    label: Text("accept", style: TextStyle(color: Color(0xff6488E5))),
                     onPressed: () {
                       _trackerController.acceptInvite(invitationC, _userModel);
                       _removeInvite(index);
@@ -176,12 +180,13 @@ class _InboxScreen extends State<InboxScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
                         backgroundColor:
                             MaterialStateProperty.all(Colors.white)),
-                    icon: Icon(Icons.alarm_off_sharp, color: Colors.red),
+                    icon: Icon(Icons.alarm_off_sharp, color: Color(0xffE56372)),
                     label: Text(
-                      "Reject",
-                      style: TextStyle(color: Colors.red),
+                      "reject",
+                      style: TextStyle(color: Color(0xffE56372)),
                     ),
                     onPressed: () {
                       _trackerController.rejectInvite(invitationC, _userModel);
