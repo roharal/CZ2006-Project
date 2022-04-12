@@ -112,10 +112,12 @@ class _ProfileScreen extends State<ProfileScreen> {
   }
 
   Widget _showPFP() {
-    print(_userModel.picture);
+    String picturez = _userModel.picture;
+    print("Hello im here " +picturez);
+    imageCache!.clear();
     return CircleAvatar(
       radius: 45,
-      foregroundImage: NetworkImage(_userModel.picture),
+      foregroundImage: NetworkImage(picturez),
       backgroundColor: Color(0xff6488E5),
       child: textMajor(_userModel.username != "" ? _userModel.username[0] : "?",
           Colors.white, 35),
