@@ -145,7 +145,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: width * (1 / 80)),
                     width: width * (4 / 10),
-                    child: TextFormField(
+                    child: TextFormField(autofocus: false,
                       controller: _textControllerFirst,
                       decoration: new InputDecoration(
                         fillColor: Colors.white,
@@ -182,7 +182,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: width * (1 / 80)),
                     width: width * (4 / 10),
-                    child: TextFormField(
+                    child: TextFormField(autofocus: false,
                       controller: _textControllerLast,
                       decoration: new InputDecoration(
                         fillColor: Colors.white,
@@ -227,9 +227,6 @@ class _ProfileScreen extends State<ProfileScreen> {
                       )),
                   onPressed: ()  {
                     print("Button pressed");
-                    final isValid = _formkey2.currentState!.validate();
-                    if(isValid){
-                    }
                     if (_formkey2.currentState!.validate()) {
                       print("Form is valid!");
                       _firebaseApi.updateDocumentByIdFromCollection("users",
@@ -237,8 +234,11 @@ class _ProfileScreen extends State<ProfileScreen> {
                       String _firstName = _textControllerFirst.text;
                       String _lastName = _textControllerLast.text;
                       setState(() {
+                        FocusManager.instance.primaryFocus?.unfocus();
                                 _userModel.firstName = _firstName;
                                 _userModel.lastName = _lastName;
+                                _textControllerFirst.clear();
+                                _textControllerLast.clear();
                         });
                     }else{
                       print("Form not valid!");
