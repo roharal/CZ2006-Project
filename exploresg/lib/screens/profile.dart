@@ -44,6 +44,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       setState(() {
         _isLoaded = true;
         print("User id is " + _userModel.id);
+        print(_userModel.picture);
       });
     }).onError((error, stackTrace) {
       showAlert(context, "Retrieve User Profile", error.toString());
@@ -110,7 +111,8 @@ class _ProfileScreen extends State<ProfileScreen> {
     );
   }
 
-  Widget _showPFP(width) {
+  Widget _showPFP() {
+    print(_userModel.picture);
     return CircleAvatar(
       radius: 45,
       foregroundImage: NetworkImage(_userModel.picture),
@@ -509,9 +511,7 @@ class _ProfileScreen extends State<ProfileScreen> {
     // Upload file and Update the User picture attribute
     String fileUrl = await _profileController.uploadFileAndUpdateUser(results, _userModel);
     _userModel.picture = fileUrl;
-    setState(() {
-
-    });
+    setState(() {});
     // // Setting file name and details etc
     // final path = results.files.single.path!;
     // final fileName = _userModel.id + "_pfp";
@@ -544,10 +544,8 @@ class _ProfileScreen extends State<ProfileScreen> {
 
   void _reload() {
     _isLoaded = false;
-    setState(() {
-
-    });
     _init();
+    setState(() {});
   }
 
   @override
@@ -569,7 +567,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                         'assets/img/account-top.svg'),
                   ),
                   SizedBox(height: 35),
-                  _showPFP(width),
+                  _showPFP(),
                   _displayName(width),
                   Container(
                       width: double.infinity,

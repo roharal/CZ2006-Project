@@ -454,7 +454,7 @@ class _PlaceScreen extends State<PlaceScreen> {
             children: [
               ElevatedButton(
                 child: _isSending
-                    ? Text('Sending invite...',
+                    ? Text('Sending...',
                         style: TextStyle(
                           fontFamily: 'AvenirLtStd',
                           color: Colors.white,

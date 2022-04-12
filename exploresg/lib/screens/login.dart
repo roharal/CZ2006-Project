@@ -315,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (result is User) {
       Navigator.pushReplacementNamed(context, BaseScreen.routeName);
     } else {
-      showAlert(context, "Login Error (1)", result);
+      showAlert(context, "Login Error (1)", result.split("]")[1]);
       setState(() {
         _isLoading = false;
       });

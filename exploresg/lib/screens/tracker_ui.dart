@@ -268,18 +268,6 @@ class _TrackerScreen extends State<TrackerScreen> {
             SizedBox(
               height: 10,
             ),
-            InkWell(
-              onTap: () {
-                _toExplore[index].setVisited();
-                _explored.add(_toExplore[index]);
-                print(_toExplore[index]);
-                _toExplore.removeAt(index);
-                setState(() {});
-              },
-              child: Center(
-                child: textMinorBold("Explored", Colors.black12),
-              ),
-            )
           ],
         );
       },

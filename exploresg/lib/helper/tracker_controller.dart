@@ -53,6 +53,7 @@ class TrackerController {
       await _firestore.collection("users").doc(u.id).collection("toExplore").doc(invite.id).get().then((value) {
         currentInvite = Invitation.fromSnapshot(value);
         currentInvite.addUsers(user);
+        invite = currentInvite;
       });
       await _firestore.collection("users").doc(u.id).collection("toExplore").doc(invite.id).update(currentInvite.toJson());
     }

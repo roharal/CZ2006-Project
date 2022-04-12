@@ -32,7 +32,7 @@ class ProfileController {
     String fileURL = await storage.downloadURL(fileName, "user_pfp");
     final updateUserMap = {'picture': fileURL};
     // Update the users picture attribute to be the url of the chosen picture
-    _firestore.collection("users").doc(_userModel.id).update(updateUserMap);
+    await _firestore.collection("users").doc(_userModel.id).update(updateUserMap);
     return fileURL;
   }
 }
