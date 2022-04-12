@@ -12,10 +12,13 @@ class InterestScreenArguments {
 
 class InterestScreen extends StatefulWidget {
   static const routeName = "/interests";
-  final String userID;
-  String userInts;
+  String userID = "";
+  List intList = [];
 
-  InterestScreen(this.userID, this.userInts);
+  InterestScreen(String userID, String userInts){
+    this.userID = userID;
+    this.intList = userInts.split(",");
+  }
 
   @override
   State<InterestScreen> createState() => _InterestScreenState();
@@ -73,13 +76,14 @@ class _InterestScreenState extends State<InterestScreen> {
 
   void updateInterestChoices() {
     interestsMap.forEach((key, value) {
-      for (String i in widget.userInts.split(",")) {
+      for (String i in widget.intList) {
         if (i == key) {
           interestsMap[key] = true;
           break;
         }
       }
     });
+    widget.intList.clear();
   }
 
   @override
