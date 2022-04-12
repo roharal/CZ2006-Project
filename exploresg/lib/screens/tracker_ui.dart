@@ -349,15 +349,13 @@ class _TrackerScreen extends State<TrackerScreen> {
                         child: topBar("my tracker", height, width,
                             'assets/img/tracker-top.svg'),
                       ),
+                      SizedBox(height: 30,),
+                      textMajor("to explore", Color(0xff22254C), 26),
+                      _toExplore.length != 0 ? _exploreList(_toExplore, height, width) : Container(),
                       FittedBox(
                           fit: BoxFit.fill,
                           child: SvgPicture.asset('assets/img/tracker-mid.svg',
                               width: width, height: width)),
-                      textMajor("to explore", Color(0xff22254C), 26),
-                      _toExplore.length != 0 ? _exploreList(_toExplore, height, width) : Container(),
-                      SizedBox(
-                        height: 35,
-                      ),
                       textMajor("explored", Color(0xff22254C), 26),
                       _explored.length != 0 ? _exploreList(_explored, height, width) : Container(),
                       SizedBox(

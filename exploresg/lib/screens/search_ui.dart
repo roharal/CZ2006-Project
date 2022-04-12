@@ -246,7 +246,7 @@ class _SearchScreen extends State<SearchScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    _printSearch(_places!, height, width),
+                    _places!.isEmpty ? textMinor('no results :-(', Color(0xffd1d1d6)) : _printSearch(_places!, height, width),
                   ],
                 ),
               ),

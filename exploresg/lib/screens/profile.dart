@@ -133,8 +133,9 @@ class _ProfileScreen extends State<ProfileScreen> {
               EdgeInsets.symmetric(horizontal: width * (1 / 9), vertical: 5),
           width: width,
           child: Text(
-            _userModel.firstName + " " + _userModel.lastName,
+            'display name: ' + _userModel.firstName + " " + _userModel.lastName,
             style: TextStyle(
+              color: Color(0xff22254C),
               fontSize: 18,
               fontFamily: "AvenirLtStd",
               fontWeight: FontWeight.bold,
@@ -226,41 +227,47 @@ class _ProfileScreen extends State<ProfileScreen> {
                   ),
                 ],
               ),
-              ElevatedButton(
-                  child: Text("change",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontFamily: "AvenirLtStd",
-                        fontWeight: FontWeight.bold,
-                      )),
-                  onPressed: () {
-                    print("Button pressed");
-                    if (_formkey2.currentState!.validate()) {
-                      print("Form is valid!");
-                      _auth.updateUserById(_userModel.id, {
-                        "firstName": _textControllerFirst.text,
-                        "lastName": _textControllerLast.text
-                      });
-                      String _firstName = _textControllerFirst.text;
-                      String _lastName = _textControllerLast.text;
-                      setState(() {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        _userModel.firstName = _firstName;
-                        _userModel.lastName = _lastName;
-                        _textControllerFirst.clear();
-                        _textControllerLast.clear();
-                      });
-                    } else {
-                      print("Form not valid!");
-                    }
-                  },
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Color(0xffF9BE7D)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      )))),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: width * (1 / 9), vertical: 5),
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                    child: Text("change",
+                        style: TextStyle(
+                          color: Color(0xff22254C),
+                          fontSize: 12,
+                          fontFamily: "AvenirLtStd",
+                          fontWeight: FontWeight.bold,
+                        )),
+                    onPressed: () {
+                      print("Button pressed");
+                      if (_formkey2.currentState!.validate()) {
+                        print("Form is valid!");
+                        _auth.updateUserById(_userModel.id, {
+                          "firstName": _textControllerFirst.text,
+                          "lastName": _textControllerLast.text
+                        });
+                        String _firstName = _textControllerFirst.text;
+                        String _lastName = _textControllerLast.text;
+                        setState(() {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          _userModel.firstName = _firstName;
+                          _userModel.lastName = _lastName;
+                          _textControllerFirst.clear();
+                          _textControllerLast.clear();
+                        });
+                      } else {
+                        print("Form not valid!");
+                      }
+                    },
+                    style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xffF9BE7D)),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        )))),
+              ),
             ],
           ),
         ),
@@ -272,7 +279,7 @@ class _ProfileScreen extends State<ProfileScreen> {
     return Row(
       children: [
         Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
             width: width * (3 / 4),
             // color: Colors.red,
             alignment: Alignment.centerLeft,
@@ -280,6 +287,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text("profile picture",
                   style: TextStyle(
+                    color: Color(0xff22254C),
                     fontSize: 18,
                     fontFamily: "AvenirLtStd",
                     fontWeight: FontWeight.bold,
@@ -289,6 +297,7 @@ class _ProfileScreen extends State<ProfileScreen> {
             child: ElevatedButton(
                 child: Text("change",
                     style: TextStyle(
+                      color: Color(0xff22254C),
                       fontSize: 12,
                       fontFamily: "AvenirLtStd",
                       fontWeight: FontWeight.bold,
@@ -297,6 +306,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                   _changePFPFunc();
                 },
                 style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
                     backgroundColor:
                         MaterialStateProperty.all(Color(0xffF9BE7D)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -311,7 +321,7 @@ class _ProfileScreen extends State<ProfileScreen> {
     return Row(
       children: [
         Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
             width: width * (3 / 4),
             // color: Colors.red,
             alignment: Alignment.centerLeft,
@@ -319,12 +329,14 @@ class _ProfileScreen extends State<ProfileScreen> {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text("username",
                   style: TextStyle(
+                    color: Color(0xff22254C),
                     fontSize: 18,
                     fontFamily: "AvenirLtStd",
                     fontWeight: FontWeight.bold,
                   )),
               Text("@" + _userModel.username,
                   style: TextStyle(
+                    color: Color(0xff22254C),
                     fontSize: 13,
                     fontFamily: "AvenirLtStd",
                   ))
@@ -334,6 +346,7 @@ class _ProfileScreen extends State<ProfileScreen> {
             child: Text(
               "change",
               style: TextStyle(
+                color: Color(0xff22254C),
                 fontSize: 12,
                 fontFamily: "AvenirLtStd",
                 fontWeight: FontWeight.bold,
@@ -343,6 +356,7 @@ class _ProfileScreen extends State<ProfileScreen> {
               await showInformationDialog(context, "username");
             },
             style: ButtonStyle(
+              elevation: MaterialStateProperty.all(0),
               backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
@@ -359,7 +373,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   Widget _changePassword(width) {
     return Row(children: [
       Container(
-        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
         width: width * (3 / 4),
         // color: Colors.red,
         alignment: Alignment.centerLeft,
@@ -369,6 +383,7 @@ class _ProfileScreen extends State<ProfileScreen> {
             Text(
               "password",
               style: TextStyle(
+                color: Color(0xff22254C),
                 fontSize: 18,
                 fontFamily: "AvenirLtStd",
                 fontWeight: FontWeight.bold,
@@ -377,6 +392,7 @@ class _ProfileScreen extends State<ProfileScreen> {
             Text(
               "must be between 8-20 characters",
               style: TextStyle(
+                color: Color(0xff22254C),
                 fontSize: 13,
                 fontFamily: "AvenirLtStd",
               ),
@@ -388,6 +404,7 @@ class _ProfileScreen extends State<ProfileScreen> {
         child: ElevatedButton(
           child: Text("change",
               style: TextStyle(
+                color: Color(0xff22254C),
                 fontSize: 12,
                 fontFamily: "AvenirLtStd",
                 fontWeight: FontWeight.bold,
@@ -397,6 +414,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 arguments: ChangePasswordArguments(_userModel.email));
           },
           style: ButtonStyle(
+            elevation: MaterialStateProperty.all(0),
             backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
@@ -412,7 +430,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   Widget _manageInterests(width) {
     return Row(children: [
       Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
           width: width * (3 / 4),
           // color: Colors.red,
           alignment: Alignment.centerLeft,
@@ -420,6 +438,7 @@ class _ProfileScreen extends State<ProfileScreen> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("manage interest",
                 style: TextStyle(
+                  color: Color(0xff22254C),
                   fontSize: 18,
                   fontFamily: "AvenirLtStd",
                   fontWeight: FontWeight.bold,
@@ -429,6 +448,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: ElevatedButton(
               child: Text("change",
                   style: TextStyle(
+                    color: Color(0xff22254C),
                     fontSize: 12,
                     fontFamily: "AvenirLtStd",
                     fontWeight: FontWeight.bold,
@@ -443,6 +463,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 ));
               },
               style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0),
                   backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
@@ -454,7 +475,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   Widget _signOut(width) {
     return Row(children: [
       Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
           width: width * (3 / 4),
           // color: Colors.red,
           alignment: Alignment.centerLeft,
@@ -462,6 +483,7 @@ class _ProfileScreen extends State<ProfileScreen> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("sign out from account",
                 style: TextStyle(
+                  color: Color(0xff22254C),
                   fontSize: 18,
                   fontFamily: "AvenirLtStd",
                   fontWeight: FontWeight.bold,
@@ -471,6 +493,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: ElevatedButton(
               child: Text("signout",
                   style: TextStyle(
+                    color: Color(0xff22254C),
                     fontSize: 12,
                     fontFamily: "AvenirLtStd",
                     fontWeight: FontWeight.bold,
@@ -482,6 +505,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                         LoginScreen.routeName, (Route<dynamic> route) => false);
               },
               style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0),
                   backgroundColor: MaterialStateProperty.all(Color(0xffF9BE7D)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
@@ -570,7 +594,9 @@ class _ProfileScreen extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 35),
                   _showPFP(),
+                  SizedBox(height: 10,),
                   _displayName(width),
+                  SizedBox(height: 20,),
                   Container(
                       width: double.infinity,
                       child: FittedBox(
@@ -579,7 +605,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                               width: width, height: width / 375 * 148))),
                   Container(
                       padding: EdgeInsets.all(10),
-                      child: textMajor("account settings", Colors.black, 30)),
+                      child: textMajor("account settings", Color(0xff22254C), 30)),
                   _changePFP(width),
                   _changeUsername(width),
                   _changePassword(width),

@@ -372,7 +372,7 @@ class _PlaceScreen extends State<PlaceScreen> {
                 },
                 child: _isDate
                     ? textMinor(
-                        _selectedDate.toString().split(" ")[0], Colors.black)
+                        _selectedDate.toString().split(" ")[0], Color(0xff22254C))
                     : Image.asset('assets/img/placesCalendar.png',
                         height: 25, width: 25),
               ),
@@ -395,7 +395,7 @@ class _PlaceScreen extends State<PlaceScreen> {
                   _showTimePicker(context);
                 },
                 child: _isTime
-                    ? textMinor(_selectedTime, Colors.black)
+                    ? textMinor(_selectedTime, Color(0xff22254C))
                     : Image.asset('assets/img/placesClock.png',
                         height: 25, width: 25),
               ),
@@ -407,7 +407,7 @@ class _PlaceScreen extends State<PlaceScreen> {
               children: [
                 Row(
                   children: [
-                    textMinorBold("friends:", Colors.black),
+                    textMinorBold("friends:", Color(0xff22254C)),
                     SizedBox(width: 20),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.6,
