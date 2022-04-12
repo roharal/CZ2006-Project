@@ -65,7 +65,7 @@ class _InboxScreen extends State<InboxScreen> {
                 Container(
                   // color: Colors.yellow,
                   height: width * (1 / 10),
-                  child: invitationC.users[0].picture == "" ? Image.network(invitationC.users[0].picture) :
+                  child: invitationC.users[0].picture != "" ? Image.network(invitationC.users[0].picture) :
                   CircleAvatar(
                     radius: 12.5,
                     backgroundColor: Color(0xff6488E5),
