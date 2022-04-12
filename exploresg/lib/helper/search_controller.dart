@@ -72,13 +72,13 @@ class SearchController {
                 ? await _placesApi.nearbySearchFromText(
                     lat,
                     long,
-                    15000,
+                    20000,
                     "&type=" + arguments.text,
                   )
                 : await _placesApi.nearbySearchFromText(
                     lat,
                     long,
-                    15000,
+                    20000,
                     "&keyword=" + arguments.text,
                   );
 
@@ -103,9 +103,9 @@ class SearchController {
         case 'price':
           {
             var places = placeType.contains(arguments.text)
-                ? await _placesApi.nearbySearchFromText(lat, long, 15000,
+                ? await _placesApi.nearbySearchFromText(lat, long, 20000,
                     "&type=" + arguments.text, arguments.max, arguments.min)
-                : await _placesApi.nearbySearchFromText(lat, long, 15000,
+                : await _placesApi.nearbySearchFromText(lat, long, 20000,
                     "&keyword=" + arguments.text, arguments.max, arguments.min);
 
             filteredPlace.clear();
@@ -125,7 +125,23 @@ class SearchController {
           }
         default:
           {
-            filteredPlace = places;
+            var places = placeType.contains(arguments.text)
+                ? await _placesApi.nearbySearchFromText(
+                    lat,
+                    long,
+                    20000,
+                    "&type=" + arguments.text,
+                  )
+                : await _placesApi.nearbySearchFromText(
+                    lat,
+                    long,
+                    20000,
+                    "&keyword=" + arguments.text,
+                  );
+
+            for (var i in places!) {
+              filteredPlace.add(i);
+            }
             break;
           }
       }
