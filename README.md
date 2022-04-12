@@ -9,3 +9,4 @@ Features include:
 - allowing users to track places they have visited and wish to visit for their ease of reference. 
 - allowing users to invite their friends along to the trip.
 - allowing users to review places that they have explored.
+
