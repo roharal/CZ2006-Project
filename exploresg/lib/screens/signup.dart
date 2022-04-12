@@ -262,7 +262,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       width: width * 0.6,
       height: height * 0.05,
       child:
-          _isLoading ? progressionIndicator() : _registerButton(width, height),
+          _isLoading ? Container(
+            color: Colors.white,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ) : _registerButton(width, height),
     );
   }
 

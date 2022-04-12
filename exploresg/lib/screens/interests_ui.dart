@@ -146,6 +146,7 @@ class _InterestScreenState extends State<InterestScreen> {
                   ).toList(),
                 ),
               ),
+              SizedBox(height: 10,),
               Container(
                 child: ElevatedButton(
                   onPressed: () async {
@@ -158,14 +159,18 @@ class _InterestScreenState extends State<InterestScreen> {
                     }
                   },
                   child: Text(
-                    "Save changes",
+                    "save changes",
                     style: TextStyle(
+                      color: Color(0xff22254C),
                       fontFamily: 'AvenirLtStd',
-                      fontSize: 16,
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.blue),
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor:
+                    MaterialStateProperty.all(Color(0xffF9BE7D)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),

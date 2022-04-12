@@ -94,7 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       width: width * 0.6,
       height: height * 0.05,
-      child: _isLoading ? progressionIndicator() : _loginButton(width, height),
+      child: _isLoading ? Container(
+        color: Colors.white,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ) : _loginButton(width, height),
     );
   }
 

@@ -54,20 +54,20 @@ class _SplashScreen extends State<SplashScreen> {
             Positioned(
               top: height / 4,
               left: width / 4.5,
-              child: textMajor("explore", Colors.black, 36),
+              child: textMajor("explore", Color(0xff22254C), 36),
             ),
             Positioned(
                 top: height / 3.5,
                 left: width / 2.2,
-                child: textMajor("SG", Colors.black, 36)),
+                child: textMajor("SG", Color(0xff22254C), 36)),
             Positioned(
               top: height / 2.9,
               left: width / 4.5,
               child: SizedBox(
-                width: width / 2,
+                width: width / 1.8,
                 child: textMinor(
-                    "discover new places and invite your friend to go together!",
-                    Colors.black),
+                    "discover new places and invite your friends to go together!",
+                    Color(0xff22254C)),
               ),
             ),
             Positioned(
@@ -79,8 +79,8 @@ class _SplashScreen extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    textMinor("Copyright HDMILF 2022", Colors.black),
-                    textMinor("All rights reserved", Colors.black)
+                    textMinor("Copyright HDMILF 2022", Color(0xff22254C)),
+                    textMinor("All rights reserved", Color(0xff22254C))
                   ],
                 ),
               ),
