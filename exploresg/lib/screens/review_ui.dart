@@ -199,7 +199,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                               fontSize: 36,
                               color: Color(0xff22254C)),
                         ),
-                        textMajor('explore reviews', Color(0xff22254C), 36),
+                        textMajor('explorer reviews', Color(0xff22254C), 36),
                         SizedBox(
                           height: 10,
                         ),
