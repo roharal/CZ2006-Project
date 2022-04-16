@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:exploresg/helper/location.dart';
+import 'package:exploresg/helper/location_controller.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
@@ -12,7 +12,7 @@ class SearchController {
 
   Future<List<Place>?> loadSearch(
       BuildContext context, SearchScreenArguments arguments) async {
-    List<Place> places = [], filteredPlace = [];
+    List<Place> filteredPlace = [];
     PlacesApi _placesApi = PlacesApi();
 
     Locator location = new Locator();
@@ -30,13 +30,13 @@ class SearchController {
                     lat,
                     long,
                     arguments.max,
-                    "&type=" + arguments.text,
+                    '&type=' + arguments.text,
                   )
                 : await _placesApi.nearbySearchFromText(
                     lat,
                     long,
                     arguments.max,
-                    "&keyword=" + arguments.text,
+                    '&keyword=' + arguments.text,
                   );
 
             filteredPlace.clear();
@@ -46,8 +46,8 @@ class SearchController {
               distMap[i] = calculateDistance(
                   userLoc.latitude,
                   userLoc.longitude,
-                  double.parse(i.coordinates["lat"]!),
-                  double.parse(i.coordinates["long"]!));
+                  double.parse(i.coordinates['lat']!),
+                  double.parse(i.coordinates['long']!));
             }
             var sortedKeys = distMap.keys.toList(growable: false)
               ..sort((a, b) => distMap[a].compareTo(distMap[b]));
@@ -71,20 +71,20 @@ class SearchController {
                     lat,
                     long,
                     5000,
-                    "&type=" + arguments.text,
+                    '&type=' + arguments.text,
                   )
                 : await _placesApi.nearbySearchFromText(
                     lat,
                     long,
                     5000,
-                    "&keyword=" + arguments.text,
+                    '&keyword=' + arguments.text,
                   );
 
             filteredPlace.clear();
             var ratingsMap = {};
             for (var i in places!) {
               if (arguments.min <= i.ratings && i.ratings <= arguments.max) {
-                print("price");
+                print('price');
                 print(i.price);
                 ratingsMap[i] = i.ratings;
               }
@@ -102,9 +102,9 @@ class SearchController {
           {
             var places = placeType.contains(arguments.text)
                 ? await _placesApi.nearbySearchFromText(lat, long, 5000,
-                    "&type=" + arguments.text, arguments.max, arguments.min)
+                    '&type=' + arguments.text, arguments.max, arguments.min)
                 : await _placesApi.nearbySearchFromText(lat, long, 5000,
-                    "&keyword=" + arguments.text, arguments.max, arguments.min);
+                    '&keyword=' + arguments.text, arguments.max, arguments.min);
 
             filteredPlace.clear();
             var priceMap = {};
@@ -129,13 +129,13 @@ class SearchController {
                     lat,
                     long,
                     5000,
-                    "&type=" + arguments.text,
+                    '&type=' + arguments.text,
                   )
                 : await _placesApi.nearbySearchFromText(
                     lat,
                     long,
                     5000,
-                    "&keyword=" + arguments.text,
+                    '&keyword=' + arguments.text,
                   );
 
             for (var i in places!) {
@@ -146,8 +146,8 @@ class SearchController {
       }
       return filteredPlace;
     } else {
-      showAlert(context, "Location Permission Error",
-          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+      showAlert(context, 'Location Permission Error',
+          'Location permission either disable or disabled. Please enable to enjoy the full experience.');
       return null;
     }
   }

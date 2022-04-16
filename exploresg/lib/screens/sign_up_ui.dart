@@ -1,13 +1,13 @@
 import 'package:exploresg/helper/auth_controller.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/user.dart';
-import 'package:exploresg/screens/login.dart';
-import 'package:exploresg/screens/verify.dart';
+import 'package:exploresg/screens/login_ui.dart';
+import 'package:exploresg/screens/verify_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class SignUpScreen extends StatefulWidget {
-  static const routeName = "/signUp";
+  static const routeName = '/signUp';
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -25,9 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return FittedBox(
         fit: BoxFit.fill,
         child: SvgPicture.asset('assets/img/login-top.svg',
-            width: width, height: width
-            //height: height * 0.4,
-            ));
+            width: width, height: width));
   }
 
   Widget _firstTextField() {
@@ -46,10 +44,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         validator: _validateName,
         onSaved: (String? saved) {
@@ -66,7 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "last name",
+          hintText: 'last name',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -75,10 +71,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         validator: _validateName,
         onSaved: (String? saved) {
@@ -95,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "email",
+          hintText: 'email',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -104,10 +98,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         keyboardType: TextInputType.emailAddress,
         validator: _validateEmail,
@@ -125,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: true,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "password",
+          hintText: 'password',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -134,10 +126,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         keyboardType: TextInputType.text,
         validator: _validatePassword,
@@ -155,7 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "username",
+          hintText: 'username',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -164,10 +154,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         keyboardType: TextInputType.text,
         onChanged: (value) {
@@ -208,13 +196,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // height: height * 0.65,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(30)),
+        borderRadius: BorderRadius.all(
+          Radius.circular(30),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           //SizedBox(height: 25),
-          textMajor("sign up", Color(0xff22254C), 36),
+          textMajor('sign up', Color(0xff22254C), 36),
           SizedBox(height: 10),
           _registerForm(),
           SizedBox(height: 30),
@@ -232,11 +222,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          textMinor("already have an account?", Color(0xff22254C)),
+          textMinor(
+            'already have an account?',
+            Color(0xff22254C),
+          ),
           SizedBox(
             width: 5,
           ),
-          textMinor("sign in", Color(0xff6488E5))
+          textMinor('sign in', Color(0xff6488E5))
         ],
       ),
     );
@@ -246,14 +239,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return ElevatedButton(
       onPressed: _isChecked ? _validateRegister : _validateUsername,
       child: _isChecked
-          ? textMinor("register", Colors.white)
-          : textMinor("check username", Colors.white),
+          ? textMinor('register', Colors.white)
+          : textMinor('check username', Colors.white),
       style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          primary: Color(0xff6488E5),
-          elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        primary: Color(0xff6488E5),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
     );
   }
 
@@ -261,28 +256,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
       width: width * 0.6,
       height: height * 0.05,
-      child:
-          _isLoading ? Container(
-            color: Colors.white,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          ) : _registerButton(width, height),
+      child: _isLoading
+          ? Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : _registerButton(width, height),
     );
   }
 
   String? _validateName(String? value) {
     if (value == null || value.isEmpty) {
-      return "Name cannot be empty";
+      return 'Name cannot be empty';
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return "Password cannot be empty";
+      return 'Password cannot be empty';
     } else if (value.length < 8) {
-      return "Password must contain at least 8 characters";
+      return 'Password must contain at least 8 characters';
     }
     return null;
   }
@@ -292,7 +288,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = RegExp(pattern);
     if (value == null || value.isEmpty) {
-      return "Email cannot be empty";
+      return 'Email cannot be empty';
     } else if (!regex.hasMatch(value))
       return 'Enter a valid email';
     else
@@ -301,16 +297,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _validateUsername() async {
     if (!validUsername.hasMatch(_username)) {
-      showAlert(context, "Invalid username",
-          "Username cannot contain special characters!");
+      showAlert(context, 'Invalid username',
+          'Username cannot contain special characters!');
     } else if (_username.isEmpty) {
-      showAlert(context, "Invalid username", "Username cannot be empty!");
+      showAlert(context, 'Invalid username', 'Username cannot be empty!');
     } else if (_username.length < 4) {
-      showAlert(context, "Invalid username",
-          "Username cannot be less than 4 characters!");
+      showAlert(context, 'Invalid username',
+          'Username cannot be less than 4 characters!');
     } else {
       await _authController.getUidfromUsername(_username).then((value) {
-        if (value == "notFound") {
+        if (value == 'notFound') {
           _isTaken = false;
         } else {
           _isTaken = true;
@@ -318,11 +314,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() {
           _isChecked = !_isTaken;
           if (_isTaken) {
-            showAlert(context, "Username taken",
-                "Change to another unique username!");
+            showAlert(context, 'Username taken',
+                'Change to another unique username!');
           } else {
             showAlert(
-                context, "Congratulation!", "The username is yours to take!");
+                context, 'Congratulation!', 'The username is yours to take!');
           }
         });
       });
@@ -342,18 +338,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _createUser() async {
-    UserModel user = UserModel("", _username, _first, _last, _email, "", "", "",
-        false, false, "shopping_mall,cafe,park", "");
+    UserModel user = UserModel(
+        '', _username, _first, _last, _email, '', '', '', false, false, '', '');
 
     await _authController.createUserFromEmail(user, _password).then((value) {
       setState(() {
         _isLoading = false;
       });
       if (value == null) {
-        print("user created");
+        print('user created');
         Navigator.pushReplacementNamed(context, VerifyScreen.routeName);
       } else {
-        showAlert(context, "Sign Up Error", value.toString());
+        showAlert(context, 'Sign Up Error', value.toString());
       }
     });
   }

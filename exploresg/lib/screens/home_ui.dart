@@ -1,5 +1,5 @@
 import 'package:exploresg/helper/home_controller.dart';
-import 'package:exploresg/helper/location.dart';
+import 'package:exploresg/helper/location_controller.dart';
 import 'package:exploresg/screens/search_ui.dart';
 import 'package:exploresg/screens/place_ui.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +10,6 @@ import 'package:exploresg/models/place.dart';
 import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -77,94 +76,97 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _ratingFilter(double width) {
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildSideLabel(
-              _minFilter.toString(),
-            ),
-            Expanded(
-              child: RangeSlider(
-                values: _ratingValues,
-                min: 1,
-                max: 5,
-                divisions: 5,
-                labels: RangeLabels(
-                  _ratingValues.start.round().toString(),
-                  _ratingValues.end.round().toString(),
-                ),
-                onChanged: (values) {
-                  setState(() {
-                    _ratingValues = values;
-                    _minFilter = values.start.round();
-                    _maxFilter = values.end.round();
-                  });
-                },
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildSideLabel(
+            _minFilter.toString(),
+          ),
+          Expanded(
+            child: RangeSlider(
+              values: _ratingValues,
+              min: 1,
+              max: 5,
+              divisions: 5,
+              labels: RangeLabels(
+                _ratingValues.start.round().toString(),
+                _ratingValues.end.round().toString(),
               ),
+              onChanged: (values) {
+                setState(() {
+                  _ratingValues = values;
+                  _minFilter = values.start.round();
+                  _maxFilter = values.end.round();
+                });
+              },
             ),
-            buildSideLabel(_maxFilter.toString()),
-          ],
-        ));
+          ),
+          buildSideLabel(_maxFilter.toString()),
+        ],
+      ),
+    );
   }
 
   Widget _priceFilter(double width) {
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildSideLabel(_minFilter.toString()),
-            Expanded(
-              child: RangeSlider(
-                values: _priceValues,
-                min: 0,
-                max: 4,
-                divisions: 4,
-                labels: RangeLabels(
-                  _priceValues.start.round().toString(),
-                  _priceValues.end.round().toString(),
-                ),
-                onChanged: (values) {
-                  setState(() {
-                    _priceValues = values;
-                    _minFilter = values.start.round();
-                    _maxFilter = values.end.round();
-                  });
-                },
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildSideLabel(_minFilter.toString()),
+          Expanded(
+            child: RangeSlider(
+              values: _priceValues,
+              min: 0,
+              max: 4,
+              divisions: 4,
+              labels: RangeLabels(
+                _priceValues.start.round().toString(),
+                _priceValues.end.round().toString(),
               ),
+              onChanged: (values) {
+                setState(() {
+                  _priceValues = values;
+                  _minFilter = values.start.round();
+                  _maxFilter = values.end.round();
+                });
+              },
             ),
-            buildSideLabel(_maxFilter.toString()),
-          ],
-        ));
+          ),
+          buildSideLabel(_maxFilter.toString()),
+        ],
+      ),
+    );
   }
 
   Widget _distanceFilter(double width) {
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildSideLabel('0 km'),
-            Expanded(
-              child: CupertinoSlider(
-                activeColor: Color(0xff6488E5),
-                value: _distValue,
-                min: 0,
-                max: 15000,
-                divisions: 1500,
-                onChanged: (value) {
-                  setState(() {
-                    _distValue = value;
-                    _maxFilter = value.round();
-                    _minFilter = 0;
-                  });
-                },
-              ),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildSideLabel('0 km'),
+          Expanded(
+            child: CupertinoSlider(
+              activeColor: Color(0xff6488E5),
+              value: _distValue,
+              min: 0,
+              max: 15000,
+              divisions: 1500,
+              onChanged: (value) {
+                setState(() {
+                  _distValue = value;
+                  _maxFilter = value.round();
+                  _minFilter = 0;
+                });
+              },
             ),
-            buildSideLabel((_maxFilter / 1000).toString() + 'km'),
-          ],
-        ));
+          ),
+          buildSideLabel((_maxFilter / 1000).toString() + 'km'),
+        ],
+      ),
+    );
   }
 
   Widget buildSideLabel(String value) {
@@ -210,7 +212,6 @@ class _HomeScreen extends State<HomeScreen> {
       _prevFilter = _filterByDropdownValue;
       return _priceFilter(width);
     } else {
-      // setState(() {});
       return SizedBox.shrink();
     }
   }
@@ -219,18 +220,35 @@ class _HomeScreen extends State<HomeScreen> {
     return _dropDownList(
       0.49 * width,
       DropdownButtonFormField<String>(
-        icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Color(0xffD1D1D6),
+        ),
         items: [
           DropdownMenuItem(
-              child: textMinor('filter by', Color(0xffD1D1D6)),
+              child: textMinor(
+                'filter by',
+                Color(0xffD1D1D6),
+              ),
               value: 'filter by'),
           DropdownMenuItem(
-              child: textMinor('distance', Color(0xff22254C)),
+              child: textMinor(
+                'distance',
+                Color(0xff22254C),
+              ),
               value: 'distance'),
           DropdownMenuItem(
-              child: textMinor('ratings', Color(0xff22254C)), value: 'ratings'),
+              child: textMinor(
+                'ratings',
+                Color(0xff22254C),
+              ),
+              value: 'ratings'),
           DropdownMenuItem(
-              child: textMinor('price', Color(0xff22254C)), value: 'price')
+              child: textMinor(
+                'price',
+                Color(0xff22254C),
+              ),
+              value: 'price')
         ],
         decoration: dropdownDeco,
         isExpanded: true,
@@ -249,11 +267,20 @@ class _HomeScreen extends State<HomeScreen> {
     return _dropDownList(
       width,
       DropdownButtonFormField(
-        icon: Icon(Icons.arrow_drop_down, color: Color(0xffD1D1D6)),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Color(0xffD1D1D6),
+        ),
         items: placeType
-            .map((String e) => DropdownMenuItem(
+            .map(
+              (String e) => DropdownMenuItem(
                 value: e,
-                child: textMinor(e.replaceAll("_", " "), Color(0xff22254C))))
+                child: textMinor(
+                  e.replaceAll('_', ' '),
+                  Color(0xff22254C),
+                ),
+              ),
+            )
             .toList(),
         decoration: dropdownDeco,
         isExpanded: true,
@@ -278,27 +305,31 @@ class _HomeScreen extends State<HomeScreen> {
         controller: _searchController,
         cursorColor: Color(0xffD1D1D6),
         cursorHeight: 14.0,
-        style: TextStyle(
-            fontFamily: 'AvenirLtStd', fontSize: 14, color: Color(0xff22254C)),
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
+        ),
         decoration: new InputDecoration(
           prefixIcon: Icon(
             Icons.search,
             color: Color(0xffD1D1D6),
           ),
           hintText: 'type a place...',
-          hintStyle: TextStyle(
-              fontFamily: 'AvenirLtStd',
-              fontSize: 14,
-              color: Color(0xffD1D1D6)),
+          hintStyle: avenirLtStdStyle(
+            Color(0xffD1D1D6),
+          ),
           contentPadding: EdgeInsets.zero,
           enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            borderRadius: BorderRadius.all(
+              Radius.circular(20.0),
+            ),
             borderSide: const BorderSide(
               color: Colors.white,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            borderRadius: BorderRadius.all(
+              Radius.circular(20.0),
+            ),
             borderSide: BorderSide(color: Colors.white),
           ),
         ),
@@ -328,24 +359,28 @@ class _HomeScreen extends State<HomeScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
         style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(Color(0xff6488E5)),
+            backgroundColor: MaterialStateProperty.all<Color>(
+              Color(0xff6488E5),
+            ),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
             ))),
         onPressed: () {
-          Navigator.pushNamed(context, SearchScreen.routeName,
-              arguments: _searchByCategory == false //using input searchbar
-                  ? SearchScreenArguments(_maxFilter, _minFilter,
-                  _filterByDropdownValue, _searchController.text)
-                  : SearchScreenArguments(
-                //using place type dropdown
-                _maxFilter,
-                _minFilter,
-                _filterByDropdownValue,
-                _placeTypeDropdownValue,
-              ));
+          Navigator.pushNamed(
+            context,
+            SearchScreen.routeName,
+            arguments: _searchByCategory == false //using input searchbar
+                ? SearchScreenArguments(_maxFilter, _minFilter,
+                    _filterByDropdownValue, _searchController.text)
+                : SearchScreenArguments(
+                    //using place type dropdown
+                    _maxFilter,
+                    _minFilter,
+                    _filterByDropdownValue,
+                    _placeTypeDropdownValue,
+                  ),
+          );
         },
         child: Text('go!',
             style: TextStyle(
@@ -420,7 +455,7 @@ class _HomeScreen extends State<HomeScreen> {
               textMinor(
                   _favourites.contains(place.id)
                       ? 'added to favourites'
-                      : "add to favourites",
+                      : 'add to favourites',
                   Color(0xffD1D1D6))
             ],
           ),
@@ -437,28 +472,30 @@ class _HomeScreen extends State<HomeScreen> {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            Stack(children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, PlaceScreen.routeName,
-                      arguments:
-                          PlaceScreenArguments(_places![index], _favourites));
-                },
-                child: placeContainer(
+            Stack(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, PlaceScreen.routeName,
+                        arguments:
+                            PlaceScreenArguments(_places![index], _favourites));
+                  },
+                  child: placeContainer(
                     places[index],
                     0.8 * width,
                     0.24 * height,
                     _addFav(places[index], 0.05 * height, 0.8 * width),
                     Container(),
-                    _userLoc != null
-                        ? calculateDistance(
-                            _userLoc.latitude,
-                            _userLoc.longitude,
-                            double.parse(_places![index].coordinates["lat"]!),
-                            double.parse(_places![index].coordinates["long"]!))
-                        : 0.0),
-              ),
-            ]),
+                    calculateDistance(
+                      _userLoc.latitude,
+                      _userLoc.longitude,
+                      double.parse(_places![index].coordinates['lat']!),
+                      double.parse(_places![index].coordinates['long']!),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(
               height: 15,
             ),

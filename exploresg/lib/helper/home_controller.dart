@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:exploresg/helper/location.dart';
+import 'package:exploresg/helper/location_controller.dart';
 import 'package:exploresg/helper/places_api.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:exploresg/models/place.dart';
@@ -14,24 +14,24 @@ class HomeController {
 
   Future<List<Place>?> loadRecommendations(BuildContext context) async {
     String uid = _auth.getCurrentUser()!.uid;
-    String interest = "";
+    String interest = '';
     Locator locator = new Locator();
     var coor = await locator.getCurrentLocation();
     if (coor != null) {
       List<Place> _mixPlaces = [];
       await _auth.getUserFromId(uid).then((value) {
-        interest = value["interest"];
+        interest = value['interest'];
       }).onError((error, stackTrace) {
-        showAlert(context, "Retrieve User Profile", error.toString());
+        showAlert(context, 'Retrieve User Profile', error.toString());
       });
-      if (interest != "") {
-        var split = interest.split(",");
+      if (interest != '') {
+        var split = interest.split(',');
         for (String s in split) {
           var result = await _placesApi.nearbySearchFromText(
               coor.latitude.toString(),
               coor.longitude.toString(),
               10000,
-              "&type=$s");
+              '&type=$s');
           for (var i in result!) {
             _mixPlaces.add(i);
           }
@@ -47,7 +47,7 @@ class HomeController {
               coor.latitude.toString(),
               coor.longitude.toString(),
               10000,
-              "&type=$s");
+              '&type=$s');
           for (var i in result!) {
             _mixPlaces.add(i);
           }
@@ -59,8 +59,8 @@ class HomeController {
       }
       return _mixPlaces;
     } else {
-      showAlert(context, "Location Permission Error",
-          "Location permission either disable or disabled. Please enable to enjoy the full experience.");
+      showAlert(context, 'Location Permission Error',
+          'Location permission either disable or disabled. Please enable to enjoy the full experience.');
       return null;
     }
   }

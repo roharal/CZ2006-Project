@@ -1,10 +1,8 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:core';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,12 +19,16 @@ Text textMinor(String text, Color color) {
       style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14, color: color));
 }
 
-Text textMinorBold(String text, Color color) {
+TextStyle avenirLtStdStyle(Color color) {
+  return TextStyle(fontFamily: 'AvenirLtStd', fontSize: 14, color: color);
+}
+
+Text textMinorBold(String text, Color color, double size) {
   return Text(text,
       style: TextStyle(
           fontFamily: 'AvenirLtStd',
           fontWeight: FontWeight.bold,
-          fontSize: 14,
+          fontSize: size,
           color: color));
 }
 

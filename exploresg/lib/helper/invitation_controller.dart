@@ -16,7 +16,7 @@ class InvitationController {
       UserModel user = UserModel.fromSnapshot(value);
       users.add(user);
     });
-    var sender = _firestore.collection("users").doc(user.uid).collection("toExplore");
+    var sender = _firestore.collection('users').doc(user.uid).collection('toExplore');
     String key = sender.doc().id;
     Invitation invitation = Invitation(key, place, date, time, users, false);
     await sender.doc(key).set(invitation.toJson());
@@ -39,28 +39,28 @@ class InvitationController {
     }
 
     if (uids.length == to.length) {
-      await _firestore.collection("users").where(FieldPath.documentId, whereIn: uids).get().then((value) {
+      await _firestore.collection('users').where(FieldPath.documentId, whereIn: uids).get().then((value) {
         if (value.size != 0) {
           for (var i in value.docs) {
             UserModel user = UserModel.fromSnapshot(i);
             unconfirmed.add(user);
           }
         } else {
-          return "unable to send invitation";
+          return 'unable to send invitation';
         }
       });
-      var sender = _firestore.collection("users").doc(from).collection("toExplore");
+      var sender = _firestore.collection('users').doc(from).collection('toExplore');
       String key = sender.doc().id;
       Invitation invitation = Invitation(key, place, date, time, users, false);
       await sender.doc(key).set(invitation.toJson());
 
       for (UserModel u in unconfirmed) {
-        batch.set(_firestore.collection("users").doc(u.id).collection("invites").doc(key),invitation.toJson());
+        batch.set(_firestore.collection('users').doc(u.id).collection('invites').doc(key),invitation.toJson());
       }
       batch.commit();
       return null;
     } else {
-      return "unable to send invitation";
+      return 'unable to send invitation';
     }
   }
 }

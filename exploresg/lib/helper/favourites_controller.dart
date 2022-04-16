@@ -8,16 +8,16 @@ class FavouritesController {
 
   void updateFavOnDB(uid, favourites) async {
     await _firestore
-        .collection("users")
+        .collection('users')
         .doc(uid)
-        .update({"favourites": favourites});
+        .update({'favourites': favourites});
   }
 
   Future addOrRemoveFav(placeID) async {
     String uid = _auth.getCurrentUser()!.uid;
     String favourites = '';
-    await _firestore.collection("users").doc(uid).get().then((value) {
-      favourites = value["favourites"];
+    await _firestore.collection('users').doc(uid).get().then((value) {
+      favourites = value['favourites'];
     });
     if (favourites == '') {
       favourites = placeID;
@@ -41,8 +41,8 @@ class FavouritesController {
   Future<List<String>> getFavouritesList() async {
     String uid = _auth.getCurrentUser()!.uid;
     String favourites = '';
-    await _firestore.collection("users").doc(uid).get().then((value) {
-      favourites = value["favourites"];
+    await _firestore.collection('users').doc(uid).get().then((value) {
+      favourites = value['favourites'];
     });
     if (favourites == '') {
       return [];
@@ -52,8 +52,8 @@ class FavouritesController {
 
   Future<bool> isUserFavourite(place) async {
     String uid = _auth.getCurrentUser()!.uid;
-    await _firestore.collection("users").doc(uid).get().then((value) {
-      String favourites = value["favourites"];
+    await _firestore.collection('users').doc(uid).get().then((value) {
+      String favourites = value['favourites'];
       List favourites_list = favourites.split(',');
       return favourites_list.contains(place.id);
     });

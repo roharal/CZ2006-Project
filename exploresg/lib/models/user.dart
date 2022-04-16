@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UserModel {
   String id,
       username,
@@ -51,32 +49,60 @@ class UserModel {
     return this.email;
   }
 
+  String getFirstName() {
+    return this.firstName;
+  }
+
+  String getLastName() {
+    return this.lastName;
+  }
+
+  String getPicture() {
+    return this.picture;
+  }
+
+  String getInterest() {
+    return this.interest;
+  }
+
+  void setFirstName(String first) {
+    this.firstName = first;
+  }
+
+  void setLastName(String last) {
+    this.lastName = last;
+  }
+
+  void setPicture(String picture) {
+    this.picture = picture;
+  }
+
   UserModel.fromSnapshot(dynamic snapshot)
-      : id = snapshot["id"],
-        username = snapshot["username"],
-        firstName = snapshot["firstName"],
-        lastName = snapshot["lastName"],
-        email = snapshot["email"],
-        token = snapshot["token"],
-        picture = snapshot["picture"],
-        mobileNumber = snapshot["mobileNumber"],
-        emailVerified = snapshot["emailVerified"],
-        numberVerified = snapshot["numberVerified"],
-        interest = snapshot["interest"],
-        favourites = snapshot["favourites"];
+      : id = snapshot['id'],
+        username = snapshot['username'],
+        firstName = snapshot['firstName'],
+        lastName = snapshot['lastName'],
+        email = snapshot['email'],
+        token = snapshot['token'],
+        picture = snapshot['picture'],
+        mobileNumber = snapshot['mobileNumber'],
+        emailVerified = snapshot['emailVerified'],
+        numberVerified = snapshot['numberVerified'],
+        interest = snapshot['interest'],
+        favourites = snapshot['favourites'];
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "username": username,
-        "firstName": firstName,
-        "lastName": lastName,
-        "email": email,
-        "token": token,
-        "picture": picture,
-        "mobileNumber": mobileNumber,
-        "emailVerified": emailVerified,
-        "numberVerified": numberVerified,
-        "interest": interest,
-        "favourites": favourites
+        'id': id,
+        'username': username,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'token': token,
+        'picture': picture,
+        'mobileNumber': mobileNumber,
+        'emailVerified': emailVerified,
+        'numberVerified': numberVerified,
+        'interest': interest,
+        'favourites': favourites
       };
 }

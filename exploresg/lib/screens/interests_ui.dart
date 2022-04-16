@@ -1,8 +1,8 @@
-import 'package:exploresg/screens/base.dart';
+import 'package:exploresg/helper/utils.dart';
+import 'package:exploresg/screens/base_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:exploresg/helper/interestController.dart';
-import 'dart:convert';
+import 'package:exploresg/helper/interest_controller.dart';
 
 class InterestScreenArguments {
   final String userID;
@@ -12,14 +12,11 @@ class InterestScreenArguments {
 }
 
 class InterestScreen extends StatefulWidget {
-  static const routeName = "/interests";
-  String userID = "";
-  List intList = [];
+  static const routeName = '/interests';
+  final String userID;
+  final String userInts;
 
-  InterestScreen(String userID, String userInts){
-    this.userID = userID;
-    this.intList = userInts.split(",");
-  }
+  InterestScreen(this.userID, this.userInts);
 
   @override
   State<InterestScreen> createState() => _InterestScreenState();
@@ -27,6 +24,8 @@ class InterestScreen extends StatefulWidget {
 
 class _InterestScreenState extends State<InterestScreen> {
   InterestController _interestController = InterestController();
+  var _interestsMap = new Map();
+  List _intList = [];
 
   @override
   void initState() {
@@ -34,57 +33,23 @@ class _InterestScreenState extends State<InterestScreen> {
     buildMap();
   }
 
-  final interests = [
-    'airport',
-    'amusement_park',
-    'aquarium',
-    'art_gallery',
-    'bakery',
-    'bar',
-    'beauty_salon',
-    'book_store',
-    'bowling_alley',
-    'cafe',
-    'casino',
-    'cemetery',
-    'clothing_store',
-    'department_store',
-    'florist',
-    'gym',
-    'hair_care',
-    'library',
-    'lodging',
-    'movie_theater',
-    'museum',
-    'night_club',
-    'park',
-    'restaurant',
-    'shopping_mall',
-    'spa',
-    'stadium',
-    'tourist_attraction',
-    'university',
-    'zoo',
-  ];
-
-  var interestsMap = new Map();
-
   void buildMap() {
-    for (var i in interests) {
-      interestsMap[i] = false;
+    for (var i in placeType) {
+      _interestsMap[i] = false;
     }
+    _intList = widget.userInts.split(',');
   }
 
   void updateInterestChoices() {
-    interestsMap.forEach((key, value) {
-      for (String i in widget.intList) {
+    _interestsMap.forEach((key, value) {
+      for (String i in _intList) {
         if (i == key) {
-          interestsMap[key] = true;
+          _interestsMap[key] = true;
           break;
         }
       }
     });
-    widget.intList.clear();
+    _intList.clear();
   }
 
   @override
@@ -92,7 +57,6 @@ class _InterestScreenState extends State<InterestScreen> {
     double w = MediaQuery.of(context).size.width;
     updateInterestChoices();
     return Scaffold(
-      backgroundColor: Color(0xfffffcec),
       body: Container(
         child: SingleChildScrollView(
           child: Column(
@@ -112,7 +76,7 @@ class _InterestScreenState extends State<InterestScreen> {
                     fontFamily: 'MadeSunflower',
                     fontSize: 36,
                     color: Color(0xff22254C),
-                  )),
+                  ),),
               SizedBox(height: 15),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
@@ -120,25 +84,22 @@ class _InterestScreenState extends State<InterestScreen> {
                   alignment: WrapAlignment.center,
                   spacing: 12.0,
                   children: List<Widget>.generate(
-                    interests.length,
+                    placeType.length,
                     (int index) {
-                      bool isSelected = interestsMap[interests[index]];
+                      bool isSelected = _interestsMap[placeType[index]];
                       return ChoiceChip(
-                        label: Text(interests[index]),
+                        label: Text(placeType[index]),
                         selected: isSelected,
                         onSelected: (bool selected) {
                           setState(() {
-                            interestsMap[interests[index]] =
+                            _interestsMap[placeType[index]] =
                                 selected ? true : false;
                           });
-                          print(interestsMap);
                         },
                         backgroundColor: Color(0xfffffcec),
                         selectedColor: Color(0xff6488E5),
-                        labelStyle: TextStyle(
-                          fontFamily: 'AvenirLtStd',
-                          color: isSelected ? Colors.white : Color(0xff6488E5),
-                          fontSize: 16,
+                        labelStyle: avenirLtStdStyle(
+                          isSelected ? Colors.white : Color(0xff6488E5),
                         ),
                         side: BorderSide(color: Color(0xff6488E5), width: 2),
                       );
@@ -146,31 +107,31 @@ class _InterestScreenState extends State<InterestScreen> {
                   ).toList(),
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Container(
                 child: ElevatedButton(
                   onPressed: () async {
+                    print(widget.userID);
                     _interestController.updateUserInterests(
-                        interestsMap, widget.userID);
+                        _interestsMap, widget.userID);
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
                     } else {
-                      Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+                      Navigator.pushReplacementNamed(
+                          context, BaseScreen.routeName);
                     }
                   },
-                  child: Text(
-                    "save changes",
-                    style: TextStyle(
-                      color: Color(0xff22254C),
-                      fontFamily: 'AvenirLtStd',
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: textMinor(
+                    'save changes',
+                    Color(0xff22254C),
                   ),
                   style: ButtonStyle(
                     elevation: MaterialStateProperty.all(0),
-                    backgroundColor:
-                    MaterialStateProperty.all(Color(0xffF9BE7D)),
+                    backgroundColor: MaterialStateProperty.all(
+                      Color(0xffF9BE7D),
+                    ),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
@@ -179,7 +140,7 @@ class _InterestScreenState extends State<InterestScreen> {
                   ),
                 ),
               ),
-              Container(height: 20)
+              Container(height: 20),
             ],
           ),
         ),

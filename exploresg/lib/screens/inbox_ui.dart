@@ -8,9 +8,9 @@ import 'package:exploresg/models/invitation.dart';
 import 'package:exploresg/models/place.dart';
 import 'package:exploresg/models/user.dart';
 import 'package:exploresg/screens/place_ui.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:intl/intl.dart';
 
 class InboxScreen extends StatefulWidget {
   @override
@@ -25,13 +25,9 @@ class _InboxScreen extends State<InboxScreen> {
   AuthController _authController = AuthController();
   PlacesApi _placesApi = PlacesApi();
   Map<String, Place> _places = {};
-  final DateFormat formatterDate = DateFormat('dd-MM-yyyy');
-  final DateFormat formatterTime = DateFormat('HH:MM');
   List<Invitation> _inbox = [];
   bool _isLoaded = false;
-  var valueChoose;
   late UserModel _userModel;
-  List listItem = ["Filter 1", "Filter 2", "Filter 3", "Filter 4"];
   List<String> _favourites = [];
   FavouritesController _favouritesController = FavouritesController();
 
@@ -65,23 +61,28 @@ class _InboxScreen extends State<InboxScreen> {
                 Container(
                   // color: Colors.yellow,
                   height: width * (1 / 10),
-                  child: invitationC.users[0].picture != "" ? Image.network(invitationC.users[0].picture) :
-                  CircleAvatar(
-                    radius: 12.5,
-                    backgroundColor: Color(0xff6488E5),
-                    child: textMajor(invitationC.users[0].username != "" ? invitationC.users[0].username[0] : "?",
-                        Colors.white, 10),
-                  ),
+                  child: invitationC.users[0].getPicture() != ''
+                      ? Image.network(invitationC.users[0].getPicture())
+                      : CircleAvatar(
+                          radius: 12.5,
+                          backgroundColor: Color(0xff6488E5),
+                          child: textMajor(
+                              invitationC.users[0].getUsername() != ''
+                                  ? invitationC.users[0].getUsername()[0]
+                                  : '?',
+                              Colors.white,
+                              10),
+                        ),
                 ),
                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    // color: Colors.blue,
-                    child: Text("invites you to...",
-                        style: TextStyle(
-                          color: Color(0xff22254C),
-                            fontFamily: "AvenirLtStd",
-                            fontWeight: FontWeight.w100))),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  alignment: Alignment.center,
+                  // color: Colors.blue,
+                  child: textMinor(
+                    'invites you to ...',
+                    Color(0xff22254C),
+                  ),
+                ),
               ],
             ),
           ),
@@ -98,13 +99,12 @@ class _InboxScreen extends State<InboxScreen> {
                   // color: Colors.blue,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: Image.network(
-                      place.images.length != 0
-                          ? place.images[0]
-                          : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Catsrepublic.jpg/275px-Catsrepublic.jpg",
-                      fit: BoxFit.fill,
+                    child: Container(
                       height: 100,
                       width: 100,
+                      child: place.getImages().length != 0
+                          ? Image.network(place.getImages()[0])
+                          : Icon(Icons.question_mark),
                     ),
                   ),
                 ),
@@ -118,14 +118,12 @@ class _InboxScreen extends State<InboxScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Spacer(flex: 3),
-                      Text(place.placeName,
-                          style: TextStyle(
-                            color: Color(0xff22254C),
-                              fontFamily: "AvenirLtStd",
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
+                      textMinorBold(
+                        place.getPlaceName(),
+                        Color(0xff22254C), 14
+                      ),
                       RatingBarIndicator(
-                        rating: place.ratings,
+                        rating: place.getRatings(),
                         itemBuilder: (context, index) => Icon(
                           Icons.star,
                           color: Colors.amber,
@@ -135,13 +133,9 @@ class _InboxScreen extends State<InboxScreen> {
                         direction: Axis.horizontal,
                       ),
                       Spacer(flex: 1),
-                      Text(
-                        place.placeAddress,
-                        style: TextStyle(
-                          color: Color(0xff22254C),
-                          fontFamily: "AvenirLtStd",
-                          fontSize: 12,
-                        ),
+                      textMinor(
+                        place.getPlaceAddress(),
+                        Color(0xff22254C),
                       ),
                       Spacer(flex: 5),
                     ],
@@ -151,10 +145,12 @@ class _InboxScreen extends State<InboxScreen> {
             ),
           ),
           Container(
-              child: textMinor("date: ${invitationC.date}", Color(0xff22254C)),
+              child: textMinor(
+                  'date: ${invitationC.getDate()}', Color(0xff22254C)),
               padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
           Container(
-              child: textMinor("time: ${invitationC.time}", Color(0xff22254C))),
+              child: textMinor(
+                  'time: ${invitationC.getTime()}', Color(0xff22254C))),
           Container(
             padding: EdgeInsets.all(1),
             child: Row(
@@ -168,7 +164,8 @@ class _InboxScreen extends State<InboxScreen> {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.white)),
                     icon: Icon(Icons.alarm_on_sharp, color: Color(0xff6488E5)),
-                    label: Text("accept", style: TextStyle(color: Color(0xff6488E5))),
+                    label: Text('accept',
+                        style: TextStyle(color: Color(0xff6488E5))),
                     onPressed: () {
                       _trackerController.acceptInvite(invitationC, _userModel);
                       _removeInvite(index);
@@ -180,12 +177,12 @@ class _InboxScreen extends State<InboxScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
+                        elevation: MaterialStateProperty.all(0),
                         backgroundColor:
                             MaterialStateProperty.all(Colors.white)),
                     icon: Icon(Icons.alarm_off_sharp, color: Color(0xffE56372)),
                     label: Text(
-                      "reject",
+                      'reject',
                       style: TextStyle(color: Color(0xffE56372)),
                     ),
                     onPressed: () {
@@ -215,10 +212,10 @@ class _InboxScreen extends State<InboxScreen> {
               onTap: () {
                 Navigator.pushNamed(context, PlaceScreen.routeName,
                     arguments: PlaceScreenArguments(
-                        _places[_inbox[index].place]!, _favourites));
+                        _places[_inbox[index].getPlace()]!, _favourites));
               },
-              child: _invitationContainer(
-                  index, width, _inbox[index], _places[_inbox[index].place]!),
+              child: _invitationContainer(index, width, _inbox[index],
+                  _places[_inbox[index].getPlace()]!),
             ),
             SizedBox(
               height: 5,
@@ -239,13 +236,13 @@ class _InboxScreen extends State<InboxScreen> {
     await _authController.getUserFromId(user!.uid).then((value) {
       _userModel = UserModel.fromSnapshot(value);
     });
-    _inbox = await _inboxController.getConfirmedInvitations(_userModel.id);
+    _inbox = await _inboxController.getConfirmedInvitations(_userModel.getId());
 
     if (_inbox.length != 0) {
       for (Invitation iv in _inbox) {
-        var place = await _placesApi.placeDetailsSearchFromText(iv.place);
+        var place = await _placesApi.placeDetailsSearchFromText(iv.getPlace());
         if (place != null) {
-          _places[iv.place] = place;
+          _places[iv.getPlace()] = place;
           print(place.id);
         }
       }
@@ -257,9 +254,7 @@ class _InboxScreen extends State<InboxScreen> {
 
   void _reload() async {
     _isLoaded = false;
-    setState(() {
-
-    });
+    setState(() {});
     _loadInbox();
   }
 
@@ -284,7 +279,7 @@ class _InboxScreen extends State<InboxScreen> {
                         onTap: () {
                           _reload();
                         },
-                        child: topBar("my inbox", height, width,
+                        child: topBar('my inbox', height, width,
                             'assets/img/inbox-top.svg'),
                       ),
                       _inboxList(width),

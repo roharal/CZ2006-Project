@@ -1,9 +1,9 @@
 import 'package:exploresg/helper/auth_controller.dart';
-import 'package:exploresg/helper/google_sign_it.dart';
-import 'package:exploresg/screens/base.dart';
-import 'package:exploresg/screens/forgotpassword.dart';
+import 'package:exploresg/helper/google_sign_in_api.dart';
+import 'package:exploresg/screens/base_ui.dart';
+import 'package:exploresg/screens/forgot_password_ui.dart';
 import 'package:exploresg/screens/interests_ui.dart';
-import 'package:exploresg/screens/signup.dart';
+import 'package:exploresg/screens/sign_up_ui.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,7 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import '../helper/utils.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const routeName = "/login";
+  static const routeName = '/login';
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -26,9 +26,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _topBar(double width) {
     return FittedBox(
-        fit: BoxFit.fill,
-        child: SvgPicture.asset('assets/img/login-top.svg',
-            width: width, height: width));
+      fit: BoxFit.fill,
+      child: SvgPicture.asset('assets/img/login-top.svg',
+          width: width, height: width),
+    );
   }
 
   Widget _login(double width, double height) {
@@ -43,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          textMajor("sign in", Color(0xff22254C), 36),
+          textMajor('sign in', Color(0xff22254C), 36),
           SizedBox(height: 10),
           _loginForm(),
           SizedBox(height: 30),
@@ -63,11 +64,17 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          textMinor("don't have an account?", Color(0xff22254C)),
+          textMinor(
+            'don\'t have an account?',
+            Color(0xff22254C),
+          ),
           SizedBox(
             width: 5,
           ),
-          textMinor("sign up", Color(0xff6488E5)),
+          textMinor(
+            'sign up',
+            Color(0xff6488E5),
+          ),
         ],
       ),
     );
@@ -79,13 +86,15 @@ class _LoginScreenState extends State<LoginScreen> {
       height: height * 0.05,
       child: ElevatedButton(
         onPressed: _validateLogin,
-        child: textMinor("sign in", Colors.white),
+        child: textMinor('sign in', Colors.white),
         style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-            primary: Color(0xff6488E5),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20))),
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+          primary: Color(0xff6488E5),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
       ),
     );
   }
@@ -94,12 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       width: width * 0.6,
       height: height * 0.05,
-      child: _isLoading ? Container(
-        color: Colors.white,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ) : _loginButton(width, height),
+      child: _isLoading
+          ? Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : _loginButton(width, height),
     );
   }
 
@@ -110,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "email",
+          hintText: 'email',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -119,10 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         keyboardType: TextInputType.emailAddress,
         validator: _validateEmail,
@@ -140,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: true,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "password",
+          hintText: 'password',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -149,10 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         keyboardType: TextInputType.text,
         validator: _validatePassword,
@@ -170,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "username",
+          hintText: 'username',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -179,10 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xff22254C),
         ),
         keyboardType: TextInputType.text,
         validator: _validateUsername,
@@ -205,13 +210,22 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            textMinor("login using", Color(0xff22254C)),
+            textMinor(
+              'login using',
+              Color(0xff22254C),
+            ),
             SizedBox(
               width: 5,
             ),
             _useEmail
-                ? textMinor("username", Color(0xff6488E5))
-                : textMinor("email", Color(0xff6488E5))
+                ? textMinor(
+                    'username',
+                    Color(0xff6488E5),
+                  )
+                : textMinor(
+                    'email',
+                    Color(0xff6488E5),
+                  )
           ],
         ),
       ),
@@ -235,55 +249,67 @@ class _LoginScreenState extends State<LoginScreen> {
       onTap: () {
         Navigator.pushReplacementNamed(context, ForgotPasswordScreen.routeName);
       },
-      child: textMinor("forgot my password", Color(0xff6488E5)),
+      child: textMinor(
+        'forgot my password',
+        Color(0xff6488E5),
+      ),
     );
   }
 
   Widget _googleRegisterButton(double width, double height) {
     return ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            primary: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20))),
-        onPressed: () async {
-          var result =
-              await _googleSignInProvider.googleLogin(context: context);
-          if (result != null) {
-            var bool = await _authController.checkUserExist(result.uid);
-            if (!bool) {
-              var error = await _authController.createUserFromGoogleSignIn(result);
-              if (error != null) {
-                showAlert(context, "Google Sign In Error", error);
-              } else {
-                Navigator.pushReplacementNamed(context, InterestScreen.routeName, arguments: InterestScreenArguments(result.uid,""));
-              }
-            } else {
-              Navigator.pushReplacementNamed(context, BaseScreen.routeName);
-            }
-          }
-        },
-        icon: Image.asset(
-          "assets/img/google_logo.png",
-          width: 25,
-          height: 25,
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        primary: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        label: textMinor('sign in with google', Color(0xff22254C)));
+      ),
+      onPressed: () async {
+        var result = await _googleSignInProvider.googleLogin(context: context);
+        if (result != null) {
+          var bool = await _authController.checkUserExist(result.uid);
+          if (!bool) {
+            var error =
+                await _authController.createUserFromGoogleSignIn(result);
+            if (error != null) {
+              showAlert(context, 'Google Sign In Error', error);
+            } else {
+              Navigator.pushReplacementNamed(context, InterestScreen.routeName,
+                  arguments: InterestScreenArguments(result.uid, ''));
+            }
+          } else {
+            Navigator.pushReplacementNamed(context, BaseScreen.routeName);
+          }
+        }
+      },
+      icon: Image.asset(
+        'assets/img/google_logo.png',
+        width: 25,
+        height: 25,
+      ),
+      label: textMinor(
+        'sign in with google',
+        Color(
+          0xff22254C,
+        ),
+      ),
+    );
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return "Password cannot be empty";
+      return 'Password cannot be empty';
     } else if (value.length < 8) {
-      return "Password must contain at least 8 characters";
+      return 'Password must contain at least 8 characters';
     }
     return null;
   }
 
   String? _validateUsername(String? value) {
     if (value == null || value.isEmpty) {
-      return "Username cannot be empty";
+      return 'Username cannot be empty';
     }
     return null;
   }
@@ -293,7 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (value == null || value.isEmpty) {
-      return "Email cannot be empty";
+      return 'Email cannot be empty';
     } else if (!regex.hasMatch(value))
       return 'Enter a valid email';
     else
@@ -319,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (result is User) {
       Navigator.pushReplacementNamed(context, BaseScreen.routeName);
     } else {
-      showAlert(context, "Login Error (1)", result.split("]")[1]);
+      showAlert(context, 'Login Error (1)', result.split(']')[1]);
       setState(() {
         _isLoading = false;
       });
@@ -328,18 +354,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _usernameLogin() async {
     String uid = await _authController.getUidfromUsername(_username);
-    if (uid != "notFound") {
+    if (uid != 'notFound') {
       await _authController.getUserFromId(uid).then((value) {
-        _emailLogin(value["email"], _password);
+        _emailLogin(value['email'], _password);
       }).onError((error, stackTrace) {
         print(stackTrace);
-        showAlert(context, "User error (1)", error.toString());
+        showAlert(context, 'User error (1)', error.toString());
       });
     } else {
       setState(() {
         _isLoading = false;
       });
-      showAlert(context, "User error (2)", "Username or password incorrect");
+      showAlert(context, 'User error (2)', 'Username or password incorrect');
     }
   }
 

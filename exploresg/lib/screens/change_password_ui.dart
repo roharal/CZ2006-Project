@@ -10,7 +10,7 @@ class ChangePasswordArguments {
 }
 
 class ChangePasswordScreen extends StatefulWidget {
-  static const routeName = "/changePW";
+  static const routeName = '/changePW';
   final String email;
 
   ChangePasswordScreen(this.email);
@@ -20,8 +20,7 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  final auth = FirebaseAuth.instance;
-  late String _email;
+  final _auth = FirebaseAuth.instance;
 
   Widget _topBar(double width) {
     return FittedBox(
@@ -51,7 +50,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          textMajor("reset password", Color(0xff22254C), 30),
+          textMajor('reset password', Color(0xff22254C), 30),
           SizedBox(height: 30),
           // _emailTextField(),
           _sendRequest()
@@ -59,35 +58,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       ),
     );
   }
-
-  // Widget _emailTextField() {
-  //   return Container(
-  //       padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-  //       child: TextFormField(
-  //         obscureText: false,
-  //         decoration: InputDecoration(
-  //           border: InputBorder.none,
-  //           hintText: "email",
-  //           hintStyle: TextStyle(
-  //             color: Color(0xffD1D1D6),
-  //           ),
-  //           icon: Icon(
-  //             Icons.email,
-  //             color: Color(0xffD1D1D6),
-  //           ),
-  //         ),
-  //         style: TextStyle(
-  //           fontFamily: 'AvenirLtStd',
-  //           color: Color(0xff22254C),
-  //           fontSize: 14,
-  //         ),
-  //         keyboardType: TextInputType.emailAddress,
-  //         validator: _validateEmail,
-  //         onChanged: (String? saved) {
-  //           _email = saved!.trim();
-  //         },
-  //       ));
-  // }
 
   Widget _sendRequest() {
     return Row(
@@ -100,9 +70,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20))),
           onPressed: () {
-            print(widget.email);
-            // auth.sendPasswordResetEmail(email: widget.email);
-            // Navigator.pop(context);
+            _auth.sendPasswordResetEmail(email: widget.email);
+            Navigator.pop(context);
           },
           child: textMinor(
             'reset my password',

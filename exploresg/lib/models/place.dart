@@ -1,5 +1,5 @@
 class Place {
-  late String id, placeName, placeDesc, placeAddress;
+  late String id, placeName, placeAddress;
   late double ratings;
   late bool likes, openNow;
   late Map<String, String> coordinates;
@@ -12,7 +12,6 @@ class Place {
   Place(
     this.id,
     this.placeName,
-    this.placeDesc,
     this.placeAddress,
     this.ratings,
     this.likes,
@@ -30,10 +29,6 @@ class Place {
 
   String getPlaceName() {
     return this.placeName;
-  }
-
-  String getPlaceDesc() {
-    return this.placeDesc;
   }
 
   String getPlaceAddress() {

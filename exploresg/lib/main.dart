@@ -1,14 +1,13 @@
-import 'package:exploresg/screens/base.dart';
-import 'package:exploresg/screens/forgotpassword.dart';
-import 'package:exploresg/screens/login.dart';
-import 'package:exploresg/screens/signup.dart';
-import 'package:exploresg/screens/splash.dart';
-import 'package:exploresg/screens/verify.dart';
+import 'package:exploresg/screens/base_ui.dart';
+import 'package:exploresg/screens/forgot_password_ui.dart';
+import 'package:exploresg/screens/login_ui.dart';
+import 'package:exploresg/screens/sign_up_ui.dart';
+import 'package:exploresg/screens/splash_ui.dart';
+import 'package:exploresg/screens/verify_ui.dart';
 import 'package:exploresg/theme/theme_constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:exploresg/screens/interests_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:exploresg/screens/changePassword.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:exploresg/helper/auth_controller.dart';
-import 'package:exploresg/screens/base.dart';
-import 'package:exploresg/screens/login.dart';
+import 'package:exploresg/screens/base_ui.dart';
+import 'package:exploresg/screens/login_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/utils.dart';
 
 class SplashScreen extends StatefulWidget {
-  static const routeName = "/splash";
+  static const routeName = '/splash';
 
   @override
   State<StatefulWidget> createState() {
@@ -54,19 +54,19 @@ class _SplashScreen extends State<SplashScreen> {
             Positioned(
               top: height / 4,
               left: width / 4.5,
-              child: textMajor("explore", Color(0xff22254C), 36),
+              child: textMajor('explore', Color(0xff22254C), 36),
             ),
             Positioned(
                 top: height / 3.5,
                 left: width / 2.2,
-                child: textMajor("SG", Color(0xff22254C), 36)),
+                child: textMajor('SG', Color(0xff22254C), 36)),
             Positioned(
               top: height / 2.9,
               left: width / 4.5,
               child: SizedBox(
                 width: width / 1.8,
                 child: textMinor(
-                    "discover new places and invite your friends to go together!",
+                    'discover new places and invite your friends to go together!',
                     Color(0xff22254C)),
               ),
             ),
@@ -79,8 +79,8 @@ class _SplashScreen extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    textMinor("Copyright HDMILF 2022", Color(0xff22254C)),
-                    textMinor("All rights reserved", Color(0xff22254C))
+                    textMinor('Copyright HDMILF 2022', Color(0xff22254C)),
+                    textMinor('All rights reserved', Color(0xff22254C))
                   ],
                 ),
               ),

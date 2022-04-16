@@ -27,14 +27,14 @@ class GoogleSignInProvider extends ChangeNotifier {
       userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
-      if (e.code == "account-exists-with-different-credential") {
+      if (e.code == 'account-exists-with-different-credential') {
         showAlert(
-            context, "Account exists with different credential", e.toString());
-      } else if (e.code == "invalid-credential") {
-        showAlert(context, "Invalid credential", e.toString());
+            context, 'Account exists with different credential', e.toString());
+      } else if (e.code == 'invalid-credential') {
+        showAlert(context, 'Invalid credential', e.toString());
       }
     } catch (e) {
-      showAlert(context, "Google Sign in", e.toString());
+      showAlert(context, 'Google Sign in', e.toString());
     }
     if (userCredential!.user != null) {
       return userCredential!.user;

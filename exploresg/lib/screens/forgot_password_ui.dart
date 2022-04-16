@@ -1,4 +1,4 @@
-import 'package:exploresg/screens/login.dart';
+import 'package:exploresg/screens/login_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,7 +12,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
-  final auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   late String _email;
   final _emailKey = GlobalKey<FormState>();
 
@@ -60,7 +60,7 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
         obscureText: false,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "email",
+          hintText: 'email',
           hintStyle: TextStyle(
             color: Color(0xffD1D1D6),
           ),
@@ -69,10 +69,8 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
             color: Color(0xffD1D1D6),
           ),
         ),
-        style: TextStyle(
-          fontFamily: 'AvenirLtStd',
-          color: Color(0xff22254C),
-          fontSize: 14,
+        style: avenirLtStdStyle(
+          Color(0xffD1D1D6),
         ),
         keyboardType: TextInputType.emailAddress,
         validator: _validateEmail,
@@ -85,10 +83,11 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
 
   Widget _emailForm() {
     return Form(
-        key: _emailKey,
-        child: Container(
-          child: _emailTextField(),
-        ));
+      key: _emailKey,
+      child: Container(
+        child: _emailTextField(),
+      ),
+    );
   }
 
   Widget _sendRequest() {
@@ -97,10 +96,12 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
       children: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-              primary: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20))),
+            primary: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
           onPressed: () {
             _validate();
           },
@@ -129,7 +130,7 @@ class _ForgetPasswordScreenState extends State<ForgotPasswordScreen> {
     if (_emailKey.currentState!.validate()) {
       _emailKey.currentState!.save();
       setState(() {
-        auth.sendPasswordResetEmail(email: _email);
+        _auth.sendPasswordResetEmail(email: _email);
         Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       });
     }

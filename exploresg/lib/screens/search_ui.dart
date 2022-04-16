@@ -1,15 +1,11 @@
-import 'dart:math';
-import 'dart:collection';
 import 'package:exploresg/helper/search_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:exploresg/screens/place_ui.dart';
 
 import 'package:exploresg/helper/utils.dart';
-import 'package:exploresg/helper/places_api.dart';
 
 import 'package:exploresg/models/place.dart';
-import 'package:exploresg/helper/location.dart';
+import 'package:exploresg/helper/location_controller.dart';
 import 'package:exploresg/helper/favourites_controller.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,7 +20,7 @@ class SearchScreenArguments {
 }
 
 class SearchScreen extends StatefulWidget {
-  static const routeName = "/search";
+  static const routeName = '/search';
   final int max;
   final int min;
   final String sort;
@@ -43,7 +39,6 @@ class _SearchScreen extends State<SearchScreen> {
   late LatLng _userLoc;
   bool _isLoaded = false;
   List<Place>? _places = [];
-  List<double> _distance = [];
   List<String> _favourites = [];
 
   void initState() {
@@ -77,11 +72,10 @@ class _SearchScreen extends State<SearchScreen> {
         child: Row(
           children: [
             Icon(Icons.arrow_back_ios, color: Color(0xff22254C)),
-            Text("back",
-                style: TextStyle(
-                    fontFamily: 'AvenirLtStd',
-                    fontSize: 14,
-                    color: Color(0xff22254C)))
+            textMinor(
+              'back',
+              Color(0xff22254C),
+            ),
           ],
         ),
       ),
@@ -93,7 +87,7 @@ class _SearchScreen extends State<SearchScreen> {
       width: 30,
       child: Text(
         value.round().toString(),
-        style: TextStyle(fontFamily: 'AvenirLtStd', fontSize: 13),
+        style: avenirLtStdStyle(Colors.black),
         textAlign: TextAlign.center,
       ),
     );
@@ -109,31 +103,32 @@ class _SearchScreen extends State<SearchScreen> {
           Row(
             children: [
               InkWell(
-                onTap: () async {
-                  await _favouritesController.addOrRemoveFav(place.id);
-                  _favourites = await _favouritesController.getFavouritesList();
-                  print("<3 pressed");
-                  setState(() {
-                    place.likes = !place.likes;
-                  });
-                  print(place.likes);
-                },
+                  onTap: () async {
+                    await _favouritesController.addOrRemoveFav(place.id);
+                    _favourites =
+                        await _favouritesController.getFavouritesList();
+                    print('<3 pressed');
+                    setState(() {
+                      place.likes = !place.likes;
+                    });
+                    print(place.likes);
+                  },
                   child: _favourites.contains(place.id)
                       ? Icon(
-                    Icons.favorite,
-                    color: Color(0xffE56372),
-                  )
+                          Icons.favorite,
+                          color: Color(0xffE56372),
+                        )
                       : Icon(
-                    Icons.favorite_border,
-                    color: Color(0xffE56372),
-                  )),
+                          Icons.favorite_border,
+                          color: Color(0xffE56372),
+                        )),
               SizedBox(
                 width: 10,
               ),
               textMinor(
                   _favourites.contains(place.id)
                       ? 'added to favourites'
-                      : "add to favourites",
+                      : 'add to favourites',
                   Color(0xffD1D1D6))
             ],
           ),
@@ -148,7 +143,6 @@ class _SearchScreen extends State<SearchScreen> {
       width: width,
       child: ListView.builder(
         shrinkWrap: true,
-        //physics: NeverScrollableScrollPhysics(),
         itemCount: places.length,
         itemBuilder: (context, index) {
           return Column(
@@ -162,13 +156,21 @@ class _SearchScreen extends State<SearchScreen> {
                               _places![index], _favourites));
                     },
                     child: placeContainer(
-                      places[index],
-                      0.8 * width,
-                      0.215 * height,
-                      _addFav(places[index], 0.05 * height, 0.8 * width,),
-                      Container(),
-                        _userLoc != null ? calculateDistance(_userLoc.latitude, _userLoc.longitude, double.parse(_places![index].coordinates["lat"]!), double.parse(_places![index].coordinates["long"]!)) : 0.0
-                    ),
+                        places[index],
+                        0.8 * width,
+                        0.215 * height,
+                        _addFav(
+                          places[index],
+                          0.05 * height,
+                          0.8 * width,
+                        ),
+                        Container(),
+                        calculateDistance(
+                            _userLoc.latitude,
+                            _userLoc.longitude,
+                            double.parse(_places![index].coordinates['lat']!),
+                            double.parse(
+                                _places![index].coordinates['long']!))),
                   ),
                 ],
               ),
@@ -192,10 +194,8 @@ class _SearchScreen extends State<SearchScreen> {
         SearchScreenArguments(
             widget.max, widget.min, widget.sort, widget.text));
     if (_places == null) {
-      print("null");
+      print('null');
     }
-    // _favourites = await _favouritesController
-    //     .getFavouritesList(); // i think this function can be defined in a controller class instead
     setState(() {
       _isLoaded = true;
     });
@@ -208,53 +208,33 @@ class _SearchScreen extends State<SearchScreen> {
     ;
     return _isLoaded
         ? Scaffold(
-            // appBar: AppBar(
-            //   // Here we take the value from the MyHomePage object that was created by
-            //   // the App.build method, and use it to set our appbar title.
-            //   //title: Text(widget.title),
-            //   backgroundColor: Color(0xfffffcec),
-            //   automaticallyImplyLeading: true,
-            //   leading: IconButton(
-            //     icon: Icon(Icons.arrow_back, color: Colors.grey),
-            //     onPressed: () => Navigator.pop(context, false),
-            //   ),
-            // ),
             body: Container(
-              //height: 220.0,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  //mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    // Container(
-                    //     alignment: Alignment.center,topBar("places", height, width, 'assets/img/afterSearchTop.png'),
                     _topVector(),
                     _back(),
                     SizedBox(
                       height: 7,
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40),
-                      child: Text(
-                        'search results',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'MadeSunflower',
-                            fontSize: 36,
-                            color: Color(0xff22254C)),
-                      ),
-                    ),
+                        margin: EdgeInsets.symmetric(horizontal: 40),
+                        child:
+                            textMajor('search results', Color(0xff22254C), 36)),
                     SizedBox(height: 20),
-                    _places!.isEmpty ? textMinor('no results :-(', Color(0xffd1d1d6)) : _printSearch(_places!, height, width),
+                    _places!.isEmpty
+                        ? textMinor('no results :-(', Color(0xffd1d1d6))
+                        : _printSearch(_places!, height, width),
                   ],
                 ),
               ),
             ),
           )
         : Container(
-      color: Color(0XffFFF9ED),
-      child: Center(
+            color: Color(0XffFFF9ED),
+            child: Center(
               child: CircularProgressIndicator(),
             ),
           );

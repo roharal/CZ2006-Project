@@ -20,123 +20,6 @@ class TrackerScreen extends StatefulWidget {
 }
 
 class _TrackerScreen extends State<TrackerScreen> {
-  // String _dropdownValue = 'to explore';
-
-  // Widget _trackerContainer(double height, double width, Place place) {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.all(Radius.circular(20))),
-  //     margin: EdgeInsets.symmetric(vertical: 5),
-  //     padding: EdgeInsets.symmetric(
-  //         vertical: 0.05 * height, horizontal: 0.05 * width),
-  //     width: width,
-  //     height: height + 30,
-  //     child: Column(
-  //       children: [
-  //         Row(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Image.asset(
-  //               "assets/img/catsafari.png",
-  //               height: 100,
-  //               width: 100,
-  //               fit: BoxFit.fill,
-  //             ),
-  //             SizedBox(width: 20),
-  //             Expanded(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   textMajor(place.placeName, Colors.grey, 20),
-  //                   RatingBarIndicator(
-  //                     rating: place.ratings,
-  //                     itemBuilder: (context, index) => Icon(
-  //                       Icons.star,
-  //                       color: Colors.amber,
-  //                     ),
-  //                     itemCount: 5,
-  //                     itemSize: width / 20,
-  //                     direction: Axis.horizontal,
-  //                   ),
-  //                   textMinor(place.placeAddress, Colors.black),
-  //                 ],
-  //               ),
-  //             )
-  //           ],
-  //         ),
-  //         SizedBox(
-  //           height: 20,
-  //         ),
-  //         textMinor(place.placeDesc, Colors.black),
-  //         SizedBox(
-  //           height: 20,
-  //         ),
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             SizedBox(
-  //               width: 20,
-  //             ),
-  //             Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               crossAxisAlignment: CrossAxisAlignment.end,
-  //               children: [
-  //                 textMinor("my status: ", Colors.black),
-  //                 textMinor("date: ", Colors.black),
-  //                 textMinor("time: ", Colors.black),
-  //                 textMinor("people: ", Colors.black),
-  //               ],
-  //             ),
-  //             SizedBox(width: 10.0),
-  //             Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 _trackerStatus(height),
-  //                 textMinor("29/02/2022", Colors.black),
-  //                 textMinor("11.30am", Colors.black),
-  //                 textMinor("faith ihsan", Colors.black)
-  //               ],
-  //             )
-  //           ],
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _trackerStatus(double height) {
-  //   return Container(
-  //       padding: EdgeInsets.symmetric(horizontal: 18),
-  //       margin: EdgeInsets.symmetric(vertical: 2),
-  //       decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(20),
-  //           color: createMaterialColor(Color(0xFFFFF9ED))),
-  //       height: height / 6.5,
-  //       child: DropdownButtonHideUnderline(
-  //           child: DropdownButton<String>(
-  //               value: _dropdownValue,
-  //               icon: const Icon(Icons.keyboard_arrow_down),
-  //               style: const TextStyle(
-  //                 color: Colors.blueAccent,
-  //                 fontFamily: 'AvenirLtStd',
-  //                 fontSize: 14,
-  //               ),
-  //               onChanged: (String? newValue) {
-  //                 setState(() {
-  //                   _dropdownValue = newValue!;
-  //                 });
-  //               },
-  //               items: <String>['unexplored', 'to explore', 'explored']
-  //                   .map<DropdownMenuItem<String>>((String value) {
-  //                 return DropdownMenuItem<String>(
-  //                   value: value,
-  //                   child: Text(value),
-  //                 );
-  //               }).toList())));
-  // }
-
   TrackerController _trackerController = TrackerController();
   AuthController _authController = AuthController();
   PlacesApi _placesApi = PlacesApi();
@@ -145,6 +28,7 @@ class _TrackerScreen extends State<TrackerScreen> {
   Map<String, Place> _places = {};
   bool _isLoaded = false;
   String _dropDownValue = 'to explore';
+  List<String> _dropDownValues = ['unexplored', 'to explore', 'explored'];
   List<String> _favourites = [];
 
   @override
@@ -155,9 +39,10 @@ class _TrackerScreen extends State<TrackerScreen> {
 
   Widget _dropDown(Invitation invite) {
     if (invite.visited) {
-      _dropDownValue = "explored";
+      _dropDownValue = 'explored';
+      _dropDownValues = ['explored'];
     } else {
-      _dropDownValue = "to explore";
+      _dropDownValue = 'to explore';
     }
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -181,7 +66,7 @@ class _TrackerScreen extends State<TrackerScreen> {
               _checkAction(invite);
             });
           },
-          items: <String>['unexplored','to explore', 'explored']
+          items: _dropDownValues
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -202,18 +87,18 @@ class _TrackerScreen extends State<TrackerScreen> {
       children: [
         _dropDown(invite),
         Container(
-            child: textMinor("date: ${invite.date}", Color(0xff22254C)),
+            child: textMinor('date: ${invite.date}', Color(0xff22254C)),
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
         SizedBox(
           height: 5,
         ),
-        Container(child: textMinor("time: ${invite.time}", Color(0xff22254C))),
+        Container(child: textMinor('time: ${invite.time}', Color(0xff22254C))),
         SizedBox(
           height: 10,
         ),
         Row(
           children: [
-            textMinorBold("people", Color(0xff22254C)),
+            textMinorBold('people', Color(0xff22254C), 14),
             SizedBox(
               width: 20,
             ),
@@ -226,18 +111,23 @@ class _TrackerScreen extends State<TrackerScreen> {
                 itemBuilder: (BuildContext context, int idx) => ClipOval(
                   child: Column(
                     children: [
-                      invite.users[idx].picture == "" ? CircleAvatar(
-                        radius: 12.5,
-                        backgroundColor: Color(0xff6488E5),
-                        child: textMajor(invite.users[idx].username != "" ? invite.users[idx].username[0] : "?",
-                            Colors.white, 10),
-                      ):
-                      Image.network(
-                        invite.users[idx].picture,
-                        height: width / 16,
-                        width: width / 16,
-                        fit: BoxFit.cover,
-                      ),
+                      invite.users[idx].getPicture() == ''
+                          ? CircleAvatar(
+                              radius: 12.5,
+                              backgroundColor: Color(0xff6488E5),
+                              child: textMajor(
+                                  invite.users[idx].getUsername() != ''
+                                      ? invite.users[idx].getUsername()[0]
+                                      : '?',
+                                  Colors.white,
+                                  10),
+                            )
+                          : Image.network(
+                              invite.users[idx].getPicture(),
+                              height: width / 16,
+                              width: width / 16,
+                              fit: BoxFit.cover,
+                            ),
                     ],
                   ),
                 ),
@@ -261,10 +151,10 @@ class _TrackerScreen extends State<TrackerScreen> {
               onTap: () {
                 Navigator.pushNamed(context, PlaceScreen.routeName,
                     arguments: PlaceScreenArguments(
-                        _places[list[index].place]!, _favourites));
+                        _places[list[index].getPlace()]!, _favourites));
               },
               child: placeContainer(
-                  _places[list[index].place]!,
+                  _places[list[index].getPlace()]!,
                   0.8 * width,
                   0.3 * height,
                   _inviteContainer(list[index], width),
@@ -281,11 +171,11 @@ class _TrackerScreen extends State<TrackerScreen> {
 
   void _checkAction(Invitation invite) async {
     var user = _authController.getCurrentUser();
-    if (_dropDownValue == "explored" && !invite.visited) {
+    if (_dropDownValue == 'explored' && !invite.visited) {
       await _trackerController.setExplored(invite, user!.uid);
-    } else if (_dropDownValue == "to explore" && invite.visited) {
+    } else if (_dropDownValue == 'to explore' && invite.visited) {
       await _trackerController.setToExplored(invite, user!.uid);
-    } else if (_dropDownValue == "unexplored") {
+    } else if (_dropDownValue == 'unexplored') {
       await _trackerController.setUnexplored(invite, user!.uid);
     }
     setState(() {
@@ -294,7 +184,6 @@ class _TrackerScreen extends State<TrackerScreen> {
   }
 
   void _loadExplores() async {
-
     _favourites = await _favouritesController.getFavouritesList();
     var user = _authController.getCurrentUser();
     _invites = await _trackerController.getConfirmedInvitations(user!.uid);
@@ -346,18 +235,24 @@ class _TrackerScreen extends State<TrackerScreen> {
                         onTap: () {
                           _reload();
                         },
-                        child: topBar("my tracker", height, width,
+                        child: topBar('my tracker', height, width,
                             'assets/img/tracker-top.svg'),
                       ),
-                      SizedBox(height: 30,),
-                      textMajor("to explore", Color(0xff22254C), 26),
-                      _toExplore.length != 0 ? _exploreList(_toExplore, height, width) : Container(),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      textMajor('to explore', Color(0xff22254C), 26),
+                      _toExplore.length != 0
+                          ? _exploreList(_toExplore, height, width)
+                          : Container(),
                       FittedBox(
                           fit: BoxFit.fill,
                           child: SvgPicture.asset('assets/img/tracker-mid.svg',
                               width: width, height: width)),
-                      textMajor("explored", Color(0xff22254C), 26),
-                      _explored.length != 0 ? _exploreList(_explored, height, width) : Container(),
+                      textMajor('explored', Color(0xff22254C), 26),
+                      _explored.length != 0
+                          ? _exploreList(_explored, height, width)
+                          : Container(),
                       SizedBox(
                         height: 35,
                       ),
@@ -365,7 +260,8 @@ class _TrackerScreen extends State<TrackerScreen> {
                   ),
                 ),
               ),
-            ))
+            ),
+          )
         : Container(
             child: Center(
               child: CircularProgressIndicator(),

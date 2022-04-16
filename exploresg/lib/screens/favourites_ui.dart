@@ -58,10 +58,11 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                 width: 10,
               ),
               textMinor(
-                  _favourites.contains(place.id)
-                      ? 'added to favourites'
-                      : "add to favourites",
-                  Color(0xffD1D1D6))
+                _favourites.contains(place.id)
+                    ? 'added to favourites'
+                    : 'add to favourites',
+                Color(0xffD1D1D6),
+              )
             ],
           ),
         ],
@@ -86,11 +87,12 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                             PlaceScreenArguments(places[index], _favourites));
                   },
                   child: placeContainer(
-                      places[index],
-                      0.8 * width,
-                      0.215 * height,
-                      _addFav(index, places[index], 0.05 * height, 0.8 * width),
-                      Container()),
+                    places[index],
+                    0.8 * width,
+                    0.215 * height,
+                    _addFav(index, places[index], 0.05 * height, 0.8 * width),
+                    Container(),
+                  ),
                 ),
               ],
             ),
@@ -120,38 +122,6 @@ class _FavouriteScreen extends State<FavouriteScreen> {
     });
   }
 
-  // Widget _addFav(Place place) {
-  //   return Expanded(
-  //       child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.end,
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //         Row(children: [
-  //           InkWell(
-  //               onTap: () {
-  //                 print("<3 pressed");
-  //                 setState(() {
-  //                   place.likes = !place.likes;
-  //                 });
-  //                 print(place.likes);
-  //               },
-  //               child: place.likes
-  //                   ? Icon(
-  //                       Icons.favorite,
-  //                       color: Colors.red,
-  //                     )
-  //                   : Icon(
-  //                       Icons.favorite_border,
-  //                       color: Colors.grey,
-  //                     )),
-  //           SizedBox(
-  //             width: 10,
-  //           ),
-  //           textMinor("add to favourites", Colors.black)
-  //         ])
-  //       ]));
-  // }
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -176,7 +146,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                         onTap: () {
                           _reload();
                         },
-                        child: topBar("favourites", height, width,
+                        child: topBar('favourites', height, width,
                             'assets/img/favourites-top.svg'),
                       ),
                       SizedBox(

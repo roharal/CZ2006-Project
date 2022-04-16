@@ -6,7 +6,7 @@ class InboxController {
 
   Future<List<Invitation>> getConfirmedInvitations(String uid) async {
     List<Invitation> invites = [];
-    await _firestore.collection("users").doc(uid).collection("invites").get().then((value) {
+    await _firestore.collection('users').doc(uid).collection('invites').get().then((value) {
       if (value.size != 0) {
         for (var n in value.docs) {
           Invitation invitation = Invitation.fromSnapshot(n);

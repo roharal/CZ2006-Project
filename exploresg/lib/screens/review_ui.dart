@@ -1,5 +1,5 @@
 // import 'package:exploresg/helper/auth_controller.dart';
-import 'package:exploresg/helper/reviewsController.dart';
+import 'package:exploresg/helper/reviews_controller.dart';
 import 'package:exploresg/helper/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -9,10 +9,10 @@ import 'package:flutter_svg/svg.dart';
 import '../models/review.dart';
 
 class ReviewsScreen extends StatefulWidget {
-  static const routeName = "/exploreReviews";
+  static const routeName = '/exploreReviews';
   final Place place;
 
-  ReviewsScreen({required this.place});
+  ReviewsScreen(this.place);
 
   @override
   State<ReviewsScreen> createState() => _ReviewsScreenState();
@@ -22,7 +22,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   bool _isLoaded = false;
   ReviewsController _reviewsController = ReviewsController();
 
-  // AuthController _auth = AuthController();
   List<Review> reviews = [];
   List<String> displayNames = [];
   List<String> PFPs = [];
@@ -58,12 +57,14 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
         },
         child: Row(
           children: [
-            Icon(Icons.arrow_back_ios, color: Color(0xff22254C)),
-            Text("back",
-                style: TextStyle(
-                    fontFamily: 'AvenirLtStd',
-                    fontSize: 14,
-                    color: Color(0xff22254C)))
+            Icon(
+              Icons.arrow_back_ios,
+              color: Color(0xff22254C),
+            ),
+            textMinor(
+              'back',
+              Color(0xff22254C),
+            ),
           ],
         ),
       ),
@@ -75,8 +76,11 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     final _w = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20))),
+        color: Colors.white,
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+      ),
       padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
       width: _w,
       child: Column(
@@ -96,7 +100,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  textMinorBold(userName, Color(0xff22254C)),
+                  textMinorBold(userName, Color(0xff22254C), 14),
                   RatingBarIndicator(
                     rating: rating,
                     itemBuilder: (context, index) => Icon(
@@ -172,8 +176,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final height = MediaQuery.of(context).size.height;
-    // final width = MediaQuery.of(context).size.width;
     return _isLoaded
         ? Scaffold(
             backgroundColor: Color(0xfffffcec),
@@ -191,26 +193,25 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         SizedBox(
                           height: 7,
                         ),
-                        Text(
-                          widget.place.placeName,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'MadeSunflower',
-                              fontSize: 36,
-                              color: Color(0xff22254C)),
-                        ),
+                        textMajor(
+                            widget.place.getPlaceName(), Color(0xff22254C), 36),
                         textMajor('explorer reviews', Color(0xff22254C), 36),
                         SizedBox(
                           height: 10,
                         ),
                         reviews.isEmpty
-                            ? textMinor('no reviews to show', Color(0xffd1d1d6))
+                            ? textMinor(
+                                'no reviews to show',
+                                Color(0xffd1d1d6),
+                              )
                             //Actual review list comes from here
                             : _review(reviews),
                         reviews.isEmpty
                             ? Container()
                             : textMinor(
-                                'no more to show...', Color(0xffd1d1d6)),
+                                'no more to show...',
+                                Color(0xffd1d1d6),
+                              ),
                         SizedBox(
                           height: 25,
                         )
@@ -222,8 +223,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             ),
           )
         : Container(
-      color: Color(0XffFFF9ED),
-      child: Center(
+            color: Color(0XffFFF9ED),
+            child: Center(
               child: CircularProgressIndicator(),
             ),
           );
