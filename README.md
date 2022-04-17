@@ -10,6 +10,8 @@ Features include:
 - allowing users to invite their friends along to the trip.
 - allowing users to review places that they have explored.
 
+Watch our app demo video to get a sense of our app's functionalities, link here: https://youtu.be/LweEYJEpFpk
+
 # Getting Started
 This project is a starting point for a Flutter application.
 
