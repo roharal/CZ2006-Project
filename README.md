@@ -1,14 +1,14 @@
 # NTU CZ2006 Group Project
 
 # exploreSG
-Our team has created a native mobile application that suggests things to do or places to visit in Singapore and help them get to those places.
+Bored with no plans? Our team has created a native mobile application that suggests things to do or places to visit in Singapore!
 
 Features include:
-- recommending places to the user based on their LatLng.
-- allowing user to search for places based on different categories such as names, ratings, location, prices etc. by utilizing real-time data retrieval using **google places API** .
-- allowing users to track places they have visited and wish to visit for their ease of reference. 
-- allowing users to invite their friends along to the trip.
-- allowing users to review places that they have explored.
+- recommending places to the user based on their LatLng
+- allowing user to search for places based on different categories such as names, ratings, distance, prices etc. by utilizing real-time data retrieval using **google places API**
+- allowing users to track places they have visited and wish to visit for their ease of reference
+- allowing users to invite their friends along to explore places
+- allowing users to review places that they have explored
 
 Watch our [app demo video](https://youtu.be/LweEYJEpFpk) to get a sense of our app's functionalities.
 
