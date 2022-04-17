@@ -58,11 +58,15 @@ class _InboxScreen extends State<InboxScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
+                ClipOval(
                   // color: Colors.yellow,
-                  height: width * (1 / 10),
                   child: invitationC.users[0].getPicture() != ''
-                      ? Image.network(invitationC.users[0].getPicture())
+                      ? Image.network(
+                          invitationC.users[0].getPicture(),
+                          height: width / 16,
+                          width: width / 16,
+                          fit: BoxFit.cover,
+                        )
                       : CircleAvatar(
                           radius: 12.5,
                           backgroundColor: Color(0xff6488E5),
@@ -119,9 +123,7 @@ class _InboxScreen extends State<InboxScreen> {
                     children: [
                       Spacer(flex: 3),
                       textMinorBold(
-                        place.getPlaceName(),
-                        Color(0xff22254C), 14
-                      ),
+                          place.getPlaceName(), Color(0xff22254C), 14),
                       RatingBarIndicator(
                         rating: place.getRatings(),
                         itemBuilder: (context, index) => Icon(

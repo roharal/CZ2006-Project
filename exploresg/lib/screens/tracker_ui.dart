@@ -43,6 +43,7 @@ class _TrackerScreen extends State<TrackerScreen> {
       _dropDownValues = ['explored'];
     } else {
       _dropDownValue = 'to explore';
+      _dropDownValues = ['unexplored', 'to explore', 'explored'];
     }
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),

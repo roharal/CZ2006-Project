@@ -1,9 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require('firebase-admin');
-const axios = require('axios');
 admin.initializeApp(functions.config().firebase);
 const API_KEY = "AIzaSyDsNDWloKgHeY_W2prK_qPOUXALiL390VY";
-const placeDetailsSearchURL = "https://maps.googleapis.com/maps/api/place/details/json";
 
 exports.sendNotification = functions.firestore.document("users/{user_id}/invites/{invitation_id}").onCreate((snap, context) => {
 	const user_id = context.params.user_id;
@@ -14,19 +12,18 @@ exports.sendNotification = functions.firestore.document("users/{user_id}/invites
         const date = result.data().date;
         const time = result.data().time;
         const user = result.data().users[0];
-        const place = fetchPlaceById(placeId);
-        const placeName = place.name;
+		const firstName = user.firstName;
         const title = "You got an invite!";
-        const body = "${user.firstName} is inviting you to ${placeName} on ${date} at ${time}";
+        const body = firstName + " is inviting you to a place on " + date + " at " + time + ". Find out more in your inbox!";
         console.log(body);
 		return admin.firestore().collection("users").doc(user_id).get().then(result => {
 			const tokenId = result.data().token;
+			console.log(tokenId);
 			const message = {
 				"token": tokenId,
 				"data": {
 					"title": title,
 					"message": body,
-					"key": key
 				},
 				"apns": {
 					"payload": {
@@ -35,7 +32,6 @@ exports.sendNotification = functions.firestore.document("users/{user_id}/invites
 								"title": title,
 								"body": body
 							},
-							"category": key,
 							"sound": "default",
 							"mutable-content": 1
 						}
@@ -49,10 +45,6 @@ exports.sendNotification = functions.firestore.document("users/{user_id}/invites
 	});
 });
 
-async function fetchPlaceById(id) {
-    const response = await axios.get("${placeDetailsSearchURL}?place_id=${place_id}&key=${API_KEY}");
-    return response.data.results[0];
-}
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
