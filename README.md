@@ -1,6 +1,6 @@
-# CZ2006-Project
+# NTU CZ2006 Group Project
 
-# Coursework Group Project
+# exploreSG
 Our team has created a native mobile application that suggests things to do or places to visit in Singapore and help them get to those places.
 
 Features include:
