@@ -12,6 +12,10 @@ Features include:
 
 Watch our [app demo video](https://youtu.be/LweEYJEpFpk) to get a sense of our app's functionalities.
 
+# How to use this repository
+Main branch: Project deliverables
+Master branch: Source code
+
 # Getting Started
 This project is a starting point for a Flutter application.
 
