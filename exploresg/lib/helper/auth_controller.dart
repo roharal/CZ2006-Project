@@ -41,7 +41,7 @@ class AuthController {
 
   Future signOut() async {
     try {
-      this.updateUserById(this.getCurrentUser()!.uid, {"token": ""});
+      this.updateUserById(this.getCurrentUser()!.uid, {'token': ''});
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());
@@ -59,10 +59,10 @@ class AuthController {
         var token = await _fcm.getToken();
         userModel.setToken(token);
         userModel.setEmailVerified(result.emailVerified);
-        batch.set(_firestore.collection("users").doc(userModel.getId()),
+        batch.set(_firestore.collection('users').doc(userModel.getId()),
             userModel.toJson());
-        batch.set(_firestore.collection("usernames").doc(userModel.getId()),
-            {"username": userModel.getUsername()});
+        batch.set(_firestore.collection('usernames').doc(userModel.getId()),
+            {'username': userModel.getUsername()});
         batch.commit();
         return null;
       } else {
@@ -76,28 +76,28 @@ class AuthController {
   Future<String?> createUserFromGoogleSignIn(User user) async {
     var token = await _fcm.getToken();
     try {
-      String first = "", last = "";
+      String first = '', last = '';
       if (user.displayName != null) {
-        first = user.displayName!.split(" ")[1];
-        last = user.displayName!.split(" ")[0];
+        first = user.displayName!.split(' ')[1];
+        last = user.displayName!.split(' ')[0];
       }
       UserModel userModel = UserModel(
           user.uid,
-          "",
+          '',
           first,
           last,
           user.email!,
           token,
-          user.photoURL == null ? "" : user.photoURL!,
+          user.photoURL == null ? '' : user.photoURL!,
           user.phoneNumber == null
-              ? ""
+              ? ''
               : user.phoneNumber! == null
-                  ? ""
+                  ? ''
                   : user.phoneNumber!,
           user.emailVerified,
           true,
-          "",
-          "");
+          '',
+          '');
       await this.createUserById(user.uid, userModel.toJson());
       return null;
     } on FirebaseAuthException catch (e) {
@@ -108,15 +108,15 @@ class AuthController {
   Future<String> getUidfromUsername(String username) async {
     String uid;
     final QuerySnapshot query = await _firestore
-        .collection("usernames")
-        .where("username", isEqualTo: username)
+        .collection('usernames')
+        .where('username', isEqualTo: username)
         .limit(1)
         .get();
     List<DocumentSnapshot> documents = query.docs;
     if (documents.length == 1) {
       uid = documents[0].id;
     } else {
-      uid = "notFound";
+      uid = 'notFound';
     }
     return uid;
   }
@@ -131,18 +131,18 @@ class AuthController {
   }
 
   Future createUserById(String id, Map<String, dynamic> data) async {
-    await _firestore.collection("users").doc(id).set(data);
+    await _firestore.collection('users').doc(id).set(data);
   }
 
   Future<DocumentSnapshot> getUserFromId(String id) async {
-    return await _firestore.collection("users").doc(id).get();
+    return await _firestore.collection('users').doc(id).get();
   }
 
   Future updateUserById(String id, Map<String, dynamic> data) async {
-    await _firestore.collection("users").doc(id).update(data);
+    await _firestore.collection('users').doc(id).update(data);
   }
 
   Future changeUsername(String id, Map<String, dynamic> data) async {
-    await _firestore.collection("usernames").doc(id).update(data);
+    await _firestore.collection('usernames').doc(id).update(data);
   }
 }
