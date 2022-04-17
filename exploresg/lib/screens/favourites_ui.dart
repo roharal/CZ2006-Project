@@ -159,6 +159,7 @@ class _FavouriteScreen extends State<FavouriteScreen> {
                         height: 30,
                       ),
                       recommendedList(_favourite_places, height, width),
+                      Container(child: _favourite_places.length == 0 ? textMinor("No favourites", Colors.black):Container(height: 10,)),
                       SizedBox(height: 20)
                     ],
                   ),
