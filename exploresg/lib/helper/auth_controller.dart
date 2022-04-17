@@ -137,4 +137,8 @@ class AuthController {
   Future updateUserById(String id, Map<String, dynamic> data) async {
     await _firestore.collection("users").doc(id).update(data);
   }
+
+  Future changeUsername(String id, Map<String, dynamic> data) async {
+    await _firestore.collection("usernames").doc(id).update(data);
+  }
 }

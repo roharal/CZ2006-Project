@@ -21,7 +21,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   var value = '';
   final Storage storage = Storage();
   bool _isLoaded = false;
-  AuthController _auth = AuthController();
+  AuthController _authController = AuthController();
   ProfileController _profileController = ProfileController();
   late UserModel _userModel;
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -36,8 +36,8 @@ class _ProfileScreen extends State<ProfileScreen> {
   }
 
   void _init() {
-    String uid = _auth.getCurrentUser()!.uid;
-    _auth.getUserFromId(uid).then((value) {
+    String uid = _authController.getCurrentUser()!.uid;
+    _authController.getUserFromId(uid).then((value) {
       _userModel = UserModel.fromSnapshot(value);
       setState(() {
         _isLoaded = true;
@@ -81,26 +81,24 @@ class _ProfileScreen extends State<ProfileScreen> {
             ),
             TextButton(
               child: Text('submit'),
-              onPressed: () {
+              onPressed: () async {
                 if (_formkey.currentState!.validate()) {
-                  _auth.updateUserById(
-                      _userModel.id, {attr: _textEditingController.text});
-                  Future.delayed(Duration(milliseconds: 1000), () {
+                  var result = await _authController
+                      .getUidfromUsername(_textEditingController.text);
+                  if (result == 'notFound') {
+                    await _authController.updateUserById(_userModel.getId(),
+                        {attr: _textEditingController.text});
+                    await _authController.changeUsername(_userModel.getId(),
+                        {attr: _textEditingController.text});
+                    Navigator.of(context).pop();
                     setState(() {
-                      switch (attr) {
-                        case 'username':
-                          {
-                            _userModel.username = _textEditingController.text;
-                          }
-                          break;
-                        case 'email':
-                          {
-                            _userModel.email = _textEditingController.text;
-                          }
-                      }
+                      _userModel.username = _textEditingController.text;
                     });
-                  });
-                  Navigator.of(context).pop();
+                  } else {
+                    Navigator.of(context).pop();
+                    showAlert(context, 'username taken',
+                        'please choose another username');
+                  }
                 }
               },
             )
@@ -134,12 +132,12 @@ class _ProfileScreen extends State<ProfileScreen> {
                 EdgeInsets.symmetric(horizontal: width * (1 / 9), vertical: 5),
             width: width,
             child: textMinorBold(
-              'display name: ' +
-                  _userModel.getFirstName() +
-                  ' ' +
-                  _userModel.getLastName(),
-              Color(0xff22254C), 18
-            )),
+                'display name: ' +
+                    _userModel.getFirstName() +
+                    ' ' +
+                    _userModel.getLastName(),
+                Color(0xff22254C),
+                18)),
         Form(
           key: _formkey2,
           child: Column(
@@ -222,15 +220,12 @@ class _ProfileScreen extends State<ProfileScreen> {
                     horizontal: width * (1 / 9), vertical: 5),
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
-                  child: textMinorBold(
-                    'change',
-                    Color(0xff22254C), 14
-                  ),
+                  child: textMinorBold('change', Color(0xff22254C), 14),
                   onPressed: () {
                     print('Button pressed');
                     if (_formkey2.currentState!.validate()) {
                       print('Form is valid!');
-                      _auth.updateUserById(_userModel.getId(), {
+                      _authController.updateUserById(_userModel.getId(), {
                         'firstName': _textControllerFirst.text,
                         'lastName': _textControllerLast.text
                       });
@@ -277,19 +272,13 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              textMinorBold(
-                'profile picture',
-                Color(0xff22254C), 14
-              ),
+              textMinorBold('profile picture', Color(0xff22254C), 14),
             ],
           ),
         ),
         Container(
             child: ElevatedButton(
-                child: textMinorBold(
-                  'change',
-                  Color(0xff22254C), 14
-                ),
+                child: textMinorBold('change', Color(0xff22254C), 14),
                 onPressed: () async {
                   _changePFPFunc();
                 },
@@ -316,10 +305,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              textMinorBold(
-                'username',
-                Color(0xff22254C), 14
-              ),
+              textMinorBold('username', Color(0xff22254C), 14),
               Text(
                 '@' + _userModel.getUsername(),
                 style: avenirLtStdStyle(
@@ -331,10 +317,7 @@ class _ProfileScreen extends State<ProfileScreen> {
         ),
         Container(
           child: ElevatedButton(
-            child: textMinorBold(
-              'change',
-              Color(0xff22254C), 14
-            ),
+            child: textMinorBold('change', Color(0xff22254C), 14),
             onPressed: () async {
               await showInformationDialog(context, 'username');
             },
@@ -364,23 +347,15 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              textMinorBold('password', Color(0xff22254C), 14),
               textMinorBold(
-                'password',
-                Color(0xff22254C), 14
-              ),
-              textMinorBold(
-                'must be between 8 - 20 characters',
-                Color(0xff22254C), 14
-              ),
+                  'must be between 8 - 20 characters', Color(0xff22254C), 14),
             ],
           ),
         ),
         Container(
           child: ElevatedButton(
-            child: textMinorBold(
-              'change',
-              Color(0xff22254C), 14
-            ),
+            child: textMinorBold('change', Color(0xff22254C), 14),
             onPressed: () {
               Navigator.pushNamed(context, ChangePasswordScreen.routeName,
                   arguments: ChangePasswordArguments(_userModel.email));
@@ -411,22 +386,16 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              textMinorBold(
-                'manage interests',
-                Color(0xff22254C), 14
-              ),
+              textMinorBold('manage interests', Color(0xff22254C), 14),
             ],
           ),
         ),
         Container(
             child: ElevatedButton(
-                child: textMinorBold(
-                  'change',
-                  Color(0xff22254C), 14
-                ),
+                child: textMinorBold('change', Color(0xff22254C), 14),
                 onPressed: () async {
                   DocumentSnapshot snapShot =
-                      await _auth.getUserFromId(_userModel.getId());
+                      await _authController.getUserFromId(_userModel.getId());
                   _userModel = UserModel.fromSnapshot(snapShot);
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => InterestScreen(
@@ -456,21 +425,15 @@ class _ProfileScreen extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              textMinorBold(
-                'sign out from account',
-                Color(0xff22254C), 14
-              ),
+              textMinorBold('sign out from account', Color(0xff22254C), 14),
             ],
           ),
         ),
         Container(
           child: ElevatedButton(
-            child: textMinorBold(
-              'signout',
-              Color(0xff22254C), 14
-            ),
+            child: textMinorBold('signout', Color(0xff22254C), 14),
             onPressed: () {
-              _auth.logOut();
+              _authController.logOut();
               Navigator.of(context, rootNavigator: true)
                   .pushNamedAndRemoveUntil(
                       LoginScreen.routeName, (Route<dynamic> route) => false);
