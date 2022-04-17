@@ -349,7 +349,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         print('user created');
         Navigator.pushReplacementNamed(context, VerifyScreen.routeName);
       } else {
-        showAlert(context, 'Sign Up Error', value.toString());
+        showAlert(context, 'Sign Up Error', value.split(']')[1]);
       }
     });
   }

@@ -53,17 +53,21 @@ class AuthController {
       UserModel userModel, String password) async {
     var batch = _firestore.batch();
     try {
-      User user = await this.signUpEmail(userModel.getEmail(), password);
-      userModel.setId(user.uid);
-      var token = await _fcm.getToken();
-      userModel.setToken(token);
-      userModel.setEmailVerified(user.emailVerified);
-      batch.set(_firestore.collection("users").doc(userModel.getId()),
-          userModel.toJson());
-      batch.set(_firestore.collection("usernames").doc(userModel.getId()),
-          {"username": userModel.getUsername()});
-      batch.commit();
-      return null;
+      var result = await this.signUpEmail(userModel.getEmail(), password);
+      if (result is User) {
+        userModel.setId(result.uid);
+        var token = await _fcm.getToken();
+        userModel.setToken(token);
+        userModel.setEmailVerified(result.emailVerified);
+        batch.set(_firestore.collection("users").doc(userModel.getId()),
+            userModel.toJson());
+        batch.set(_firestore.collection("usernames").doc(userModel.getId()),
+            {"username": userModel.getUsername()});
+        batch.commit();
+        return null;
+      } else {
+        return result;
+      }
     } on FirebaseAuthException catch (e) {
       return e.toString();
     }
