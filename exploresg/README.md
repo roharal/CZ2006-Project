@@ -1,6 +1,6 @@
 # exploresg
 
-An app that explores Singapore with your friends
+An app that allows you to explore Singapore with your friends
 
 ## Getting Started
 
